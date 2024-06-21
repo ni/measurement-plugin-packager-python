@@ -35,7 +35,7 @@ To contribute to this project, it is recommended that you follow these steps:
    Pull Requests are the expected method of code collaboration on this project.
 
 
-# To setup virtual environement
+# Setup virtual environement
 
 You must have a supported version of Python (3.8+) and [Poetry](https://python-poetry.org/docs/) installed locally.
 
