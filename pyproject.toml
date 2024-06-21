@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "ni_measurement_plugin_package_builder"
+version = "1.2.0-dev1"
+description = "NI Package builder for python measurement plugins"
+authors = ["NI <opensource@ni.com>"]
+readme = "README.md"
+packages = [{include = "ni_measurement_plugin_package_builder", from = "src"}]
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Manufacturing",
+    "Operating System :: Microsoft :: Windows",
+    # Poetry automatically adds classifiers for the license and the supported Python versions.
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering",
+    "Topic :: System :: Hardware",
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pydantic = "^2.7.1"
+tomli = "^2.0.1"
+tomli-w = "^1.0.0"
+click = "^8.1.7"
+
+[tool.poetry.scripts]
+ni-measurement-plugin-package-builder = "ni_measurement_plugin_package_builder.main:run"
+
+[tool.poetry.group.dev.dependencies]
+ni-python-styleguide = "^0.4.5"
+lint = "^1.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
