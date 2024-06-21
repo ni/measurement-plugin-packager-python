@@ -1,20 +1,20 @@
 # NI Measurement Plugin Package builder
 
-### Description
+## Description
 
 NI Measurement Plugin Package builder enables user to build Python Measurement plugins as NI package files.
 
-### Prerequistes
+## Prerequistes
 
 - Python (3.8 and above)
 - NI Package manager
 
-### Code Setup
+## Code Setup
 
 - Clone the repository using `git clone <respository link>`.
 - Check out to the required branch using `git checkout <branch name>`.
 
-### Setup Virtual Environment
+## Setup Virtual Environment
 
 - Open terminal.
 - Run `cd ni_measurement_plugin_package_builder`
@@ -22,7 +22,7 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
 - Run `poetry shell` to activate virtual environment.
 - Run `poetry install` to install dependency files.
 
-#### Build whl File
+## Build whl File
 
 - Run `poetry build` to build whl file.
 
@@ -33,7 +33,7 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
     1. Non-interactive mode
     2. Interactive mode
 
-**Non-interactive mode**
+### Non-interactive mode
 - To build a single measurement plugin, Run the following command
     `ni-measurement-plugin-package-builder --plugin-dir <measurement_plugin_directory>`
     Example: `ni-measurement-plugin-package-builder --plugin-dir "C:\Users\examples\sample_measurement"`
@@ -42,7 +42,7 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
     Example: `ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement"`
 - Input arguments should be provided within double quotes.
 
-**Interactive mode**
+### Interactive mode
 - To build multiple measurement plugins, the parent directory containing the measurement plugin folders must be provided
 - To start the tool in interactive mode, Run the following command
     `ni-measurement-plugin-package-builder -i`
@@ -51,6 +51,6 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
 
 - Require Internet access to install the external dependencies of NI Measurement Plugin Package builder.
 
-### Reference Link
+## Reference Link
 
 - [NI package builder](https://www.ni.com/docs/en-US/bundle/package-manager/page/build-package-using-cli.html)

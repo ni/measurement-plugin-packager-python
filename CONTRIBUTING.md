@@ -22,25 +22,17 @@ to ensure proper semantic versioning.
 To contribute to this project, it is recommended that you follow these steps:
 
 1. Clone this repository on GitHub.
-2. Run the unit tests on your system (see Testing section). At this point,
-   if any tests fail, do not begin development. Try to investigate these
-   failures. If you're unable to do so, report an issue through our
-   [GitHub issues page](https://github.com/ni/ni-measurement-plugin-package-builder/issues).
-3. Write new tests that demonstrate your bug or feature. Ensure that these
-   new tests fail.
-4. Make your change.
-5. Run all the unit tests again (which include the tests you just added),
-   and confirm that they all pass.
-6. Send a GitHub Pull Request to the main repository's master branch. GitHub
+2. Create a new branch for any development.
+3. Refer `Setup Virtual Environment` and start to develop.
+4. Send a GitHub Pull Request to the main repository's master branch. GitHub
    Pull Requests are the expected method of code collaboration on this project.
 
-
-# Setup virtual environement
+# Setup Virtual Environement
 
 You must have a supported version of Python (3.8+) and [Poetry](https://python-poetry.org/docs/) installed locally.
 
 ```
-cd ni_measurement_plugin_package_builder
+cd ni-measurement-plugin-package-builder
 
 poetry env use Python
 ```
