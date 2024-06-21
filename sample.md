@@ -1,11 +1,11 @@
-# Contributing to *ni-measurement-plugin-package-builder* 
+# Contributing to *ni-spec-server-proxy* 
 
-Contributions to *ni-measurement-plugin-package-builder* are welcome from all!
+Contributions to *ni-spec-server-proxy* are welcome from all!
 
-*ni-measurement-plugin-package-builder* is managed via [git](https://git-scm.com), with the canonical upstream
-repository hosted on [GitHub](https://github.com/ni/ni-measurement-plugin-package-builder).
+*ni-spec-server-proxy* is managed via [git](https://git-scm.com), with the canonical upstream
+repository hosted on [GitHub](https://github.com/ni/ni-spec-server-proxy).
 
-*ni-measurement-plugin-package-builder* follows a pull-request model for development.  If
+*ni-spec-server-proxy* follows a pull-request model for development.  If
 you wish to contribute, you will need to create a GitHub account, clone this
 project, push a branch with your changes to your project, and then submit a
 pull request.
@@ -25,7 +25,7 @@ To contribute to this project, it is recommended that you follow these steps:
 2. Run the unit tests on your system (see Testing section). At this point,
    if any tests fail, do not begin development. Try to investigate these
    failures. If you're unable to do so, report an issue through our
-   [GitHub issues page](https://github.com/ni/ni-measurement-plugin-package-builder/issues).
+   [GitHub issues page](https://github.com/ni/ni-spec-server-proxy/issues).
 3. Write new tests that demonstrate your bug or feature. Ensure that these
    new tests fail.
 4. Make your change.
@@ -34,15 +34,22 @@ To contribute to this project, it is recommended that you follow these steps:
 6. Send a GitHub Pull Request to the main repository's master branch. GitHub
    Pull Requests are the expected method of code collaboration on this project.
 
+# Testing
 
-# To setup virtual environement
+Before running any tests, you must have a supported version of Python (3.8+) and [Poetry](https://python-poetry.org/docs/) installed locally.
 
-You must have a supported version of Python (3.8+) and [Poetry](https://python-poetry.org/docs/) installed locally.
+**Important:** 
+
+- Create a Product in SLE.
+- Enter the part number in `VALID_PRODUCT_NAME` and `NO_SPEC_PRODUCT_NAME` in `constants.py` under `tests` folder before running tests.
+- It is required to install SystemLink Client and connection to SLE server is to be made.
+
+To setup virtual environement
 
 ```
-cd ni_measurement_plugin_package_builder
+cd ni_spec_server_proxy
 
-poetry env use Python
+poetry env use "C:\Program Files\National Instruments\Shared\Skyline\Python\3.8\python.exe"
 ```
 
 To run commands and scripts, spawn a shell within the virtual environment managed by Poetry:
@@ -51,6 +58,17 @@ To run commands and scripts, spawn a shell within the virtual environment manage
 poetry shell
 ```
 
+To run all tests in place with your current python environment setup:
+
+```
+pytest
+```
+
+To only run the tests in one particular folder, run
+
+```
+pytest tests/myfolder
+```
 
 # Developer Certificate of Origin (DCO)
 
@@ -82,5 +100,5 @@ poetry shell
 
 (taken from [developercertificate.org](https://developercertificate.org/))
 
-See [LICENSE](https://github.com/ni/ni-measurement-plugin-package-builder/blob/main/LICENSE)
-for details about how *ni-measurement-plugin-package-builder* is licensed.
+See [LICENSE](https://github.com/ni/ni-spec-server-proxy/blob/main/LICENSE)
+for details about how *ni-spec-server-proxy* is licensed.
