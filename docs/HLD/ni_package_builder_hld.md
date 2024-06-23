@@ -1,8 +1,8 @@
 # NI Measurement Plugin Package builder
 
-- [NI Measurement Plugin Package builder](#ni-measurement-plugin-package-builder)
+- [NI Measurement Plugin Package Builder](#ni-measurement-plugin-package-builder)
   - [Who](#who)
-  - [Problem Statement](#problem-statement)
+  - [Problem statement](#problem-statement)
   - [Links to relevant work items](#links-to-relevant-work-items)
   - [Implementation and Design](#implemenation-and-design)
     - [Workflow](#work-flow)
@@ -10,48 +10,45 @@
         - [Non interactive mode](#non-interactive-mode)
         - [Interactive mode](#interactive-mode)
         - [Logger implementation](#logger-implementation)
-    - [Building Measurement Packages](#building-measurement-packages)
+    - [Building measurement packages](#building-measurement-packages)
         - [Creating required files](#creating-required-files)
         - [Building measurements using nipkg exe](#building-measurements-using-nipkg-exe)
-    - [Architecture Diagram](#architecture-diagram)
     - [Installation](#installation)
         - [Non interactive mode](#non-interactive-mode)
         - [Interactive mode](#interactive-mode)
   - [Alternative implementations and designs](#alternative-implementations-and-designs)
-  - [Open Issues](#open-issues)
+  - [Open issues](#open-issues)
 
 ## Who
 
 Author: National Instruments
 Team: ModernLab Success
 
-## Problem Statement
+## Problem statement
 
-- Building python measurement plugin involves a lot of tedious process like creating files with required information about packaging and running the `nipkg.exe` to build the measurement. This tools simplify that process and creates the measurement plugin packages with less efforts.
+- Building python measurement plugin involves a lot of tedious processes of creating files with required information about packaging and running the `nipkg.exe` to build the measurement.
 
 ## Links to relevant work items
 
-- [Feature - Measurement Utility builder](https://dev.azure.com/ni/DevCentral/_sprints/taskboard/ModernLab%20Reference%20Architecture/DevCentral/24C2/06/06b?workitem=2773393)
-- [Prototype Demo video](https://nio365.sharepoint.com/:w:/r/sites/ModernLabReferenceArchitecture/_layouts/15/Doc.aspx?sourcedoc=%7B830D52CC-BEC8-4314-A524-D7EE34887352%7D&file=Measurement%20Builder%20Utility%20Python%20-%20Demo%20Script.docx&action=default&mobileredirect=true&wdsle=0)
-- [Prototype Source source](https://github.com/ni/modernlab-ref-architecture/tree/ni-measurementlink-package-builder)
+- [Feature - Measurement Utility Builder](https://dev.azure.com/ni/DevCentral/_sprints/taskboard/ModernLab%20Reference%20Architecture/DevCentral/24C2/06/06b?workitem=2773393)
+- [Prototype Demo video](https://nio365.sharepoint.com/:v:/r/sites/ModernLabReferenceArchitecture/Shared%20Documents/Recordings/Measurement%20Builder%20Utility%20-%20Python/ni-measurement-plugin-package-builderV1.2.0-dev1_demo.mp4?csf=1&web=1&e=fkldX4)
+- [Prototype Source Code](https://github.com/ni/ni-measurement-plugin-package-builder/tree/main)
 
 ## Implementation and Design
 
 ### Workflow
 
-NI Measurement Plugin Package Builder has a workflow to build python measurement plugin to NI package files, by interacting with user through Command Line Interface.
-Built measurements are available under specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and output created.
-It validates the provided measurement plugin by checking for files `measurement.py, pyproject.toml, start.py`. As these files are required for running the measurement in discovery services. If any one of these file getting missed it warns the user with appropriate message and not building the package.  CLI will inform the user about the progress of building packages through status messages, for any unexpected event occurs the `log.txt` file path will be prompted on the CLI to check and debug the issue.
+NI Measurement Plugin Package Builder builds python measurement plugins as NI package files, thereby reducing the manual efforts of creating the files information about packaging and running the `nipkg.exe` to build the measurement. The Built measurements are available under specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and output created. It validates the provided measurement plugin by checking for files `measurement.py, pyproject.toml, start.py`. As these files are required for running the measurement in discovery services. If any one of these file getting missed it warns the user with appropriate message and not building the package.  CLI will inform the user about the progress of building packages through status messages, for any unexpected event occurs the `log.txt` file path will be prompted on the CLI to check and debug the issue.
 
 ### CLI
 
-Command Line Interface implemented for `ni-measurement-plugin-package-builder` using `click` module, Please refer this [link](https://click.palletsprojects.com/en/8.1.x/) to know more about the module. Click module is utilized in this tool as a part of standardization of `Reference Architecture Tools`. This tools supports for both interactive and non interactive mode for building measurement packages.
+Command Line Interface implemented for `ni-measurement-plugin-package-builder` using `click` module, Please refer this [link](https://click.palletsprojects.com/en/8.1.x/) to know more about the module. `click` is designed to be simple and easy to use. It provides decorators for defining commands and options, which makes the code more readable and maintainable. The module provides strong typing and validation for command-line parameters, ensuring that the input is of the expected type and format before your code runs.
 
 #### Non-interactive mode
 
 Non interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files.
 The argument `--plugin-dir` as input with measurement plugin directory builds single measurement. The inputs should be enclosed within double quotes.
-Arguments `--base-dir and --selected-meas-plugins` are used for building multiple measurements, whereas the `--base-dir` has the input of base directory with measurement plugins and `--selected-meas-plugins` has the input of comma separated measurement plugin names under that base directory or or `dot(.)` to build all the available measurement plugins under that base directory. It validates the user provided input and throw necessary warnings in the CLI.
+Arguments `--base-dir` and `--selected-meas-plugins` are used for building multiple measurements, whereas the `--base-dir` has the input of base directory with measurement plugins and `--selected-meas-plugins` has the input of comma separated measurement plugin names under that base directory or or `dot(.)` to build all the available measurement plugins under that base directory. It validates the user provided input and throw necessary warnings in the CLI.
 
 Arguments like `--plugin-dir, --base-dir, --selected-meas-plugins` can be used with their corresponding shorthand versions `-p, -b, -s` in non-interactive mode.
 
@@ -75,7 +72,7 @@ Initially the console logger gets loaded and then the file logger gets loaded, h
 Log file will be created under folder `NI-Measurement-Plugin-Package-Builder/Logs`, these folders will be created during the execution of tool, if not exists.
 The tool will create those folders in either **User's My Documents directory path** or **Public Documents directory path** based on the available permissions. If not it will utilize the user provided input path.
 
-### Building Measurement Packages
+### Building measurement packages
 
 #### Creating required files
 
@@ -130,11 +127,11 @@ Once the required files have been created under the respective folders. The tool
 - The command line interface will show the directory where the .nipkg files are generated.
   ![interactive_mode](interactive_mode.png)
 
-## Alternative Implementations and Designs
+## Alternative implementations and designs
 
 No alternative implementations.
 
-## Open Issues
+## Open issues
 
 - This tool validates the individual measurement plugins at the time of building, not at the stage of prompting the available measurements.
 - Measurement plugin name with commas cannot be used for building the measurement through non-interactive mode for multiple measurements.
