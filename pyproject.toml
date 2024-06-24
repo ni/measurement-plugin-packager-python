@@ -21,7 +21,6 @@ classifiers = [
 python = "^3.8"
 pydantic = "^2.7.1"
 tomli = "^2.0.1"
-tomli-w = "^1.0.0"
 click = "^8.1.7"
 
 [tool.poetry.scripts]
