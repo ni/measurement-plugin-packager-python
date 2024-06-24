@@ -57,7 +57,8 @@ Arguments like `--plugin-dir, --base-dir, --selected-meas-plugins` can be used w
 #### Interactive mode
 
 Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
-It initially prompts the user with the base directory of measurement plugin and list down the available measurements for better user experience. After selecting the required measurement from the list or `dot(.)` for building all the measurements, then the packages will be built successfully. It will prompt again for continuing further for building measurements.
+It initially prompts the user with the base directory of measurement plugin and list down the available measurements for better user experience. User can select the measurement plugin by its ID to build the packages. Once the package is built, the prompt will ask user for the next plugin.
+Note: User can enter (dot) '.' to build all measurements.
 
 #### Logger implementation
 
