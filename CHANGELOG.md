@@ -5,6 +5,12 @@ All notable changes to this library will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0-dev2] - 2024-06-18
+
+### Changed
+
+- Update the CLI messages for `interactive mode`
+
 ## [1.2.0-dev1] - 2024-06-18
 
 ### Added
