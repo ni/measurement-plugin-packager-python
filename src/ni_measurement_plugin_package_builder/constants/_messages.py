@@ -31,8 +31,8 @@ class UserMessages:
     FAILED_PUBLIC_DIR = "Failed to get PublicDocuments directory. Using UserDocuments for Log file."
     FAILED_USER_DIR = "Failed to get UserDocuments directory. Using Temp directory for\
  Log file."
-    MEASUREMENT_NUMBER = "Enter the measurement plugin number({start}-{end})\
- [Enter . to build all measurement plugins]: "
+    MEASUREMENT_NUMBER = "Enter Measurement Plugin index number ({start}-{end}) to build\
+ [. to build all]:"
     CONTINUE_BUILDING = "Do you want to continue building NI Measurement Packages? (y/n): "
     AVAILABLE_MEASUREMENTS = "Available measurements: "
     INVALID_INPUT = "Invalid measurement plugin number."
