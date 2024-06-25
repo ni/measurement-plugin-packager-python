@@ -158,7 +158,9 @@ def get_user_inputs_in_interactive_mode(
     user_warning_count = 2
 
     while user_warning_count > 0:
-        user_selected_plugin_number = input(UserMessages.MEASUREMENT_NUMBER).strip()
+        user_selected_plugin_number = input(
+            UserMessages.MEASUREMENT_NUMBER.format(start=1, end=len(measurement_plugins_list))
+        ).strip()
 
         if user_selected_plugin_number == ALL_MEAS:
             user_selected_measurements = list(measurement_plugins.values())
