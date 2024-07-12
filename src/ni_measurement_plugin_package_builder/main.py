@@ -1,6 +1,7 @@
 """Implementation of NI Measurement Plugin Package Builder."""
 
 import os
+import glob
 import subprocess
 import sys
 from logging import Logger
@@ -8,6 +9,10 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 import click
+from nisystemlink_feeds_manager.clients.core import ApiException
+from nisystemlink_feeds_manager.clients.feeds.models import UploadPackageResponse
+from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
+from nisystemlink_feeds_manager.models import PackageInfo
 
 from ni_measurement_plugin_package_builder import __version__
 from ni_measurement_plugin_package_builder.constants import (
@@ -17,7 +22,7 @@ from ni_measurement_plugin_package_builder.constants import (
     CliInterface,
     UserMessages,
 )
-from ni_measurement_plugin_package_builder.models import CliInputs
+from ni_measurement_plugin_package_builder.models import CliInputs, InvalidInputError
 from ni_measurement_plugin_package_builder.utils import (
     add_file_handler,
     add_stream_handler,
@@ -60,7 +65,35 @@ def __initialize_logger(name: str, folder_path: str) -> Tuple[Logger, str]:
     return logger, folder_path
 
 
-def __build_meas_package(logger: Logger, measurement_plugin_path) -> None:
+def __publish_package_to_systemlink(
+    feed_name: str,
+    api_key: str,
+    api_url: str,
+    workspace: str,
+    overwrite: bool,
+    meas_package_path: str,
+) -> UploadPackageResponse:
+    publish_packages = PublishPackagesToSystemLink(
+        server_api_key=api_key,
+        server_url=api_url,
+        workspace_name=workspace,
+    )
+    upload_response = publish_packages.upload_package(
+        package_info=PackageInfo(feed_name=feed_name, path=meas_package_path, overwrite=overwrite)
+    )
+    return upload_response
+
+
+def __build_meas_package(
+    logger: Logger,
+    measurement_plugin_path: str,
+    upload_packages: bool,
+    feed_name: str = None,
+    api_key: str = None,
+    api_url: str = None,
+    workspace: str = None,
+    overwrite: bool = False,
+) -> None:
     logger.info("")
     measurement_plugin = Path(measurement_plugin_path).name
     logger.info(UserMessages.BUILDING_MEAS.format(name=measurement_plugin))
@@ -90,11 +123,36 @@ def __build_meas_package(logger: Logger, measurement_plugin_path) -> None:
         )
     )
 
+    if upload_packages:
+        package_files = glob.glob(os.path.join(package_folder_path, '*'))
+        meas_package_name = max(package_files, key=os.path.getctime)
+        measurement_package_path = os.path.join(package_folder_path, meas_package_name)
+        upload_response = __publish_package_to_systemlink(
+            feed_name=feed_name,
+            api_key=api_key,
+            api_url=api_url,
+            meas_package_path=measurement_package_path,
+            overwrite=overwrite,
+            workspace=workspace,
+        )
+        logger.info(
+            UserMessages.PACKAGE_UPLOADED.format(
+                package_name=upload_response.file_name,
+                feed_name=feed_name
+            )
+        )
+
 
 def __build_meas_packages(
     logger: Logger,
     measurement_plugin_base_path: str,
     measurement_plugins: List[str],
+    upload_packages: bool,
+    feed_name: str,
+    api_key: str,
+    api_url: str = None,
+    workspace: str = None,
+    overwrite: bool = False,
 ) -> None:
     for measurement_plugin in measurement_plugins:
         measurement_plugin_path = os.path.join(measurement_plugin_base_path, measurement_plugin)
@@ -102,7 +160,16 @@ def __build_meas_packages(
             __build_meas_package(
                 logger=logger,
                 measurement_plugin_path=measurement_plugin_path,
+                upload_packages=upload_packages,
+                feed_name=feed_name,
+                api_key=api_key,
+                api_url=api_url,
+                workspace=workspace,
+                overwrite=overwrite,
             )
+        except ApiException as ex:
+            logger.debug(ex, exc_info=True)
+            logger.info(ex)
         except Exception as ex:
             logger.debug(ex, exc_info=True)
             logger.info(ex)
@@ -110,6 +177,21 @@ def __build_meas_packages(
 
 
 def __build_meas_in_interactive_mode(logger: Logger, measurement_plugin_base_path: str) -> None:
+    upload_packages = input(UserMessages.UPLOAD_PACKAGE) or None
+
+    if upload_packages:
+        api_url = input(UserMessages.ENTER_API_URL).strip() or None
+        api_key = input(UserMessages.ENTER_API_KEY).strip()
+        workspace = input(UserMessages.ENTER_WORKSPACE.strip()) or None
+
+        if not api_key:
+            raise InvalidInputError(UserMessages.NO_API_KEY)
+        feed_name = input(UserMessages.ENTER_FEED_NAME).strip()
+
+        if not feed_name:
+            raise InvalidInputError(UserMessages.NO_FEED_NAME)
+        overwrite = False if input(UserMessages.OVERWRITE_MEAS).strip() !="y" else True
+
     while True:
         measurement_plugins = get_user_inputs_in_interactive_mode(
             logger=logger,
@@ -122,17 +204,36 @@ def __build_meas_in_interactive_mode(logger: Logger, measurement_plugin_base_pat
             logger=logger,
             measurement_plugin_base_path=measurement_plugin_base_path,
             measurement_plugins=measurement_plugins,
+            upload_packages=upload_packages,
+            feed_name=feed_name,
+            api_key=api_key,
+            api_url=api_url,
+            workspace=workspace,
+            overwrite=overwrite,
         )
         logger.info("\n")
         user_input_for_continuation = input(UserMessages.CONTINUE_BUILDING).strip().lower()
         if user_input_for_continuation != "y":
             break
+        user_input_for_same_feed = input(UserMessages.SAME_FEED)
+
+        if user_input_for_same_feed != "y":
+            feed_name = input(UserMessages.ENTER_FEED_NAME).strip()
+            if not feed_name:
+                raise InvalidInputError(UserMessages.NO_FEED_NAME)
+            overwrite = False if input(UserMessages.OVERWRITE_MEAS).strip() !="y" else True
 
 
 def __build_meas_in_non_interactive_mode(
     logger: Logger,
     measurement_plugin_base_path: str,
     selected_meas_plugins: str,
+    upload_packages: bool,
+    feed_name: str = None,
+    api_key: str = None,
+    api_url: str = None,
+    workspace: str = None,
+    overwrite: bool = False,
 ) -> None:
     measurement_plugins = get_folders(folder_path=measurement_plugin_base_path)
 
@@ -157,6 +258,12 @@ def __build_meas_in_non_interactive_mode(
         logger=logger,
         measurement_plugin_base_path=measurement_plugin_base_path,
         measurement_plugins=selected_meas_plugins,
+        upload_packages=upload_packages,
+        feed_name=feed_name,
+        api_key=api_key,
+        api_url=api_url,
+        workspace=workspace,
+        overwrite=overwrite,
     )
     logger.info("\n")
 
@@ -178,11 +285,23 @@ def __build_meas_in_non_interactive_mode(
     required=False,
     help=CliInterface.SELECTED_PLUGINS,
 )
+@click.option("-u", "--upload-packages", is_flag=True, help=CliInterface.UPLOADED_PACKAGES)
+@click.option("-a", "--api-url", default=None, required=False, help=CliInterface.API_URL)
+@click.option("-k", "--api-key", default=None, required=False, help=CliInterface.API_KEY)
+@click.option("-w", "--workspace", default=None, required=False, help=CliInterface.WORK_SPACE)
+@click.option("-f","--feed-name", default=None, required=False, help=CliInterface.FEED_NAME)
+@click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
 def run(
     interactive_mode: bool,
     plugin_dir: Optional[Path],
     base_dir: Optional[Path],
     selected_meas_plugins: str,
+    upload_packages: bool,
+    api_url: Optional[str],
+    api_key: Optional[str],
+    workspace: Optional[str],
+    feed_name: Optional[str],
+    overwrite: Optional[bool]
 ) -> None:
     """NI Measurement Plugin Package Builder is a Command line tool for building NI package file\
  for python measurement plugins."""
@@ -211,12 +330,22 @@ def run(
                 logger.warning(UserMessages.MEAS_DIR_REQUIRED)
                 sys.exit(1)
 
+            if upload_packages and not api_key:
+                logger.warning(UserMessages.NO_API_KEY)
+                sys.exit(1)
+
             logger.debug(UserMessages.NON_INTERACTIVE_MODE.format(dir=plugin_dir))
             cli_args = CliInputs(
                 measurement_plugin_path=plugin_dir,
                 selected_meas_plugins=selected_meas_plugins,
                 measurement_plugin_base_path=base_dir,
                 interactive_mode=interactive_mode,
+                upload_packages=upload_packages,
+                feed_name=feed_name,
+                api_key=api_key,
+                api_url=api_url,
+                workspace=workspace,
+                overwrite=overwrite,
             )
 
         remove_handlers(logger)
@@ -238,13 +367,28 @@ def run(
                 logger=logger,
                 measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
                 selected_meas_plugins=cli_args.selected_meas_plugins,
+                upload_packages=upload_packages,
+                feed_name=feed_name,
+                api_key=api_key,
+                api_url=api_url,
+                workspace=workspace,
+                overwrite=overwrite,
             )
         elif cli_args.measurement_plugin_path:
             __build_meas_package(
                 logger=logger,
                 measurement_plugin_path=cli_args.measurement_plugin_path,
+                upload_packages=upload_packages,
+                feed_name=feed_name,
+                api_key=api_key,
+                api_url=api_url,
+                workspace=workspace,
+                overwrite=overwrite,
             )
-            logger.info("")
+
+    except ApiException as ex:
+        logger.debug(ex, exc_info=True)
+        logger.info(ex)
 
     except PermissionError as error:
         logger.info(UserMessages.ACCESS_DENIED)

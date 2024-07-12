@@ -22,6 +22,8 @@ python = "^3.8"
 pydantic = "^2.7.1"
 tomli = "^2.0.1"
 click = "^8.1.7"
+nisystemlink-feeds-manager = "^1.0.0.dev1"
+
 
 [tool.poetry.scripts]
 ni-measurement-plugin-package-builder = "ni_measurement_plugin_package_builder.main:run"

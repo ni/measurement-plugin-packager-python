@@ -15,6 +15,12 @@ class CliInputs(BaseModel):
     measurement_plugin_path: Optional[str] = None
     selected_meas_plugins: Optional[str] = None
     interactive_mode: Optional[bool] = False
+    upload_packages: Optional[bool] = False
+    feed_name: Optional[str] = None
+    api_key: Optional[str] = None
+    api_url: Optional[str] = None
+    workspace: Optional[str] = None
+    overwrite: Optional[bool] = False
 
     @model_validator(mode="after")
     def validate_cli_inputs(self) -> "CliInputs":

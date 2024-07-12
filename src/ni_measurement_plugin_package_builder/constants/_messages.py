@@ -50,3 +50,15 @@ class UserMessages:
     INVALID_SELECTED_PLUGINS = "Invalid plugin name '{input}' provided in '--selected-meas-plugins'\
 .\nPlease enter comma-separated names (Eg: sample_measurement,test_measurement). Or, '.'\
  to build all the available measurements.\nUse interactive mode if the folder name has comma."
+    NO_API_KEY = "No API Key, Please Provide an API key for uploading the measurement packages."
+    PACKAGE_UPLOADED = "Measurement package '{package_name}' uploaded successfully to the feed \
+'{feed_name}' in SystemLink."
+    UPLOAD_PACKAGE = "Do you want to upload the measurement packages to systemlink feeds? (y/n):"
+    ENTER_API_KEY = "Enter the SystemLink API Key: "
+    ENTER_API_URL = "Enter the SystemLink API URL: "
+    ENTER_WORKSPACE = "Enter the workspace name: "
+    ENTER_FEED_NAME = "Enter the feed name."
+    SAME_FEED = "Do you want to use same feed? (y/n):"
+    NO_FEED_NAME = "No feed name, Please provide a valid feed name for uploading the\
+ measurement packages."
+    OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n):"
