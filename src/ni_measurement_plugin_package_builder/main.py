@@ -1,7 +1,6 @@
 """Implementation of NI Measurement Plugin Package Builder."""
 
 import os
-import glob
 import subprocess
 import sys
 from logging import Logger
@@ -18,6 +17,7 @@ from ni_measurement_plugin_package_builder import __version__
 from ni_measurement_plugin_package_builder.constants import (
     MEASUREMENT_NAME,
     NIPKG_EXE,
+    PACKAGE_NAME,
     PACKAGES,
     CliInterface,
     UserMessages,
@@ -123,10 +123,13 @@ def __build_meas_package(
         )
     )
 
+    measurement_package_path = None
     if upload_packages:
-        package_files = glob.glob(os.path.join(package_folder_path, '*'))
-        meas_package_name = max(package_files, key=os.path.getctime)
-        measurement_package_path = os.path.join(package_folder_path, meas_package_name)
+        for name in os.listdir(package_folder_path):
+            if measurement_package_info[PACKAGE_NAME] in name:
+                measurement_package_path = os.path.join(package_folder_path, name)
+                break
+
         upload_response = __publish_package_to_systemlink(
             feed_name=feed_name,
             api_key=api_key,

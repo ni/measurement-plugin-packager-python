@@ -8,6 +8,7 @@ CONTROL = "control"
 DATA = "data"
 DEBIAN_BIN = "debian-binary"
 MEASUREMENT_NAME = "measurement_name"
+PACKAGE_NAME = "name"
 MEASUREMENT_FILE = "measurement.py"
 BATCH_FILE = "start.bat"
 

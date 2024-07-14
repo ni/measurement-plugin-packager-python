@@ -26,6 +26,7 @@ from ni_measurement_plugin_package_builder.constants._template_files import (
     MEASUREMENT_NAME,
     MEASUREMENT_SERVICES_PATH,
     NIPKG_EXE,
+    PACKAGE_NAME,
     PACKAGES,
     TEMPLATE_FILES,
     ControlFile,
