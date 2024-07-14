@@ -15,6 +15,7 @@ from ni_measurement_plugin_package_builder.constants import (
     PyProjectToml,
     UserMessages,
 )
+from ni_measurement_plugin_package_builder.utils._file import validate_meas_plugin_files
 
 ALL_MEAS = "."
 UNDERSCORE_SPACE_REGEX = r"[_ ]"
@@ -104,11 +105,12 @@ def get_measurement_package_info(measurement_plugin_path: str, logger: Logger) -
     return measurement_package_info
 
 
-def get_folders(folder_path: str) -> List[str]:
+def get_folders(folder_path: str, logger: Logger) -> List[str]:
     """Get list of folders present in a path.
 
     Args:
         folder_path (str): Folder path provided by the user.
+        logger (Logger): Logger object.
 
     Returns:
         List[str]: List of folders.
@@ -118,6 +120,7 @@ def get_folders(folder_path: str) -> List[str]:
             name
             for name in os.listdir(folder_path)
             if os.path.isdir(os.path.join(folder_path, name))
+            and validate_meas_plugin_files(os.path.join(folder_path, name), logger)
         ]
         return folders
 
@@ -138,7 +141,7 @@ def get_user_inputs_in_interactive_mode(
     Returns:
         Union[List[str], None]: User selected measurement infomation.
     """
-    measurement_plugins_list = get_folders(measurement_plugins_base_path)
+    measurement_plugins_list = get_folders(measurement_plugins_base_path, logger)
 
     if not measurement_plugins_list:
         raise FileNotFoundError(

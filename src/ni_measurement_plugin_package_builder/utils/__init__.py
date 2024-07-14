@@ -2,7 +2,7 @@
 
 # flake8: noqa
 
-from ni_measurement_plugin_package_builder.utils._cli import (
+from ni_measurement_plugin_package_builder.utils._user_inputs import (
     get_folders,
     get_measurement_package_info,
     get_user_inputs_in_interactive_mode,

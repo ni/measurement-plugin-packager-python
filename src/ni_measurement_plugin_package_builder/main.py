@@ -22,7 +22,11 @@ from ni_measurement_plugin_package_builder.constants import (
     CliInterface,
     UserMessages,
 )
-from ni_measurement_plugin_package_builder.models import CliInputs, InvalidInputError
+from ni_measurement_plugin_package_builder.models import (
+    CliInputs,
+    InvalidInputError,
+    UploadPackageInputs,
+)
 from ni_measurement_plugin_package_builder.utils import (
     add_file_handler,
     add_stream_handler,
@@ -88,18 +92,15 @@ def __build_meas_package(
     logger: Logger,
     measurement_plugin_path: str,
     upload_packages: bool,
-    feed_name: str = None,
-    api_key: str = None,
-    api_url: str = None,
-    workspace: str = None,
-    overwrite: bool = False,
+    upload_package_info: UploadPackageInputs,
 ) -> None:
     logger.info("")
     measurement_plugin = Path(measurement_plugin_path).name
     logger.info(UserMessages.BUILDING_MEAS.format(name=measurement_plugin))
 
     mlink_package_builder_path = get_ni_mlink_package_builder_path(logger=logger)
-    validate_meas_plugin_files(path=measurement_plugin_path)
+    if not validate_meas_plugin_files(path=measurement_plugin_path, logger=logger):
+        return
 
     measurement_package_info = get_measurement_package_info(
         measurement_plugin_path=measurement_plugin_path,
@@ -131,17 +132,17 @@ def __build_meas_package(
                 break
 
         upload_response = __publish_package_to_systemlink(
-            feed_name=feed_name,
-            api_key=api_key,
-            api_url=api_url,
+            feed_name=upload_package_info.feed_name,
+            api_key=upload_package_info.api_key,
+            api_url=upload_package_info.api_url,
             meas_package_path=measurement_package_path,
-            overwrite=overwrite,
-            workspace=workspace,
+            overwrite=upload_package_info.overwrite_packages,
+            workspace=upload_package_info.workspace,
         )
         logger.info(
             UserMessages.PACKAGE_UPLOADED.format(
                 package_name=upload_response.file_name,
-                feed_name=feed_name
+                feed_name=upload_package_info.feed_name,
             )
         )
 
@@ -151,11 +152,7 @@ def __build_meas_packages(
     measurement_plugin_base_path: str,
     measurement_plugins: List[str],
     upload_packages: bool,
-    feed_name: str,
-    api_key: str,
-    api_url: str = None,
-    workspace: str = None,
-    overwrite: bool = False,
+    upload_package_info: UploadPackageInputs,
 ) -> None:
     for measurement_plugin in measurement_plugins:
         measurement_plugin_path = os.path.join(measurement_plugin_base_path, measurement_plugin)
@@ -164,11 +161,7 @@ def __build_meas_packages(
                 logger=logger,
                 measurement_plugin_path=measurement_plugin_path,
                 upload_packages=upload_packages,
-                feed_name=feed_name,
-                api_key=api_key,
-                api_url=api_url,
-                workspace=workspace,
-                overwrite=overwrite,
+                upload_package_info=upload_package_info,
             )
         except ApiException as ex:
             logger.debug(ex, exc_info=True)
@@ -179,21 +172,38 @@ def __build_meas_packages(
             logger.info(UserMessages.CHECK_LOG_FILE)
 
 
+def __get_user_input_for_upload_packages() -> UploadPackageInputs:
+    upload_packages_input = UploadPackageInputs()
+    api_url = input(UserMessages.ENTER_API_URL).strip()
+    api_key = input(UserMessages.ENTER_API_KEY).strip()
+    workspace = input(UserMessages.ENTER_WORKSPACE.strip())
+
+    if not api_key:
+        raise InvalidInputError(UserMessages.NO_API_KEY)
+    feed_name = input(UserMessages.ENTER_FEED_NAME).strip()
+
+    if not feed_name:
+        raise InvalidInputError(UserMessages.NO_FEED_NAME)
+    overwrite_packages = input(UserMessages.OVERWRITE_MEAS).strip().lower() == "y"
+
+    upload_packages_input.feed_name = feed_name
+    upload_packages_input.overwrite_packages = overwrite_packages
+    upload_packages_input.api_url = api_url
+    upload_packages_input.api_key = api_key
+    upload_packages_input.workspace = workspace
+
+    return upload_packages_input
+
+
 def __build_meas_in_interactive_mode(logger: Logger, measurement_plugin_base_path: str) -> None:
-    upload_packages = input(UserMessages.UPLOAD_PACKAGE) or None
+    upload_packages = input(UserMessages.UPLOAD_PACKAGE) or False
+    upload_package_info = UploadPackageInputs()
 
-    if upload_packages:
-        api_url = input(UserMessages.ENTER_API_URL).strip() or None
-        api_key = input(UserMessages.ENTER_API_KEY).strip()
-        workspace = input(UserMessages.ENTER_WORKSPACE.strip()) or None
-
-        if not api_key:
-            raise InvalidInputError(UserMessages.NO_API_KEY)
-        feed_name = input(UserMessages.ENTER_FEED_NAME).strip()
-
-        if not feed_name:
-            raise InvalidInputError(UserMessages.NO_FEED_NAME)
-        overwrite = False if input(UserMessages.OVERWRITE_MEAS).strip() !="y" else True
+    if upload_packages == "y":
+        upload_packages = True
+        upload_package_info = __get_user_input_for_upload_packages()
+    else:
+        upload_packages = False
 
     while True:
         measurement_plugins = get_user_inputs_in_interactive_mode(
@@ -208,23 +218,31 @@ def __build_meas_in_interactive_mode(logger: Logger, measurement_plugin_base_pat
             measurement_plugin_base_path=measurement_plugin_base_path,
             measurement_plugins=measurement_plugins,
             upload_packages=upload_packages,
-            feed_name=feed_name,
-            api_key=api_key,
-            api_url=api_url,
-            workspace=workspace,
-            overwrite=overwrite,
+            upload_package_info=upload_package_info,
         )
         logger.info("\n")
         user_input_for_continuation = input(UserMessages.CONTINUE_BUILDING).strip().lower()
+
         if user_input_for_continuation != "y":
             break
-        user_input_for_same_feed = input(UserMessages.SAME_FEED)
 
-        if user_input_for_same_feed != "y":
-            feed_name = input(UserMessages.ENTER_FEED_NAME).strip()
-            if not feed_name:
-                raise InvalidInputError(UserMessages.NO_FEED_NAME)
-            overwrite = False if input(UserMessages.OVERWRITE_MEAS).strip() !="y" else True
+        if upload_packages:
+            user_input_for_same_feed = input(UserMessages.SAME_FEED)
+
+            if user_input_for_same_feed != "y":
+                feed_name = input(UserMessages.ENTER_FEED_NAME).strip()
+                if not feed_name:
+                    raise InvalidInputError(UserMessages.NO_FEED_NAME)
+                overwrite_packages = input(UserMessages.OVERWRITE_MEAS).strip().lower() == "y"
+
+            upload_package_info.feed_name = feed_name
+            upload_package_info.overwrite_packages = overwrite_packages
+
+        else:
+            upload_packages = input(UserMessages.UPLOAD_PACKAGE) or False
+            if upload_packages == "y":
+                upload_packages = True
+                upload_package_info = __get_user_input_for_upload_packages()
 
 
 def __build_meas_in_non_interactive_mode(
@@ -232,13 +250,9 @@ def __build_meas_in_non_interactive_mode(
     measurement_plugin_base_path: str,
     selected_meas_plugins: str,
     upload_packages: bool,
-    feed_name: str = None,
-    api_key: str = None,
-    api_url: str = None,
-    workspace: str = None,
-    overwrite: bool = False,
+    upload_package_info: UploadPackageInputs,
 ) -> None:
-    measurement_plugins = get_folders(folder_path=measurement_plugin_base_path)
+    measurement_plugins = get_folders(folder_path=measurement_plugin_base_path, logger=logger)
 
     if not measurement_plugins:
         raise FileNotFoundError(
@@ -262,11 +276,7 @@ def __build_meas_in_non_interactive_mode(
         measurement_plugin_base_path=measurement_plugin_base_path,
         measurement_plugins=selected_meas_plugins,
         upload_packages=upload_packages,
-        feed_name=feed_name,
-        api_key=api_key,
-        api_url=api_url,
-        workspace=workspace,
-        overwrite=overwrite,
+        upload_package_info=upload_package_info,
     )
     logger.info("\n")
 
@@ -304,7 +314,7 @@ def run(
     api_key: Optional[str],
     workspace: Optional[str],
     feed_name: Optional[str],
-    overwrite: Optional[bool]
+    overwrite: Optional[bool],
 ) -> None:
     """NI Measurement Plugin Package Builder is a Command line tool for building NI package file\
  for python measurement plugins."""
@@ -360,6 +370,13 @@ def run(
         logger.debug(UserMessages.VERSION.format(version=__version__))
         logger.info(UserMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
 
+        upload_package_info = UploadPackageInputs(
+            feed_name=feed_name,
+            workspace=workspace,
+            api_key=api_key,
+            api_url=api_url,
+            overwrite_packages=overwrite,
+        )
         if cli_args.measurement_plugin_base_path and interactive_mode:
             __build_meas_in_interactive_mode(
                 logger=logger,
@@ -371,22 +388,14 @@ def run(
                 measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
                 selected_meas_plugins=cli_args.selected_meas_plugins,
                 upload_packages=upload_packages,
-                feed_name=feed_name,
-                api_key=api_key,
-                api_url=api_url,
-                workspace=workspace,
-                overwrite=overwrite,
+                upload_package_info=upload_package_info,
             )
         elif cli_args.measurement_plugin_path:
             __build_meas_package(
                 logger=logger,
                 measurement_plugin_path=cli_args.measurement_plugin_path,
                 upload_packages=upload_packages,
-                feed_name=feed_name,
-                api_key=api_key,
-                api_url=api_url,
-                workspace=workspace,
-                overwrite=overwrite,
+                upload_package_info=upload_package_info,
             )
 
     except ApiException as ex:

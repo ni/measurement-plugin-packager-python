@@ -31,30 +31,34 @@ def get_ni_mlink_package_builder_path(logger: Logger) -> Union[str, None]:
     return None
 
 
-def validate_meas_plugin_files(path: str) -> None:
+def validate_meas_plugin_files(path: str, logger: Logger) -> bool:
     """Validate Measurement Plugin files.
 
     Args:
         path (str): Measurement Plugin path.
-
-    Raises:
-        FileNotFoundError: if the measurement plugin doesn't have any required files.
+        logger (Logger): Logger object.
 
     Returns:
-        None.
+        bool: True if valid measurement plugin folder else False.
     """
     pyproject_path = os.path.join(path, PyProjectToml.FILE_NAME)
     measurement_file_path = os.path.join(path, MEASUREMENT_FILE)
     batch_file_path = os.path.join(path, BATCH_FILE)
+    valid_file = True
 
     if not os.path.isfile(pyproject_path):
-        raise FileNotFoundError(UserMessages.NO_TOML_FILE.format(dir=path))
+        logger.info(UserMessages.NO_TOML_FILE.format(dir=path))
+        valid_file = False
 
     if not os.path.isfile(measurement_file_path):
-        raise FileNotFoundError(UserMessages.NO_MEAS_FILE.format(dir=path))
+        logger.info(UserMessages.NO_MEAS_FILE.format(dir=path))
+        valid_file = False
 
     if not os.path.isfile(batch_file_path):
-        raise FileNotFoundError(UserMessages.NO_BATCH_FILE.format(dir=path))
+        logger.info(UserMessages.NO_BATCH_FILE.format(dir=path))
+        valid_file = False
+
+    return valid_file
 
 
 def validate_selected_meas_plugins(
@@ -77,6 +81,7 @@ def validate_selected_meas_plugins(
     """
     for measurement_plugin in selected_meas_plugins.split(","):
         plugin_name = measurement_plugin.strip("'\"").strip()
+
         if plugin_name not in measurement_plugins:
             logger.info("\n")
             logger.info(UserMessages.AVAILABLE_MEASUREMENTS)
@@ -84,6 +89,4 @@ def validate_selected_meas_plugins(
                 logger.info(f"{index + 1}.{measurement_name}")
             logger.info("\n")
 
-            raise InvalidInputError(
-                UserMessages.INVALID_SELECTED_PLUGINS.format(input=plugin_name)
-            )
+            raise InvalidInputError(UserMessages.INVALID_SELECTED_PLUGINS.format(input=plugin_name))

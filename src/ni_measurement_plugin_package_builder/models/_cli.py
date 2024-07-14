@@ -53,3 +53,13 @@ class CliInputs(BaseModel):
             raise FileNotFoundError(UserMessages.INVALID_SELECTED_PLUGINS)
 
         return self
+
+
+class UploadPackageInputs(BaseModel):
+    """Upload package user inputs."""
+
+    api_url: Optional[str] = None
+    api_key: Optional[str] = None
+    workspace: Optional[str] = None
+    feed_name: Optional[str] = None
+    overwrite_packages: Optional[bool] = False
