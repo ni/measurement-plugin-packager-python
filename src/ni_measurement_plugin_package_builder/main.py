@@ -165,7 +165,9 @@ def __build_meas_packages(
             )
         except ApiException as ex:
             logger.debug(ex, exc_info=True)
-            logger.info(ex)
+            logger.info(ex.error.message)
+            logger.info(UserMessages.CHECK_LOG_FILE)
+
         except Exception as ex:
             logger.debug(ex, exc_info=True)
             logger.info(ex)

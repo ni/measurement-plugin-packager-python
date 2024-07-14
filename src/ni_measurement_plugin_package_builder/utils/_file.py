@@ -47,15 +47,15 @@ def validate_meas_plugin_files(path: str, logger: Logger) -> bool:
     valid_file = True
 
     if not os.path.isfile(pyproject_path):
-        logger.info(UserMessages.NO_TOML_FILE.format(dir=path))
+        logger.debug(UserMessages.NO_TOML_FILE.format(dir=path))
         valid_file = False
 
     if not os.path.isfile(measurement_file_path):
-        logger.info(UserMessages.NO_MEAS_FILE.format(dir=path))
+        logger.debug(UserMessages.NO_MEAS_FILE.format(dir=path))
         valid_file = False
 
     if not os.path.isfile(batch_file_path):
-        logger.info(UserMessages.NO_BATCH_FILE.format(dir=path))
+        logger.debug(UserMessages.NO_BATCH_FILE.format(dir=path))
         valid_file = False
 
     return valid_file
