@@ -5,6 +5,13 @@ All notable changes to this library will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.3.0-dev0] - 2024-07-15
+
+### Added
+
+- Integrate `nisystemlink-feeds-manager` for uploading the measurement packages to systemlink.
+
 ## [1.2.0-dev2] - 2024-06-18
 
 ### Changed
