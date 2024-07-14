@@ -48,10 +48,11 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
     `ni-measurement-plugin-package-builder --base-dir <measurement_plugin_base_directory> --selected-meas-plugins <list_of_comma_separated_meas_plugins> --upload-packages --api-url <systemlink_api_url> --api-key <systemlink_api_key> --workspace <workspace_name> --feed-name <name_of_the_feed>`
     Example: `ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"`
 - Input arguments should be provided within double quotes.
-- For uploading the packages, if the `api-url` and `workspace` not provided then the SystemLink client configuration will be utilized.
+- For uploading the packages, if the `api-url` and `workspace` not provided then the `SystemLink client configuration` will be utilized, whereas `api-key` and `feed-name` must be provided.
 
 ### Interactive mode
-- To build multiple measurement plugins, the parent directory containing the measurement plugin folders must be provided
+- To build multiple measurement plugins, the parent directory containing the measurement plugin folders must be provided.
+- For uploading the packages, if the API URL and Workspace are not provided then the `SystemLink client configuration` will be utilized, whereas API key and Feed name must be provided.
 - To start the tool in interactive mode, run the following command
     `ni-measurement-plugin-package-builder -i`
 
