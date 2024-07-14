@@ -32,7 +32,7 @@ class UserMessages:
     FAILED_USER_DIR = "Failed to get UserDocuments directory. Using Temp directory for\
  Log file."
     MEASUREMENT_NUMBER = "Enter Measurement Plugin index number ({start}-{end}) to build\
- [. to build all]:"
+ [. to build all or Comma separated measurement plugin index numbers Eg: 1,2,3]: "
     CONTINUE_BUILDING = "Do you want to continue building NI Measurement Packages? (y/n): "
     AVAILABLE_MEASUREMENTS = "Available measurements: "
     INVALID_INPUT = "Invalid measurement plugin number."
@@ -53,12 +53,12 @@ class UserMessages:
     NO_API_KEY = "No API Key, Please Provide an API key for uploading the measurement packages."
     PACKAGE_UPLOADED = "Measurement package '{package_name}' uploaded successfully to the feed \
 '{feed_name}' in SystemLink."
-    UPLOAD_PACKAGE = "Do you want to upload the measurement packages to systemlink feeds? (y/n):"
+    UPLOAD_PACKAGE = "Do you want to upload the measurement packages to systemlink feeds? (y/n): "
     ENTER_API_KEY = "Enter the SystemLink API Key: "
     ENTER_API_URL = "Enter the SystemLink API URL: "
     ENTER_WORKSPACE = "Enter the workspace name: "
-    ENTER_FEED_NAME = "Enter the feed name."
-    SAME_FEED = "Do you want to use same feed? (y/n):"
+    ENTER_FEED_NAME = "Enter the feed name: "
+    SAME_FEED = "Do you want to use same feed? (y/n): "
     NO_FEED_NAME = "No feed name, Please provide a valid feed name for uploading the\
  measurement packages."
-    OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n):"
+    OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n): "

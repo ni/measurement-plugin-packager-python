@@ -158,16 +158,21 @@ def get_user_inputs_in_interactive_mode(
     user_warning_count = 2
 
     while user_warning_count > 0:
-        user_selected_plugin_number = input(
+        user_selected_plugin_numbers = input(
             UserMessages.MEASUREMENT_NUMBER.format(start=1, end=len(measurement_plugins_list))
-        ).strip()
+        ).strip().split(",")
 
-        if user_selected_plugin_number == ALL_MEAS:
+        if user_selected_plugin_numbers == [ALL_MEAS]:
             user_selected_measurements = list(measurement_plugins.values())
             return user_selected_measurements
 
-        if user_selected_plugin_number in measurement_plugins:
-            return [measurement_plugins[user_selected_plugin_number]]
+        selected_measurements = []
+        for user_selected_plugin_number in user_selected_plugin_numbers:
+            if user_selected_plugin_number in measurement_plugins:
+                selected_measurements.append(measurement_plugins[user_selected_plugin_number])
+
+        if selected_measurements:
+            return selected_measurements
 
         logger.info(UserMessages.INVALID_INPUT)
         user_warning_count -= 1
