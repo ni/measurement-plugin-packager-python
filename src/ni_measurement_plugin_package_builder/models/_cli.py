@@ -26,7 +26,7 @@ class CliInputs(BaseModel):
     selected_meas_plugins: Optional[str] = None
     interactive_mode: Optional[bool] = False
     upload_packages: Optional[bool] = False
-    upload_packages_info: Optional[UploadPackageInputs]
+    upload_packages_info: Optional[UploadPackageInputs] = None
 
     @model_validator(mode="after")
     def validate_cli_inputs(self) -> "CliInputs":
