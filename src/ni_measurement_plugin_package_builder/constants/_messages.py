@@ -35,7 +35,8 @@ class UserMessages:
  [. to build all or Comma separated measurement plugin index numbers Eg: 1,2,3]: "
     CONTINUE_BUILDING = "Do you want to continue building NI Measurement Packages? (y/n): "
     AVAILABLE_MEASUREMENTS = "Available measurements: "
-    INVALID_INPUT = "Invalid measurement plugin number."
+    INVALID_INPUT = "Invalid measurement plugin index numbers {numbers}, please provide valid\
+ plugin index numbers."
     BUILDING_MEAS = "Building the NI package for the measurement '{name}'..."
     EMPTY_AUTHOR = "No author details provided in 'pyproject.toml' using default author name\
  '{author}'."

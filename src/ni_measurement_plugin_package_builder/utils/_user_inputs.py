@@ -174,10 +174,10 @@ def get_user_inputs_in_interactive_mode(
             if user_selected_plugin_number in measurement_plugins:
                 selected_measurements.append(measurement_plugins[user_selected_plugin_number])
 
-        if selected_measurements:
+        if len(selected_measurements) == len(user_selected_plugin_numbers):
             return selected_measurements
 
-        logger.info(UserMessages.INVALID_INPUT)
+        logger.info(UserMessages.INVALID_INPUT.format(numbers=user_selected_plugin_numbers))
         user_warning_count -= 1
 
     return None
