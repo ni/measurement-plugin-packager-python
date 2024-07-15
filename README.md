@@ -4,7 +4,7 @@
 
 NI Measurement Plugin Package builder enables user to build Python Measurement plugins as NI package files.
 
-## Prerequistes
+## Prerequisites
 
 - Python (3.8 and above)
 - NI Package manager

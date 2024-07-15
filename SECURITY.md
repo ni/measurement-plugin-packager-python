@@ -6,7 +6,7 @@ NI views the security of our software products as an important part of our commi
 
 ## Reporting Security Issues
 
-We encourage you to report security vulnerabilities to us privately so we can follow the principle of [Coordinated Vulnerability Disclosure (CVD)](https://vuls.cert.org/confluence/display/CVD).  This allows us time to thoroughly investigate security issues and publicly disclose them when appropriate.
+We encourage you to report security vulnerabilities to us privately, so we can follow the principle of [Coordinated Vulnerability Disclosure (CVD)](https://vuls.cert.org/confluence/display/CVD). This allows us time to thoroughly investigate security issues and publicly disclose them when appropriate.
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 

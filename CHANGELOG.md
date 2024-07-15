@@ -3,7 +3,7 @@
 All notable changes to this library will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
 ## [1.3.0-dev0] - 2024-07-15
@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Updation of CLI with interactive and non interactive mode using click module.
+- Update of CLI with interactive and non-interactive mode using click module.
 - Removal of version tracking feature by using `config.ini` file.
 
 ## [1.1.0] - 2024-05-24
@@ -49,4 +49,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Building NI package files for python MeasurementLink plugins from the provided plugin path.
+- Building NI package files for python Measurement plugins from the provided plugin path.
