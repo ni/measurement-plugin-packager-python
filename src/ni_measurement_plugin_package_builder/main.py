@@ -100,6 +100,7 @@ def __build_meas_package(
 
     mlink_package_builder_path = get_ni_mlink_package_builder_path(logger=logger)
     if not validate_meas_plugin_files(path=measurement_plugin_path, logger=logger):
+        logger.info(UserMessages.INVALID_MEAS_PLUGIN)
         return
 
     measurement_package_info = get_measurement_package_info(

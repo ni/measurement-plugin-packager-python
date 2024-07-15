@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Integrate `nisystemlink-feeds-manager` for uploading the measurement packages to systemlink.
+- Support for comma separated inputs for `interactive mode`.
 
 ## [1.2.0-dev2] - 2024-06-18
 

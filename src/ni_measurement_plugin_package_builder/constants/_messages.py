@@ -62,3 +62,5 @@ class UserMessages:
     NO_FEED_NAME = "No feed name, Please provide a valid feed name for uploading the\
  measurement packages."
     OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n): "
+    INVALID_MEAS_PLUGIN = "Invalid Measurement Plugin folder, as it is missing one or more of the\
+ required files: 'measurement.py', 'start.bat', or 'pyproject.toml'."
