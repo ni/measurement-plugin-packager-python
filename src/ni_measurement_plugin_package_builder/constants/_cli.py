@@ -15,8 +15,8 @@ class CliInterface:
     SELECTED_PLUGINS = "Comma-separated list of measurement plugins or\
  dot(.) for building all the available measurements."
     UPLOADED_PACKAGES = "Upload the measurement packages to systemlink feeds services."
-    WORK_SPACE = "Name of the workspace for uploading the measurement packages to systemlink feeds."
+    WORK_SPACE = "Name of the workspace to upload the measurement packages."
     API_KEY = "API key of SystemLink server."
     API_URL = "URL of SystemLink API documentation."
     FEED_NAME = "Name of the feed to upload the measurement packages."
-    OVERWRITE_PACKAGES = "Overwrite the existing measurement packages in systemlink feeds service."
+    OVERWRITE_PACKAGES = "Overwrite the existing measurement packages in SystemLink feeds."

@@ -327,7 +327,7 @@ def run(
     overwrite: Optional[bool],
 ) -> None:
     """NI Measurement Plugin Package Builder is a Command line tool for building NI package file\
- for python measurement plugins."""
+ for python measurement plugins and uploading it to SystemLink Feeds."""
     try:
         log_folder_path = None
         logger, log_folder_path = __initialize_logger(
