@@ -166,6 +166,12 @@ def __build_meas_packages(
             )
         except ApiException as ex:
             logger.debug(ex, exc_info=True)
+            logger.info(
+                UserMessages.PACKAGE_UPLOAD_FAILED.format(
+                    package=measurement_plugin,
+                    name=upload_package_info.feed_name,
+                )
+            )
             logger.info(ex.error.message)
             logger.info(UserMessages.CHECK_LOG_FILE)
 
@@ -199,7 +205,7 @@ def __get_user_input_for_upload_packages() -> UploadPackageInputs:
 
 
 def __build_meas_in_interactive_mode(logger: Logger, measurement_plugin_base_path: str) -> None:
-    upload_packages = input(UserMessages.UPLOAD_PACKAGE) or False
+    upload_packages = input(UserMessages.UPLOAD_PACKAGE)
     upload_package_info = UploadPackageInputs()
 
     if upload_packages == "y":
@@ -237,15 +243,16 @@ def __build_meas_in_interactive_mode(logger: Logger, measurement_plugin_base_pat
                 if not feed_name:
                     raise InvalidInputError(UserMessages.NO_FEED_NAME)
                 overwrite_packages = input(UserMessages.OVERWRITE_MEAS).strip().lower() == "y"
-
-            upload_package_info.feed_name = feed_name
-            upload_package_info.overwrite_packages = overwrite_packages
+                upload_package_info.feed_name = feed_name
+                upload_package_info.overwrite_packages = overwrite_packages
 
         else:
-            upload_packages = input(UserMessages.UPLOAD_PACKAGE) or False
+            upload_packages = input(UserMessages.UPLOAD_PACKAGE)
             if upload_packages == "y":
                 upload_packages = True
                 upload_package_info = __get_user_input_for_upload_packages()
+            else:
+                upload_packages = False
 
 
 def __build_meas_in_non_interactive_mode(
@@ -346,8 +353,16 @@ def run(
                 logger.warning(UserMessages.MEAS_DIR_REQUIRED)
                 sys.exit(1)
 
+            if not upload_packages and any([feed_name, api_key, api_url, workspace]):
+                logger.warning(UserMessages.UNWANTED_SYSTEMLINK_CREDENTIALS)
+                sys.exit(1)
+
             if upload_packages and not api_key:
                 logger.warning(UserMessages.NO_API_KEY)
+                sys.exit(1)
+
+            if upload_packages and not feed_name:
+                logger.warning(UserMessages.NO_FEED_NAME)
                 sys.exit(1)
 
             logger.debug(UserMessages.NON_INTERACTIVE_MODE.format(dir=plugin_dir))
@@ -402,8 +417,16 @@ def run(
             )
 
     except ApiException as ex:
+        measurement_plugin = Path(cli_args.measurement_plugin_path).name
         logger.debug(ex, exc_info=True)
-        logger.info(ex)
+        logger.info(
+            UserMessages.PACKAGE_UPLOAD_FAILED.format(
+                package=measurement_plugin,
+                name=upload_package_info.feed_name,
+            )
+        )
+        logger.info(ex.error.message)
+        logger.info(UserMessages.CHECK_LOG_FILE)
 
     except PermissionError as error:
         logger.info(UserMessages.ACCESS_DENIED)

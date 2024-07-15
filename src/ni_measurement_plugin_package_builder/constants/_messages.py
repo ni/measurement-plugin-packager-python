@@ -64,3 +64,6 @@ class UserMessages:
     OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n): "
     INVALID_MEAS_PLUGIN = "Invalid Measurement Plugin folder, as it is missing one or more of the\
  required files: 'measurement.py', 'start.bat', or 'pyproject.toml'."
+    PACKAGE_UPLOAD_FAILED = "Failed to upload the package '{package}' to SystemLink feed '{name}'."
+    UNWANTED_SYSTEMLINK_CREDENTIALS = "Please provide the argument '-u or --upload-packages' for\
+ uploading the packages."
