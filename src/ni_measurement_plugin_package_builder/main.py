@@ -175,6 +175,27 @@ def __build_meas_packages(
             logger.info(ex.error.message)
             logger.info(UserMessages.CHECK_LOG_FILE)
 
+        except KeyError as ex:
+            logger.info(
+                UserMessages.PACKAGE_UPLOAD_FAILED.format(
+                    package=measurement_plugin,
+                    name=upload_package_info.feed_name,
+                )
+            )
+            logger.debug(ex, exc_info=True)
+            logger.info(UserMessages.API_URL_KEY_MISSING.format(key=ex))
+            logger.info(UserMessages.CHECK_LOG_FILE)
+
+        except FileNotFoundError as ex:
+            logger.info(
+                UserMessages.PACKAGE_UPLOAD_FAILED.format(
+                    package=measurement_plugin,
+                    name=upload_package_info.feed_name,
+                )
+            )
+            logger.debug(ex, exc_info=True)
+            logger.info(ex)
+
         except Exception as ex:
             logger.debug(ex, exc_info=True)
             logger.info(ex)
@@ -312,7 +333,7 @@ def __build_meas_in_non_interactive_mode(
 @click.option("-a", "--api-url", default=None, required=False, help=CliInterface.API_URL)
 @click.option("-k", "--api-key", default=None, required=False, help=CliInterface.API_KEY)
 @click.option("-w", "--workspace", default=None, required=False, help=CliInterface.WORK_SPACE)
-@click.option("-f","--feed-name", default=None, required=False, help=CliInterface.FEED_NAME)
+@click.option("-f", "--feed-name", default=None, required=False, help=CliInterface.FEED_NAME)
 @click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
 def run(
     interactive_mode: bool,
@@ -366,17 +387,20 @@ def run(
                 sys.exit(1)
 
             logger.debug(UserMessages.NON_INTERACTIVE_MODE.format(dir=plugin_dir))
+            upload_package_info = UploadPackageInputs(
+                feed_name=feed_name,
+                workspace=workspace,
+                api_key=api_key,
+                api_url=api_url,
+                overwrite_packages=overwrite,
+            )
             cli_args = CliInputs(
                 measurement_plugin_path=plugin_dir,
                 selected_meas_plugins=selected_meas_plugins,
                 measurement_plugin_base_path=base_dir,
                 interactive_mode=interactive_mode,
                 upload_packages=upload_packages,
-                feed_name=feed_name,
-                api_key=api_key,
-                api_url=api_url,
-                workspace=workspace,
-                overwrite=overwrite,
+                upload_packages_info=upload_package_info,
             )
 
         remove_handlers(logger)
@@ -388,13 +412,6 @@ def run(
         logger.debug(UserMessages.VERSION.format(version=__version__))
         logger.info(UserMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
 
-        upload_package_info = UploadPackageInputs(
-            feed_name=feed_name,
-            workspace=workspace,
-            api_key=api_key,
-            api_url=api_url,
-            overwrite_packages=overwrite,
-        )
         if cli_args.measurement_plugin_base_path and interactive_mode:
             __build_meas_in_interactive_mode(
                 logger=logger,
@@ -436,6 +453,10 @@ def run(
         logger.debug(ex, exc_info=True)
         logger.info(UserMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode))
         logger.info(UserMessages.CHECK_LOG_FILE)
+
+    except KeyError as ex:
+        logger.debug(ex, exc_info=True)
+        logger.info(UserMessages.API_URL_KEY_MISSING.format(key=ex))
 
     except FileNotFoundError as ex:
         logger.debug(ex, exc_info=True)

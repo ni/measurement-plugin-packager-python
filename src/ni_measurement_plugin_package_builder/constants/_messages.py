@@ -67,3 +67,4 @@ class UserMessages:
     PACKAGE_UPLOAD_FAILED = "Failed to upload the package '{package}' to SystemLink feed '{name}'."
     UNWANTED_SYSTEMLINK_CREDENTIALS = "Please provide the argument '-u or --upload-packages' for\
  uploading the packages."
+    API_URL_KEY_MISSING = "{key} key found missing in systemlink configuration files."

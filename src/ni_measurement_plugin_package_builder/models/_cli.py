@@ -8,6 +8,16 @@ from pydantic import BaseModel, model_validator
 from ni_measurement_plugin_package_builder.constants import UserMessages
 
 
+class UploadPackageInputs(BaseModel):
+    """Upload package user inputs."""
+
+    api_url: Optional[str] = None
+    api_key: Optional[str] = None
+    workspace: Optional[str] = None
+    feed_name: Optional[str] = None
+    overwrite_packages: Optional[bool] = False
+
+
 class CliInputs(BaseModel):
     """Represent Command Line Interface inputs."""
 
@@ -16,11 +26,7 @@ class CliInputs(BaseModel):
     selected_meas_plugins: Optional[str] = None
     interactive_mode: Optional[bool] = False
     upload_packages: Optional[bool] = False
-    feed_name: Optional[str] = None
-    api_key: Optional[str] = None
-    api_url: Optional[str] = None
-    workspace: Optional[str] = None
-    overwrite: Optional[bool] = False
+    upload_packages_info: Optional[UploadPackageInputs]
 
     @model_validator(mode="after")
     def validate_cli_inputs(self) -> "CliInputs":
@@ -53,13 +59,3 @@ class CliInputs(BaseModel):
             raise FileNotFoundError(UserMessages.INVALID_SELECTED_PLUGINS)
 
         return self
-
-
-class UploadPackageInputs(BaseModel):
-    """Upload package user inputs."""
-
-    api_url: Optional[str] = None
-    api_key: Optional[str] = None
-    workspace: Optional[str] = None
-    feed_name: Optional[str] = None
-    overwrite_packages: Optional[bool] = False
