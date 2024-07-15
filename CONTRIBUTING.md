@@ -43,6 +43,14 @@ To run commands and scripts, spawn a shell within the virtual environment manage
 poetry shell
 ```
 
+To install the dependencies, inside the virtual environment:
+
+```
+pip install ..\dependencies\nisystemlink_feeds_manager-X.X.X-py3-none-any.whl
+
+poetry install
+```
+
 
 # Developer Certificate of Origin (DCO)
 
