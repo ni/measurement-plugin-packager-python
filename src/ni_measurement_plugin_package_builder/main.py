@@ -138,10 +138,16 @@ def run(
                     measurement_plugin_path=cli_args.measurement_plugin_path,
                 )
                 if publish_package_client:
-                    publish_package_to_systemlink(
+                    upload_response = publish_package_to_systemlink(
                         meas_package_path=meas_package_path,
                         publish_package_client=publish_package_client,
                         upload_package_info=upload_package_info,
+                    )
+                    logger.info(
+                        UserMessages.PACKAGE_UPLOADED.format(
+                            package_name=upload_response.file_name,
+                            feed_name=upload_package_info.feed_name,
+                        )
                     )
 
     except ApiException as ex:
