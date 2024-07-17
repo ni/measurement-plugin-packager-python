@@ -2,25 +2,25 @@
 
 from logging import Logger
 
+from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
+
 from ni_measurement_plugin_package_builder.constants import UserMessages
 from ni_measurement_plugin_package_builder.models import (
     InvalidInputError,
-    SystemLinkConfig,
     UploadPackageInfo,
 )
 from ni_measurement_plugin_package_builder.utils._helpers import (
     get_folders,
     publish_meas_packages,
+    validate_selected_meas_plugins,
 )
-from ._validate_files import validate_selected_meas_plugins
 
 
 def publish_meas_packages_in_non_interactive_mode(
     logger: Logger,
     measurement_plugin_base_path: str,
     selected_meas_plugins: str,
-    upload_packages: bool,
-    systemlink_config: SystemLinkConfig,
+    publish_package_client: PublishPackagesToSystemLink,
     upload_package_info: UploadPackageInfo,
 ) -> None:
     """Publish measurement packages in non interactive mode.
@@ -29,8 +29,7 @@ def publish_meas_packages_in_non_interactive_mode(
         logger (Logger): Logger object.
         measurement_plugin_base_path (str): Measurement plugins parent path.
         selected_meas_plugins (str): Selected measurement plugins.
-        upload_packages (bool): True if the packages need to be uploaded to SystemLink else False.
-        systemlink_config (SystemLinkConfig): SystemLink config credentials.
+        publish_package_client (PublishPackagesToSystemLink): Client for publish packages to SystemLink. # noqa:  W505
         upload_package_info (UploadPackageInfo): Information about the package to be uploaded.
 
     Raises:
@@ -59,8 +58,7 @@ def publish_meas_packages_in_non_interactive_mode(
         logger=logger,
         measurement_plugin_base_path=measurement_plugin_base_path,
         measurement_plugins=selected_meas_plugins,
-        upload_packages=upload_packages,
-        systemlink_config=systemlink_config,
+        publish_package_client=publish_package_client,
         upload_package_info=upload_package_info,
     )
     logger.info("\n")

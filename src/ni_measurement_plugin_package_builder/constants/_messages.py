@@ -9,8 +9,8 @@ class UserMessages:
     LOG_FILE_LOCATION = "Log File Directory: {log_dir}"
     PROCESS_COMPLETED = "Process Completed."
     VERSION = "Package Version - {version}"
-    INVALID_MEAS_DIR = "Invalid measurementlink plugin directory - '{dir}'"
-    INVALID_BASE_DIR = "Invalid measurementlink plugin base directory - '{dir}',\
+    INVALID_MEAS_DIR = "Invalid measurement plugin directory - '{dir}'"
+    INVALID_BASE_DIR = "Invalid measurement plugin base directory - '{dir}',\
 \nPlease provide the parent directory containing measurement plugin folders."
     PACKAGE_BUILT = "NI Package for the measurement '{name}' built successfully at '{dir}'"
     NO_TOML_FILE = "The 'pyproject.toml' file is not found in '{dir}'"
@@ -40,6 +40,7 @@ class UserMessages:
  required files: 'measurement.py', 'start.bat', or 'pyproject.toml'."
     PACKAGE_UPLOAD_FAILED = "Failed to upload the package '{package}' to SystemLink feed '{name}'."
     API_URL_KEY_MISSING = "{key} key found missing in SystemLink Client configuration files."
+    FAILED_CLIENT_CREATION = "Failed to instantiate the client for publish packages to SystemLink."
 
 
 class InteractiveModeMessages:
@@ -50,21 +51,23 @@ class InteractiveModeMessages:
  '--plugin-dir', '--base-dir', or '--selected-meas-plugins'."
     MEASUREMENT_NUMBER = "Enter Measurement Plugin index ({start}-{end}) to build\
  (. to build all): "
-    CONTINUE_BUILDING = "Do you want to continue building NI Measurement Packages? (y/n): "
+    CONTINUE_BUILDING = "Do you want to continue? (y/n): "
     AVAILABLE_MEASUREMENTS = "Available measurements: "
     INVALID_INPUT = "Invalid measurement plugin indexes {numbers}, please provide valid\
  plugin indexes ."
-    UPLOAD_PACKAGE = "Do you want to upload the measurement packages to systemlink feeds? (y/n): "
+    UPLOAD_PACKAGE = "Do you want to upload the measurement packages to SystemLink feeds? (y/n): "
     ENTER_API_KEY = "Enter the SystemLink API Key: "
     ENTER_API_URL = "Enter the SystemLink API URL: "
-    ENTER_WORKSPACE = "Enter the workspace name: "
-    ENTER_FEED_NAME = "Enter the feed name: "
+    ENTER_WORKSPACE = "Enter the Workspace Name: "
+    ENTER_FEED_NAME = "Enter the Feed Name: "
     SAME_FEED = "Do you want to use same feed? (y/n): "
     NO_FEED_NAME = "No feed name, Please provide a valid feed name for uploading the\
  measurement packages."
     OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n): "
     INPUT_MEAS_PLUGIN_BASE_DIR = "In Interactive mode, User must provide the parent directory\
  containing the measurement plugin folders.\nEnter the Measurement Plugins parent directory:"
+    DEFAULT_SYSTEMLINK_CONFIG = "API URL and Workspace will be fetched from\
+ 'SystemLink Client' configuration by default."
 
 
 class NonInteractiveModeMessages:

@@ -5,8 +5,8 @@ from pathlib import Path
 from typing import Optional
 
 import click
-from pydantic import ValidationError
 from nisystemlink_feeds_manager.clients.core import ApiException
+from pydantic import ValidationError
 
 from ni_measurement_plugin_package_builder import __version__
 from ni_measurement_plugin_package_builder.constants import (
@@ -20,18 +20,25 @@ from ni_measurement_plugin_package_builder.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_package_builder.utils import (
+from ni_measurement_plugin_package_builder.utils._helpers import (
     build_meas_package,
+    get_publish_package_client,
+    publish_package_to_systemlink,
+)
+from ni_measurement_plugin_package_builder.utils._interactive_mode import (
+    publish_meas_packages_in_interactive_mode,
+)
+from ni_measurement_plugin_package_builder.utils._logger import (
     initialize_logger,
     remove_handlers,
     setup_logger_with_file_handler,
-    publish_package_to_systemlink,
+)
+from ni_measurement_plugin_package_builder.utils._non_interactive_mode import (
     publish_meas_packages_in_non_interactive_mode,
-    publish_meas_packages_in_interactive_mode,
 )
 
-
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
+
 
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.option("-i", "--interactive-mode", is_flag=True, help=CliInterface.INTERACTIVE_BUILDER)
@@ -95,10 +102,7 @@ def run(
         remove_handlers(logger)
         logger = initialize_logger(name="debug_logger")
         logger, log_folder_path = setup_logger_with_file_handler(
-            output_path=(
-                cli_args.measurement_plugin_base_path or
-                cli_args.measurement_plugin_path
-            ),
+            output_path=(cli_args.measurement_plugin_base_path or cli_args.measurement_plugin_path),
             logger=logger,
         )
         logger.debug(UserMessages.VERSION.format(version=__version__))
@@ -110,28 +114,35 @@ def run(
                 logger=logger,
                 measurement_plugin_base_path=meas_plugin_base_path,
             )
-        elif cli_args.measurement_plugin_base_path and cli_args.selected_meas_plugins:
+        else:
             logger.debug(NonInteractiveModeMessages.NON_INTERACTIVE_MODE)
-            publish_meas_packages_in_non_interactive_mode(
-                logger=logger,
-                measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
-                selected_meas_plugins=cli_args.selected_meas_plugins,
-                upload_packages=upload_packages,
-                systemlink_config=systemlink_config,
-                upload_package_info=upload_package_info,
-            )
-        elif cli_args.measurement_plugin_path:
-            logger.debug(NonInteractiveModeMessages.NON_INTERACTIVE_MODE)
-            meas_package_path = build_meas_package(
-                logger=logger,
-                measurement_plugin_path=cli_args.measurement_plugin_path,
-            )
+            publish_package_client = None
             if upload_packages:
-                publish_package_to_systemlink(
-                    meas_package_path=meas_package_path,
+                publish_package_client = get_publish_package_client(
+                    logger=logger,
                     systemlink_config=systemlink_config,
+                )
+
+            if cli_args.measurement_plugin_base_path and cli_args.selected_meas_plugins:
+                publish_meas_packages_in_non_interactive_mode(
+                    logger=logger,
+                    measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
+                    selected_meas_plugins=cli_args.selected_meas_plugins,
+                    publish_package_client=publish_package_client,
                     upload_package_info=upload_package_info,
                 )
+
+            if cli_args.measurement_plugin_path:
+                meas_package_path = build_meas_package(
+                    logger=logger,
+                    measurement_plugin_path=cli_args.measurement_plugin_path,
+                )
+                if publish_package_client:
+                    publish_package_to_systemlink(
+                        meas_package_path=meas_package_path,
+                        publish_package_client=publish_package_client,
+                        upload_package_info=upload_package_info,
+                    )
 
     except ApiException as ex:
         measurement_plugin = Path(cli_args.measurement_plugin_path).name
@@ -149,22 +160,15 @@ def run(
         logger.info(UserMessages.ACCESS_DENIED)
         logger.debug(error, exc_info=True)
 
-    except ValidationError as ex:
-        logger.debug(ex, exc_info=True)
-        logger.info(ex)
-
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
         logger.info(UserMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode))
         logger.info(UserMessages.CHECK_LOG_FILE)
 
-    except KeyError as ex:
-        logger.debug(ex, exc_info=True)
-        logger.info(UserMessages.API_URL_KEY_MISSING.format(key=ex))
-
-    except FileNotFoundError as ex:
+    except (FileNotFoundError, KeyError, ValidationError) as ex:
         logger.debug(ex, exc_info=True)
         logger.info(ex)
+        logger.info(UserMessages.CHECK_LOG_FILE)
 
     except Exception as ex:
         logger.debug(ex, exc_info=True)

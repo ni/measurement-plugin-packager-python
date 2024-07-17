@@ -3,7 +3,7 @@
 import os
 from typing import Optional
 
-from pydantic import BaseModel, model_validator, ValidationError
+from pydantic import BaseModel, model_validator
 
 from ni_measurement_plugin_package_builder.constants import (
     InteractiveModeMessages,
@@ -33,23 +33,26 @@ class CliInputs(BaseModel):
     measurement_plugin_base_path: Optional[str] = None
     measurement_plugin_path: Optional[str] = None
     selected_meas_plugins: Optional[str] = None
-    interactive_mode: Optional[bool] = False
-    upload_packages: Optional[bool] = False
+    interactive_mode: bool = False
+    upload_packages: bool = False
     systemlink_config: Optional[SystemLinkConfig] = SystemLinkConfig()
     upload_package_info: Optional[UploadPackageInfo] = UploadPackageInfo()
 
     @model_validator(mode="after")
     def validate_non_interactive_mode_inputs(self) -> "CliInputs":
-        """Validator to validate the non-interactive mode inputs.
+        """Validator to validate the non-interactive mode inputs."""
+        if (
+            not self.interactive_mode
+            and not self.measurement_plugin_path
+            and not (self.measurement_plugin_base_path and self.selected_meas_plugins)
+        ):
+            raise FileNotFoundError(NonInteractiveModeMessages.MEAS_DIR_REQUIRED)
 
-        Returns:
-            CliInputs: Validated non-interactive mode inputs.
-        """
         if self.measurement_plugin_base_path and (
             not os.path.isdir(self.measurement_plugin_base_path)
             or not os.path.exists(self.measurement_plugin_base_path)
         ):
-            raise ValidationError(
+            raise FileNotFoundError(
                 UserMessages.INVALID_BASE_DIR.format(dir=self.measurement_plugin_base_path)
             )
 
@@ -57,57 +60,43 @@ class CliInputs(BaseModel):
             not os.path.isdir(self.measurement_plugin_path)
             or not os.path.exists(self.measurement_plugin_path)
         ):
-            raise ValidationError(
+            raise FileNotFoundError(
                 UserMessages.INVALID_MEAS_DIR.format(dir=self.measurement_plugin_path)
             )
-
-        if (
-            not self.interactive_mode and
-            not self.measurement_plugin_path and
-            not (self.measurement_plugin_base_path and self.selected_meas_plugins)
-        ):
-            raise ValidationError(NonInteractiveModeMessages.MEAS_DIR_REQUIRED)
 
         return self
 
     @model_validator(mode="after")
     def validate_interactive_mode_inputs(self) -> "CliInputs":
-        """Validator to validate the interactive mode inputs.
-
-        Returns:
-            CliInputs: Validated interactive mode inputs.
-        """
+        """Validator to validate the interactive mode inputs."""
         if self.interactive_mode and any(
             [
                 self.measurement_plugin_base_path,
                 self.measurement_plugin_path,
-                self.selected_meas_plugins
+                self.selected_meas_plugins,
             ]
         ):
-            raise ValidationError(InteractiveModeMessages.DIR_NOT_REQUIRED)
+            raise FileNotFoundError(InteractiveModeMessages.DIR_NOT_REQUIRED)
 
         return self
 
     @model_validator(mode="after")
     def validate_nisystemlink_feeds_manager_inputs(self) -> "CliInputs":
-        """Validator to validate the `nisystemlink-feeds-manager` inputs.
-
-        Returns:
-            CliInputs: Validated nisystemlink feeds manager inputs.
-        """
+        """Validator to validate the `nisystemlink-feeds-manager` inputs."""
         if not self.upload_packages and any(
             [
                 self.systemlink_config.api_key,
                 self.systemlink_config.api_url,
-                self.systemlink_config.workspace
+                self.systemlink_config.workspace,
             ]
         ):
-            raise ValidationError(NonInteractiveModeMessages.UNWANTED_SYSTEMLINK_CREDENTIALS)
+            raise ValueError(NonInteractiveModeMessages.UNWANTED_SYSTEMLINK_CREDENTIALS)
 
-        if self.upload_packages and not self.systemlink_config.api_key:
-            raise ValidationError(UserMessages.NO_API_KEY)
+        if self.upload_packages:
+            if not self.systemlink_config.api_key:
+                raise ValueError(UserMessages.NO_API_KEY)
 
-        if self.upload_packages and not self.upload_package_info.feed_name:
-            raise ValidationError(InteractiveModeMessages.NO_FEED_NAME)
+            if self.upload_packages and not self.upload_package_info.feed_name:
+                raise ValueError(InteractiveModeMessages.NO_FEED_NAME)
 
         return self

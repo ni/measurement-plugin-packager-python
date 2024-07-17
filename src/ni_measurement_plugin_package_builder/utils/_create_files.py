@@ -30,7 +30,7 @@ def transfer_measurement_files(
     src_path = Path(measurement_plugin_path)
     dest_path = Path(template_measurement_folder_path)
 
-    # Iterate over all files in the source directory
+    # Iterate over all files in the source directory.
     for item in src_path.iterdir():
         if item.is_file():
             shutil.copy2(item, dest_path / item.name)
