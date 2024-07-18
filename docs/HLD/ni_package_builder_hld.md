@@ -6,6 +6,7 @@
   - [Links to relevant work items](#links-to-relevant-work-items)
   - [Implementation and Design](#implemenation-and-design)
     - [Workflow](#work-flow)
+    - [NISystemLink Feeds Manager](#nisystemlink-feeds-manager)
     - [CLI](#cli)
         - [Non interactive mode](#non-interactive-mode)
         - [Interactive mode](#interactive-mode)
@@ -26,19 +27,22 @@ Team: ModernLab Success
 
 ## Problem statement
 
-- Building python measurement plugin involves a lot of tedious processes of creating files with the required information about packaging and running the `nipkg.exe` to build the measurement.
+- For test engineer, building python measurement plugin involves a lot of tedious processes of creating files with the required information about packaging and running the `nipkg.exe` to build the measurement and manually uploading those packages to SystemLink through web server.
 
 ## Links to relevant work items
 
 - [Feature - Measurement Utility Builder](https://dev.azure.com/ni/DevCentral/_sprints/taskboard/ModernLab%20Reference%20Architecture/DevCentral/24C2/06/06b?workitem=2773393)
 - [Prototype Demo video](https://nio365.sharepoint.com/:v:/r/sites/ModernLabReferenceArchitecture/Shared%20Documents/Recordings/Measurement%20Builder%20Utility%20-%20Python/ni-measurement-plugin-package-builderV1.2.0-dev1_demo.mp4?csf=1&web=1&e=fkldX4)
-- [Prototype Source Code](https://github.com/ni/ni-measurement-plugin-package-builder/tree/main)
 
 ## Implementation and Design
 
 ### Workflow
 
-NI Measurement Plugin Package Builder builds python measurement plugins as NI package files, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and the output created. It validates the provided measurement plugin by checking for files `measurement.py, pyproject.toml, start.py` as these files are required for running the measurement in discovery services. If any one of these files gets missed it warns the user with the appropriate message and not build the package. CLI will inform the user about the progress of building packages through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
+Create a python package `NI Measurement Plugin Package Builder` which builds python measurement plugins as NI package files and uploads it to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and the output created. It validates the provided measurement plugin by checking for files `measurement.py, pyproject.toml, start.py` as these files are required for running the measurement in discovery services. If any one of these files gets missed it warns the user with the appropriate message and not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
+
+### NISystemLink Feeds Manager
+
+NISystemLink Feeds Manager is a python package to automate the process of publishing packages by creating the feeds and uploading the packages to the feeds using SystemLink APIs. Please refer this [HLD](https://github.com/ni/modernlab-ref-architecture/blob/nisystemlink-feeds-manager/nisystemlink_feeds_manager/docs/HLD/nisystemlink_feeds_manager.md) for more information about the package.
 
 ### CLI
 
@@ -81,7 +85,7 @@ For building the measurement plugin packages, it requires a certain template.
 
 ![required_files](template_files_heirarchy.png)
 
-Control folder contains a single file `control` which has information about the maintainer, version, system architecture etc., Some of that information has been from the `pyproject.toml`, if the pyproject.toml doesn't has those information default values would be used in that place.
+Control folder contains a single file `control` which has information about the maintainer, version, system architecture etc., Some of that information has been from the `pyproject.toml`, if the pyproject.toml doesn't have this information default values would be used in that place.
 
 ![control_file](control_file.png)
 
@@ -134,5 +138,4 @@ No alternative implementations.
 
 ## Open issues
 
-- This tool validates the individual measurement plugins at the time of building, not at the stage of prompting the available measurements.
 - Measurement plugin name with commas cannot be used for building the measurement through non-interactive mode for multiple measurements.
