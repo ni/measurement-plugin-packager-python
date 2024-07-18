@@ -1,21 +1,17 @@
-"""Implementation of template creation for building NI packages."""
+"""Helper functions for creating the files for NI Measurement Plugin Package Builder."""
 
 import os
 import platform
 import shutil
 from pathlib import Path
-from typing import Dict
 
 from ni_measurement_plugin_package_builder.constants import (
-    CONTROL,
-    DATA,
-    DEBIAN_BIN,
-    MEASUREMENT_NAME,
     MEASUREMENT_SERVICES_PATH,
     ControlFile,
+    FileNames,
     InstructionFile,
-    PyProjectToml,
 )
+from ni_measurement_plugin_package_builder.models import PackageInfo
 
 
 def transfer_measurement_files(
@@ -34,7 +30,7 @@ def transfer_measurement_files(
     src_path = Path(measurement_plugin_path)
     dest_path = Path(template_measurement_folder_path)
 
-    # Iterate over all files in the source directory
+    # Iterate over all files in the source directory.
     for item in src_path.iterdir():
         if item.is_file():
             shutil.copy2(item, dest_path / item.name)
@@ -43,29 +39,29 @@ def transfer_measurement_files(
 def create_template_folders(
     mlink_package_builder_path: str,
     measurement_plugin_path: str,
-    measurement_package_info: Dict[str, str],
+    measurement_package_info: PackageInfo,
 ) -> str:
     """Create Template folders for building NI Packages.
 
     Args:
         mlink_package_builder_path (str): Measurement Package builder path.
         measurement_plugin_path (str): Measurement Plugin path from user.
-        measurement_package_info (Dict[str, str]): Measurement package information.
+        measurement_package_info (PackageInfo): Measurement package information.
 
     Returns:
         str: Template folder path.
     """
     template_path = os.path.join(
-        mlink_package_builder_path, measurement_package_info[MEASUREMENT_NAME]
+        mlink_package_builder_path, measurement_package_info.measurement_name
     )
     if os.path.isdir(template_path):
         shutil.rmtree(template_path)
 
-    data_path = os.path.join(template_path, DATA)
+    data_path = os.path.join(template_path, FileNames.DATA)
     template_measurement_folder_path = os.path.join(
-        data_path, measurement_package_info[PyProjectToml.NAME]
+        data_path, measurement_package_info.package_name
     )
-    control_path = os.path.join(template_path, CONTROL)
+    control_path = os.path.join(template_path, FileNames.CONTROL)
 
     os.makedirs(control_path, exist_ok=True)
     os.makedirs(template_measurement_folder_path, exist_ok=True)
@@ -79,11 +75,11 @@ def create_template_folders(
     )
     create_instruction_file(
         data_path=data_path,
-        measurement_name=measurement_package_info[MEASUREMENT_NAME],
-        package_name=measurement_package_info[PyProjectToml.NAME],
+        measurement_name=measurement_package_info.measurement_name,
+        package_name=measurement_package_info.package_name,
     )
 
-    debian_binary_file = os.path.join(template_path, DEBIAN_BIN)
+    debian_binary_file = os.path.join(template_path, FileNames.DEBIAN_BIN)
     with open(debian_binary_file, "w", encoding="utf-8") as fp:
         fp.write("2.0")
 
@@ -106,24 +102,24 @@ def __get_system_type() -> str:
     return f"{system}_{architecture}"
 
 
-def create_control_file(control_folder_path: str, package_info: Dict[str, str]) -> None:
+def create_control_file(control_folder_path: str, package_info: PackageInfo) -> None:
     """Create control file for storing information about measurement package.
 
     Args:
         control_folder_path (str): Control folder path.
-        package_info (Dict[str, str]): Measurement Package information.
+        package_info (PackageInfo): Measurement Package information.
 
     Returns:
         None
     """
-    control_file_path = os.path.join(control_folder_path, CONTROL)
+    control_file_path = os.path.join(control_folder_path, FileNames.CONTROL)
 
-    package_version = package_info[PyProjectToml.VERSION]
-    package_description = package_info[PyProjectToml.DESCRIPTION]
-    package_name = package_info[PyProjectToml.NAME].lower()
-    measurement_name = package_info[MEASUREMENT_NAME]
+    package_version = package_info.version
+    package_description = package_info.description
+    package_name = package_info.package_name.lower()
+    measurement_name = package_info.measurement_name
 
-    measurement_author = package_info[PyProjectToml.AUTHOR]
+    measurement_author = package_info.author
 
     control_file_data = ControlFile.BUILT_USING + ": " + ControlFile.NIPKG + "\n"
     control_file_data += ControlFile.SECTION + ": " + ControlFile.ADD_ONS + "\n"

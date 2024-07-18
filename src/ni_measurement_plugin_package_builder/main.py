@@ -1,164 +1,44 @@
 """Implementation of NI Measurement Plugin Package Builder."""
 
-import os
 import subprocess
-import sys
-from logging import Logger
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Optional
 
 import click
+from nisystemlink_feeds_manager.clients.core import ApiException
+from pydantic import ValidationError
 
 from ni_measurement_plugin_package_builder import __version__
 from ni_measurement_plugin_package_builder.constants import (
-    MEASUREMENT_NAME,
-    NIPKG_EXE,
-    PACKAGES,
     CliInterface,
+    InteractiveModeMessages,
+    NonInteractiveModeMessages,
     UserMessages,
 )
-from ni_measurement_plugin_package_builder.models import CliInputs
-from ni_measurement_plugin_package_builder.utils import (
-    add_file_handler,
-    add_stream_handler,
-    create_template_folders,
-    get_folders,
-    get_log_folder_path,
-    get_measurement_package_info,
-    get_ni_mlink_package_builder_path,
-    get_user_inputs_in_interactive_mode,
+from ni_measurement_plugin_package_builder.models import (
+    CliInputs,
+    SystemLinkConfig,
+    UploadPackageInfo,
+)
+from ni_measurement_plugin_package_builder.utils._helpers import (
+    build_meas_package,
+    get_publish_package_client,
+    valid_folder_path,
+    publish_package_to_systemlink,
+)
+from ni_measurement_plugin_package_builder.utils._interactive_mode import (
+    publish_meas_packages_in_interactive_mode,
+)
+from ni_measurement_plugin_package_builder.utils._logger import (
     initialize_logger,
     remove_handlers,
-    validate_meas_plugin_files,
-    validate_selected_meas_plugins,
+    setup_logger_with_file_handler,
+)
+from ni_measurement_plugin_package_builder.utils._non_interactive_mode import (
+    publish_meas_packages_in_non_interactive_mode,
 )
 
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
-
-
-def __add_file_handler(output_path: str, logger: Logger) -> Tuple[Logger, str]:
-    log_folder_path, public_path_status, user_path_status = get_log_folder_path(output_path)
-    add_file_handler(logger=logger, log_folder_path=log_folder_path)
-    logger.debug(UserMessages.VERSION.format(version=__version__))
-
-    if not public_path_status:
-        logger.info(UserMessages.FAILED_PUBLIC_DIR)
-    if not user_path_status:
-        logger.info(UserMessages.FAILED_USER_DIR)
-
-    return logger, log_folder_path
-
-
-def __initialize_logger(name: str, folder_path: str) -> Tuple[Logger, str]:
-    logger = initialize_logger(name=name)
-
-    if folder_path:
-        logger, folder_path = __add_file_handler(output_path=folder_path, logger=logger)
-
-    add_stream_handler(logger=logger)
-
-    return logger, folder_path
-
-
-def __build_meas_package(logger: Logger, measurement_plugin_path) -> None:
-    logger.info("")
-    measurement_plugin = Path(measurement_plugin_path).name
-    logger.info(UserMessages.BUILDING_MEAS.format(name=measurement_plugin))
-
-    mlink_package_builder_path = get_ni_mlink_package_builder_path(logger=logger)
-    validate_meas_plugin_files(path=measurement_plugin_path)
-
-    measurement_package_info = get_measurement_package_info(
-        measurement_plugin_path=measurement_plugin_path,
-        logger=logger,
-    )
-    template_folder_path = create_template_folders(
-        mlink_package_builder_path=mlink_package_builder_path,
-        measurement_plugin_path=measurement_plugin_path,
-        measurement_package_info=measurement_package_info,
-    )
-
-    package_folder_path = os.path.join(mlink_package_builder_path, PACKAGES)
-    os.makedirs(package_folder_path, exist_ok=True)
-
-    logger.info(UserMessages.TEMPLATE_FILES_COMPLETED)
-    subprocess.run(f"{NIPKG_EXE} pack {template_folder_path} {package_folder_path}", check=True)
-    logger.info(
-        UserMessages.PACKAGE_BUILT.format(
-            name=measurement_package_info[MEASUREMENT_NAME],
-            dir=package_folder_path,
-        )
-    )
-
-
-def __build_meas_packages(
-    logger: Logger,
-    measurement_plugin_base_path: str,
-    measurement_plugins: List[str],
-) -> None:
-    for measurement_plugin in measurement_plugins:
-        measurement_plugin_path = os.path.join(measurement_plugin_base_path, measurement_plugin)
-        try:
-            __build_meas_package(
-                logger=logger,
-                measurement_plugin_path=measurement_plugin_path,
-            )
-        except Exception as ex:
-            logger.debug(ex, exc_info=True)
-            logger.info(ex)
-            logger.info(UserMessages.CHECK_LOG_FILE)
-
-
-def __build_meas_in_interactive_mode(logger: Logger, measurement_plugin_base_path: str) -> None:
-    while True:
-        measurement_plugins = get_user_inputs_in_interactive_mode(
-            logger=logger,
-            measurement_plugins_base_path=measurement_plugin_base_path,
-        )
-        if not measurement_plugins:
-            break
-
-        __build_meas_packages(
-            logger=logger,
-            measurement_plugin_base_path=measurement_plugin_base_path,
-            measurement_plugins=measurement_plugins,
-        )
-        logger.info("\n")
-        user_input_for_continuation = input(UserMessages.CONTINUE_BUILDING).strip().lower()
-        if user_input_for_continuation != "y":
-            break
-
-
-def __build_meas_in_non_interactive_mode(
-    logger: Logger,
-    measurement_plugin_base_path: str,
-    selected_meas_plugins: str,
-) -> None:
-    measurement_plugins = get_folders(folder_path=measurement_plugin_base_path)
-
-    if not measurement_plugins:
-        raise FileNotFoundError(
-            UserMessages.INVALID_BASE_DIR.format(dir=measurement_plugin_base_path)
-        )
-
-    if selected_meas_plugins == ".":
-        selected_meas_plugins = measurement_plugins
-    else:
-        validate_selected_meas_plugins(
-            measurement_plugins=measurement_plugins,
-            selected_meas_plugins=selected_meas_plugins,
-            logger=logger,
-        )
-        selected_meas_plugins = [
-            meas_plugin.strip("'\"").strip() for meas_plugin in selected_meas_plugins.split(",")
-        ]
-
-    __build_meas_packages(
-        logger=logger,
-        measurement_plugin_base_path=measurement_plugin_base_path,
-        measurement_plugins=selected_meas_plugins,
-    )
-    logger.info("\n")
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
@@ -178,73 +58,120 @@ def __build_meas_in_non_interactive_mode(
     required=False,
     help=CliInterface.SELECTED_PLUGINS,
 )
+@click.option("-u", "--upload-packages", is_flag=True, help=CliInterface.UPLOAD_PACKAGES)
+@click.option("-a", "--api-url", default=None, required=False, help=CliInterface.API_URL)
+@click.option("-k", "--api-key", default=None, required=False, help=CliInterface.API_KEY)
+@click.option("-w", "--workspace", default=None, required=False, help=CliInterface.WORK_SPACE)
+@click.option("-f", "--feed-name", default=None, required=False, help=CliInterface.FEED_NAME)
+@click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
 def run(
     interactive_mode: bool,
     plugin_dir: Optional[Path],
     base_dir: Optional[Path],
-    selected_meas_plugins: str,
+    selected_meas_plugins: Optional[str],
+    upload_packages: bool,
+    api_url: Optional[str],
+    api_key: Optional[str],
+    workspace: Optional[str],
+    feed_name: Optional[str],
+    overwrite: Optional[bool],
 ) -> None:
     """NI Measurement Plugin Package Builder is a Command line tool for building NI package file\
- for python measurement plugins."""
+ for python measurement plugins and uploading it to SystemLink Feeds."""
     try:
-        log_folder_path = None
-        logger, log_folder_path = __initialize_logger(
-            name="console_logger",
-            folder_path=log_folder_path,
-        )
+        logger = initialize_logger(name="console_logger")
         logger.info(UserMessages.STARTED_EXECUTION)
 
+        systemlink_config = SystemLinkConfig(api_key=api_key, api_url=api_url, workspace=workspace)
+        upload_package_info = UploadPackageInfo(feed_name=feed_name, overwrite_packages=overwrite)
+        interactive_mode_input_parent_dir = None
+
+        cli_args = CliInputs(
+            measurement_plugin_base_path=base_dir,
+            interactive_mode=interactive_mode,
+            measurement_plugin_path=plugin_dir,
+            upload_packages=upload_packages,
+            selected_meas_plugins=selected_meas_plugins,
+            systemlink_config=systemlink_config,
+            upload_package_info=upload_package_info,
+        )
+
         if interactive_mode:
-            if plugin_dir or base_dir or selected_meas_plugins:
-                logger.warning(UserMessages.DIR_NOT_REQUIRED)
-                sys.exit(1)
-
-            logger.debug(UserMessages.INTERACTIVE_MODE_ON)
-            plugin_base_path = input(UserMessages.INPUT_MEAS_PLUGIN_BASE_DIR)
-            cli_args = CliInputs(
-                measurement_plugin_base_path=plugin_base_path,
-                interactive_mode=interactive_mode,
-            )
-
-        else:
-            if not plugin_dir and not (base_dir and selected_meas_plugins):
-                logger.warning(UserMessages.MEAS_DIR_REQUIRED)
-                sys.exit(1)
-
-            logger.debug(UserMessages.NON_INTERACTIVE_MODE.format(dir=plugin_dir))
-            cli_args = CliInputs(
-                measurement_plugin_path=plugin_dir,
-                selected_meas_plugins=selected_meas_plugins,
-                measurement_plugin_base_path=base_dir,
-                interactive_mode=interactive_mode,
-            )
+            interactive_mode_input_parent_dir = input(
+                InteractiveModeMessages.INPUT_MEAS_PLUGIN_BASE_DIR
+            ).strip()
+            if not valid_folder_path(interactive_mode_input_parent_dir):
+                raise FileNotFoundError(
+                    UserMessages.INVALID_BASE_DIR.format(dir=interactive_mode_input_parent_dir)
+                )
 
         remove_handlers(logger)
-
-        logger, log_folder_path = __initialize_logger(
-            name="debug_logger",
-            folder_path=cli_args.measurement_plugin_path or cli_args.measurement_plugin_base_path,
+        logger = initialize_logger(name="debug_logger")
+        logger, log_folder_path = setup_logger_with_file_handler(
+            output_path=(
+                cli_args.measurement_plugin_base_path
+                or cli_args.measurement_plugin_path
+                or interactive_mode_input_parent_dir
+            ),
+            logger=logger,
         )
         logger.debug(UserMessages.VERSION.format(version=__version__))
         logger.info(UserMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
 
-        if cli_args.measurement_plugin_base_path and interactive_mode:
-            __build_meas_in_interactive_mode(
+        if interactive_mode_input_parent_dir and interactive_mode:
+            logger.debug(InteractiveModeMessages.INTERACTIVE_MODE_ON)
+            publish_meas_packages_in_interactive_mode(
                 logger=logger,
-                measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
+                measurement_plugin_base_path=interactive_mode_input_parent_dir,
             )
-        elif cli_args.measurement_plugin_base_path and cli_args.selected_meas_plugins:
-            __build_meas_in_non_interactive_mode(
-                logger=logger,
-                measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
-                selected_meas_plugins=cli_args.selected_meas_plugins,
+        else:
+            logger.debug(NonInteractiveModeMessages.NON_INTERACTIVE_MODE)
+            publish_package_client = None
+            if upload_packages:
+                publish_package_client = get_publish_package_client(
+                    logger=logger,
+                    systemlink_config=systemlink_config,
+                )
+
+            if cli_args.measurement_plugin_base_path and cli_args.selected_meas_plugins:
+                publish_meas_packages_in_non_interactive_mode(
+                    logger=logger,
+                    measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
+                    selected_meas_plugins=cli_args.selected_meas_plugins,
+                    publish_package_client=publish_package_client,
+                    upload_package_info=upload_package_info,
+                )
+
+            if cli_args.measurement_plugin_path:
+                meas_package_path = build_meas_package(
+                    logger=logger,
+                    measurement_plugin_path=cli_args.measurement_plugin_path,
+                )
+                if publish_package_client and meas_package_path:
+                    upload_response = publish_package_to_systemlink(
+                        meas_package_path=meas_package_path,
+                        publish_package_client=publish_package_client,
+                        upload_package_info=upload_package_info,
+                    )
+                    logger.info(
+                        UserMessages.PACKAGE_UPLOADED.format(
+                            package_name=upload_response.file_name,
+                            feed_name=upload_package_info.feed_name,
+                        )
+                    )
+                logger.info("")
+
+    except ApiException as ex:
+        measurement_plugin = Path(cli_args.measurement_plugin_path).name
+        logger.debug(ex, exc_info=True)
+        logger.info(
+            UserMessages.PACKAGE_UPLOAD_FAILED.format(
+                package=measurement_plugin,
+                name=upload_package_info.feed_name,
             )
-        elif cli_args.measurement_plugin_path:
-            __build_meas_package(
-                logger=logger,
-                measurement_plugin_path=cli_args.measurement_plugin_path,
-            )
-            logger.info("")
+        )
+        logger.info(ex.error.message)
+        logger.info(UserMessages.CHECK_LOG_FILE)
 
     except PermissionError as error:
         logger.info(UserMessages.ACCESS_DENIED)
@@ -255,9 +182,10 @@ def run(
         logger.info(UserMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode))
         logger.info(UserMessages.CHECK_LOG_FILE)
 
-    except FileNotFoundError as ex:
+    except (FileNotFoundError, KeyError, ValidationError) as ex:
         logger.debug(ex, exc_info=True)
         logger.info(ex)
+        logger.info(UserMessages.CHECK_LOG_FILE)
 
     except Exception as ex:
         logger.debug(ex, exc_info=True)

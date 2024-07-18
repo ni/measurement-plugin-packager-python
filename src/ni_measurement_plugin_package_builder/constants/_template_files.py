@@ -2,14 +2,17 @@
 
 MEASUREMENT_SERVICES_PATH = "C:\\ProgramData\\National Instruments\\MeasurementLink\\Services\\"
 NIPKG_EXE = "C:\\Program Files\\National Instruments\\NI Package Manager\\nipkg.exe"
-TEMPLATE_FILES = "template_files"
 PACKAGES = "packages"
-CONTROL = "control"
-DATA = "data"
-DEBIAN_BIN = "debian-binary"
-MEASUREMENT_NAME = "measurement_name"
-MEASUREMENT_FILE = "measurement.py"
-BATCH_FILE = "start.bat"
+
+
+class FileNames:
+    """Name of the files required for building measurements."""
+
+    CONTROL = "control"
+    DATA = "data"
+    DEBIAN_BIN = "debian-binary"
+    MEASUREMENT_FILE = "measurement.py"
+    BATCH_FILE = "start.bat"
 
 
 class ControlFile:

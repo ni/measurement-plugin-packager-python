@@ -27,7 +27,7 @@ To contribute to this project, it is recommended that you follow these steps:
 4. Send a GitHub Pull Request to the main repository's master branch. GitHub
    Pull Requests are the expected method of code collaboration on this project.
 
-# Setup Virtual Environement
+# Setup Virtual Environment
 
 You must have a supported version of Python (3.8+) and [Poetry](https://python-poetry.org/docs/) installed locally.
 
@@ -41,6 +41,14 @@ To run commands and scripts, spawn a shell within the virtual environment manage
 
 ```
 poetry shell
+```
+
+To install the dependencies, inside the virtual environment:
+
+```
+pip install ..\dependencies\nisystemlink_feeds_manager-X.X.X-py3-none-any.whl
+
+poetry install
 ```
 
 
