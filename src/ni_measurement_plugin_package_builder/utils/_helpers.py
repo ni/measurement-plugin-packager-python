@@ -57,7 +57,7 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[str
     logger.info(InteractiveModeMessages.AVAILABLE_MEASUREMENTS)
     for index, measurement_name in enumerate(measurement_plugins):
         logger.info(f"{index + 1}. {measurement_name}")
-    logger.info("\n")
+    logger.info("")
 
 
 def validate_meas_plugin_files(path: str, logger: Logger) -> bool:

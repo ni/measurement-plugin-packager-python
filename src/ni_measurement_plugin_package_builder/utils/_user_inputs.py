@@ -54,8 +54,8 @@ def validate_user_input_for_meas_plugins(
 
     selected_measurements = []
     for plugin_number in user_inputs:
-        if plugin_number in measurement_plugins:
-            selected_measurements.append(measurement_plugins[plugin_number])
+        if plugin_number.strip() in measurement_plugins:
+            selected_measurements.append(measurement_plugins[plugin_number.strip()])
 
     if len(selected_measurements) == len(user_inputs):
         return selected_measurements
