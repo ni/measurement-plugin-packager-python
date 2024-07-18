@@ -41,25 +41,30 @@ class CliInputs(BaseModel):
     @model_validator(mode="after")
     def validate_non_interactive_mode_inputs(self) -> "CliInputs":
         """Validator to validate the non-interactive mode inputs."""
-        if (
-            not self.interactive_mode
-            and not self.measurement_plugin_path
-            and not (self.measurement_plugin_base_path and self.selected_meas_plugins)
+        if not self.interactive_mode and (
+            (
+                self.measurement_plugin_path
+                and any([self.measurement_plugin_base_path, self.selected_meas_plugins])
+            )
+            or (
+                all([self.measurement_plugin_base_path, self.selected_meas_plugins])
+                and self.measurement_plugin_path
+            )
+            or (
+                not all([self.measurement_plugin_base_path, self.selected_meas_plugins])
+                and not self.measurement_plugin_path
+            )
         ):
             raise FileNotFoundError(NonInteractiveModeMessages.MEAS_DIR_REQUIRED)
 
         if self.measurement_plugin_base_path and (
             not os.path.isdir(self.measurement_plugin_base_path)
-            or not os.path.exists(self.measurement_plugin_base_path)
         ):
             raise FileNotFoundError(
                 UserMessages.INVALID_BASE_DIR.format(dir=self.measurement_plugin_base_path)
             )
 
-        if self.measurement_plugin_path and (
-            not os.path.isdir(self.measurement_plugin_path)
-            or not os.path.exists(self.measurement_plugin_path)
-        ):
+        if self.measurement_plugin_path and not os.path.isdir(self.measurement_plugin_path):
             raise FileNotFoundError(
                 UserMessages.INVALID_MEAS_DIR.format(dir=self.measurement_plugin_path)
             )
