@@ -31,6 +31,18 @@ from ni_measurement_plugin_package_builder.utils._pyproject_toml_info import (
 )
 
 
+def valid_folder_path(path: str) -> bool:
+    """Check if the provided folder path is valid or not.
+
+    Args:
+        path (str): Folder path.
+
+    Returns:
+        bool: True if valid folder path else False.
+    """
+    return os.path.isdir(path)
+
+
 def display_available_measurements(logger: Logger, measurement_plugins: List[str]) -> None:
     """Display available measurement plugins in CLI.
 
@@ -319,7 +331,7 @@ def publish_meas_packages(
                 logger=logger,
                 measurement_plugin_path=measurement_plugin_path,
             )
-            if publish_package_client:
+            if publish_package_client and measurement_package_path:
                 upload_response = publish_package_to_systemlink(
                     publish_package_client=publish_package_client,
                     meas_package_path=measurement_package_path,

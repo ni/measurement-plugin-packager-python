@@ -2,7 +2,7 @@
 
 ## Description
 
-NI Measurement Plugin Package builder enables user to build Python Measurement plugins as NI package files.
+NI Measurement Plugin Package builder enables user to build Python Measurement plugins as NI package files and uploading it to SystemLink feeds.
 
 ## Prerequisites
 
@@ -35,6 +35,7 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
     2. Interactive mode
 
 ### Non-interactive mode
+
 - To build a single measurement plugin, run the following command,
     `ni-measurement-plugin-package-builder --plugin-dir <measurement_plugin_directory>`
     Example: `ni-measurement-plugin-package-builder --plugin-dir "C:\Users\examples\sample_measurement"`
@@ -50,6 +51,7 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
 - Input arguments should be provided within double quotes.
 
 ### Interactive mode
+
 - To build multiple measurement plugins, the parent directory containing the measurement plugin folders must be provided.
 - To start the tool in interactive mode, run the following command
     `ni-measurement-plugin-package-builder -i`

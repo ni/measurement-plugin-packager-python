@@ -35,8 +35,8 @@ class CliInputs(BaseModel):
     selected_meas_plugins: Optional[str] = None
     interactive_mode: bool = False
     upload_packages: bool = False
-    systemlink_config: Optional[SystemLinkConfig] = SystemLinkConfig()
-    upload_package_info: Optional[UploadPackageInfo] = UploadPackageInfo()
+    systemlink_config: Optional[SystemLinkConfig] = None
+    upload_package_info: Optional[UploadPackageInfo] = None
 
     @model_validator(mode="after")
     def validate_non_interactive_mode_inputs(self) -> "CliInputs":
@@ -74,6 +74,12 @@ class CliInputs(BaseModel):
                 self.measurement_plugin_base_path,
                 self.measurement_plugin_path,
                 self.selected_meas_plugins,
+                self.upload_packages,
+                self.systemlink_config.api_key,
+                self.systemlink_config.api_url,
+                self.systemlink_config.workspace,
+                self.upload_package_info.overwrite_packages,
+                self.upload_package_info.feed_name,
             ]
         ):
             raise FileNotFoundError(InteractiveModeMessages.DIR_NOT_REQUIRED)

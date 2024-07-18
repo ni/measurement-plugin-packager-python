@@ -23,6 +23,7 @@ from ni_measurement_plugin_package_builder.models import (
 from ni_measurement_plugin_package_builder.utils._helpers import (
     build_meas_package,
     get_publish_package_client,
+    valid_folder_path,
     publish_package_to_systemlink,
 )
 from ni_measurement_plugin_package_builder.utils._interactive_mode import (
@@ -83,6 +84,8 @@ def run(
 
         systemlink_config = SystemLinkConfig(api_key=api_key, api_url=api_url, workspace=workspace)
         upload_package_info = UploadPackageInfo(feed_name=feed_name, overwrite_packages=overwrite)
+        interactive_mode_input_parent_dir = None
+
         cli_args = CliInputs(
             measurement_plugin_base_path=base_dir,
             interactive_mode=interactive_mode,
@@ -94,25 +97,32 @@ def run(
         )
 
         if interactive_mode:
-            meas_plugin_base_path = input(
+            interactive_mode_input_parent_dir = input(
                 InteractiveModeMessages.INPUT_MEAS_PLUGIN_BASE_DIR
             ).strip()
-            cli_args.measurement_plugin_base_path = meas_plugin_base_path
+            if not valid_folder_path(interactive_mode_input_parent_dir):
+                raise FileNotFoundError(
+                    UserMessages.INVALID_BASE_DIR.format(dir=interactive_mode_input_parent_dir)
+                )
 
         remove_handlers(logger)
         logger = initialize_logger(name="debug_logger")
         logger, log_folder_path = setup_logger_with_file_handler(
-            output_path=(cli_args.measurement_plugin_base_path or cli_args.measurement_plugin_path),
+            output_path=(
+                cli_args.measurement_plugin_base_path
+                or cli_args.measurement_plugin_path
+                or interactive_mode_input_parent_dir
+            ),
             logger=logger,
         )
         logger.debug(UserMessages.VERSION.format(version=__version__))
         logger.info(UserMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
 
-        if cli_args.measurement_plugin_base_path and interactive_mode:
+        if interactive_mode_input_parent_dir and interactive_mode:
             logger.debug(InteractiveModeMessages.INTERACTIVE_MODE_ON)
             publish_meas_packages_in_interactive_mode(
                 logger=logger,
-                measurement_plugin_base_path=meas_plugin_base_path,
+                measurement_plugin_base_path=interactive_mode_input_parent_dir,
             )
         else:
             logger.debug(NonInteractiveModeMessages.NON_INTERACTIVE_MODE)
@@ -137,7 +147,7 @@ def run(
                     logger=logger,
                     measurement_plugin_path=cli_args.measurement_plugin_path,
                 )
-                if publish_package_client:
+                if publish_package_client and meas_package_path:
                     upload_response = publish_package_to_systemlink(
                         meas_package_path=meas_package_path,
                         publish_package_client=publish_package_client,

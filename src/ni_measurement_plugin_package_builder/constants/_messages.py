@@ -47,8 +47,8 @@ class InteractiveModeMessages:
     """Non interactive mode messages."""
 
     INTERACTIVE_MODE_ON = "Interactive mode enabled."
-    DIR_NOT_REQUIRED = "None of the following options are required for 'Interactive mode':\
- '--plugin-dir', '--base-dir', or '--selected-meas-plugins'."
+    DIR_NOT_REQUIRED = "Interactive mode requires only the '-i' argument, and no other arguments\
+ are necessary."
     MEASUREMENT_NUMBER = "Enter Measurement Plugin index ({start}-{end}) to build\
  (. to build all): "
     CONTINUE_BUILDING = "Do you want to continue? (y/n): "
