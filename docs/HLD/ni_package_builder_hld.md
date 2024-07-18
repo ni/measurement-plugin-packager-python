@@ -119,6 +119,12 @@ Once the required files have been created under the respective folders. The tool
   `ni-measurement-plugin-package-builder --base-dir <measurement_plugin_base_directory> --selected-meas-plugins <list_of_comma_separated_meas_plugins>`
   For example,
   `ni-measurement-plugin-package-builder --base-dir "C:/Users/examples" --selected-meas-plugins "sample_measurement,test_measurement"`
+- To upload the single measurement package to systemlink, run the following command,
+    `ni-measurement-plugin-package-builder --plugin-dir <measurement_plugin_directory> --upload-packages --api-url <systemlink_api_url> --api-key <systemlink_api_key> --workspace <workspace_name> --feed-name <name_of_the_feed>`
+    Example: `ni-measurement-plugin-package-builder --plugin-dir "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"`
+- To upload the multiple measurement packages to systemlink, run the following command,
+    `ni-measurement-plugin-package-builder --base-dir <measurement_plugin_base_directory> --selected-meas-plugins <list_of_comma_separated_meas_plugins> --upload-packages --api-url <systemlink_api_url> --api-key <systemlink_api_key> --workspace <workspace_name> --feed-name <name_of_the_feed>`
+    Example: `ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"`
 - Input arguments should be provided within double quotes.
 - For building multiple measurements both the required inputs will be required like base directory and selected measurement plugins.
   ![non_interactive_mode](non_interactive_mode.png)
@@ -129,8 +135,12 @@ Once the required files have been created under the respective folders. The tool
   `ni-measurement-plugin-package_builder -i`
 - Users will be prompted to enter the required inputs for building measurements.
 - To build multiple measurement plugins, the parent directory containing the measurement plugin folders must be provided.
+- Users can provide comma separated measurement plugin indexes, for building measurements.
 - The command line interface will show the directory where the .nipkg files are generated.
   ![interactive_mode](interactive_mode.png)
+
+
+Note: For uploading the packages, if the API URL and Workspace are not provided then the `SystemLink client configuration` will be utilized, whereas API key and Feed name must be provided.
 
 ## Alternative implementations and designs
 
