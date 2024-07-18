@@ -33,7 +33,8 @@ class UserMessages:
  '{name}'."
     ACCESS_DENIED = "Access is denied.\
  Please run the tool with Admin privileges or provide a different output directory."
-    NO_API_KEY = "No API Key, Please Provide an API key for uploading the measurement packages."
+    NO_API_KEY = "No API Key provided. Please provide a valid API key for uploading\
+ the measurement packages."
     PACKAGE_UPLOADED = "Measurement package '{package_name}' uploaded to the SystemLink Feed \
 '{feed_name}' successfully."
     INVALID_MEAS_PLUGIN = "Invalid Measurement Plugin folder, as it is missing one or more of the\
@@ -54,7 +55,7 @@ class InteractiveModeMessages:
     CONTINUE_BUILDING = "Do you want to continue? (y/n): "
     AVAILABLE_MEASUREMENTS = "Available measurements: "
     INVALID_INPUT = "Invalid measurement plugin indexes {numbers}, please provide valid\
- plugin indexes ."
+ plugin indexes."
     UPLOAD_PACKAGE = "Do you want to upload the measurement packages to SystemLink feeds? (y/n): "
     ENTER_API_KEY = "Enter the SystemLink API Key: "
     ENTER_API_URL = "Enter the SystemLink API URL: "
@@ -65,7 +66,7 @@ class InteractiveModeMessages:
  measurement packages."
     OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n): "
     INPUT_MEAS_PLUGIN_BASE_DIR = "In Interactive mode, User must provide the parent directory\
- containing the measurement plugin folders.\nEnter the Measurement Plugins parent directory:"
+ containing the measurement plugin folders.\nEnter the Measurement Plugins parent directory: "
     DEFAULT_SYSTEMLINK_CONFIG = "API URL and Workspace will be fetched from\
  'SystemLink Client' configuration by default."
 

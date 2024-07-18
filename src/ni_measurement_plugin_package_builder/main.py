@@ -159,6 +159,7 @@ def run(
                             feed_name=upload_package_info.feed_name,
                         )
                     )
+                logger.info("")
 
     except ApiException as ex:
         measurement_plugin = Path(cli_args.measurement_plugin_path).name

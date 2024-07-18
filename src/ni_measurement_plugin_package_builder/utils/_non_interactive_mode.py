@@ -61,4 +61,4 @@ def publish_meas_packages_in_non_interactive_mode(
         publish_package_client=publish_package_client,
         upload_package_info=upload_package_info,
     )
-    logger.info("\n")
+    logger.info("")

@@ -132,7 +132,7 @@ def get_systemlink_config(logger: Logger) -> SystemLinkConfig:
     logger.info(InteractiveModeMessages.DEFAULT_SYSTEMLINK_CONFIG)
     api_url = input(InteractiveModeMessages.ENTER_API_URL).strip()
     api_key = input(InteractiveModeMessages.ENTER_API_KEY).strip()
-    workspace = input(InteractiveModeMessages.ENTER_WORKSPACE.strip())
+    workspace = input(InteractiveModeMessages.ENTER_WORKSPACE).strip()
 
     if not api_key:
         raise InvalidInputError(UserMessages.NO_API_KEY)
