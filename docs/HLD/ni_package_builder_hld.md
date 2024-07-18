@@ -15,7 +15,7 @@
         - [Creating required files](#creating-required-files)
         - [Building measurements using nipkg exe](#building-measurements-using-nipkg-exe)
     - [Installation](#installation)
-        - [Non interactive mode](#non-interactive-mode)
+        - [Non-interactive mode](#non-interactive-mode)
         - [Interactive mode](#interactive-mode)
   - [Alternative implementations and designs](#alternative-implementations-and-designs)
   - [Open issues](#open-issues)
@@ -27,32 +27,31 @@ Team: ModernLab Success
 
 ## Problem statement
 
-- For test engineer, building python measurement plugin involves a lot of tedious processes of creating files with the required information about packaging and running the `nipkg.exe` to build the measurement and manually uploading those packages to SystemLink through web server.
+- For the test engineer, building a Python measurement plugin involves a lot of tedious processes of creating files with the required information about packaging and running the `nipkg.exe` to build the measurement, and manually uploading those packages to SystemLink through the web server.
 
 ## Links to relevant work items
 
 - [Feature - Measurement Utility Builder](https://dev.azure.com/ni/DevCentral/_sprints/taskboard/ModernLab%20Reference%20Architecture/DevCentral/24C2/06/06b?workitem=2773393)
-- [Prototype Demo video](https://nio365.sharepoint.com/:v:/r/sites/ModernLabReferenceArchitecture/Shared%20Documents/Recordings/Measurement%20Builder%20Utility%20-%20Python/ni-measurement-plugin-package-builderV1.2.0-dev1_demo.mp4?csf=1&web=1&e=fkldX4)
 
 ## Implementation and Design
 
 ### Workflow
 
-Create a python package `NI Measurement Plugin Package Builder` which builds python measurement plugins as NI package files and uploads it to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and the output created. It validates the provided measurement plugin by checking for files `measurement.py, pyproject.toml, start.py` as these files are required for running the measurement in discovery services. If any one of these files gets missed it warns the user with the appropriate message and not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
+Create a Python package `NI Measurement Plugin Package Builder` which builds Python measurement plugins as NI package files and uploads them to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and the output created. It validates the provided measurement plugin by checking for files `measurement.py, pyproject.toml, start.py` as these files are required for running the measurement in discovery services. If any one of these files gets missed it warns the user with the appropriate message and does not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
 
 ### NISystemLink Feeds Manager
 
-NISystemLink Feeds Manager is a python package to automate the process of publishing packages by creating the feeds and uploading the packages to the feeds using SystemLink APIs. Please refer this [HLD](https://github.com/ni/modernlab-ref-architecture/blob/nisystemlink-feeds-manager/nisystemlink_feeds_manager/docs/HLD/nisystemlink_feeds_manager.md) for more information about the package.
+NISystemLink Feeds Manager is a Python package to automates the process of publishing packages by creating the feeds and uploading the packages to the feeds using SystemLink APIs. Please refer to this [HLD](https://github.com/ni/modernlab-ref-architecture/blob/nisystemlink-feeds-manager/nisystemlink_feeds_manager/docs/HLD/nisystemlink_feeds_manager.md) for more information about the package.
 
 ### CLI
 
-Command Line Interface implemented for `ni-measurement-plugin-package-builder` using `click` module, Please refer this [link](https://click.palletsprojects.com/en/8.1.x/) to know more about the module. `click` is designed to be simple and easy to use. It provides decorators for defining commands and options, which makes the code more readable and maintainable. The module provides strong typing and validation for command-line parameters, ensuring that the input is of the expected type and format before your code runs.
+Command Line Interface implemented for `ni-measurement-plugin-package-builder` using `click` module, please refer to this [link](https://click.palletsprojects.com/en/8.1.x/) to know more about the module. `click` is designed to be simple and easy to use. It provides decorators for defining commands and options, which makes the code more readable and maintainable. The module provides strong typing and validation for command-line parameters, ensuring that the input is of the expected type and format before your code runs.
 
 #### Non-interactive mode
 
-Non-interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files.
+The non-interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files.
 The argument `--plugin-dir` as input with the measurement plugin directory builds a single measurement. The inputs should be enclosed within double quotes.
-Arguments `--base-dir` and `--selected-meas-plugins` are used for building multiple measurements, where the `--base-dir` has the input of base directory of the measurement plugins and `--selected-meas-plugins` has the input of comma-separated measurement plugin names under that base directory or `dot(.)` to build all the available measurement plugins under that base directory. It validates the user provided input and throws necessary warnings in the CLI.
+Arguments `--base-dir` and `--selected-meas-plugins` are used for building multiple measurements, where the `--base-dir` has the input of base directory of the measurement plugins and `--selected-meas-plugins` has the input of comma-separated measurement plugin names under that base directory or `dot(.)` to build all the available measurement plugins under that base directory. It validates the user-provided input and throws necessary warnings in the CLI.
 
 Arguments like `--plugin-dir, --base-dir, --selected-meas-plugins` can be used with their corresponding shorthand versions `-p, -b, -s` in non-interactive mode.
 
@@ -61,7 +60,7 @@ Arguments like `--plugin-dir, --base-dir, --selected-meas-plugins` can be used w
 #### Interactive mode
 
 Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
-It initially prompts the user with the base directory of measurement plugin and list down the available measurements for better user experience. User can select the measurement plugin by its index number to build the packages. Once the package is built, the prompt will ask user for the next plugin.
+It initially prompts the user with the base directory of the measurement plugin and lists down the available measurements for a better user experience. Users can select the measurement plugin by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plugin.
 Note: User can enter (dot) '.' to build all measurements.
 
 #### Logger implementation
@@ -72,24 +71,24 @@ Two types of loggers have been implemented in this tool, one is `console logger`
 For example,
 ![file_logger](file_logger.png)
 
-Initially, the console logger gets loaded and then the file logger gets loaded. Here in the file logger all the console messages along with any exception messages and its traceback will be logged.
+Initially, the console logger gets loaded and then the file logger gets loaded. Here in the file logger all the console messages along with any exception messages and their trace back will be logged.
 
-The log file will be created under the folder `NI-Measurement-Plugin-Package-Builder/Logs`, these folders will be created during the execution of the tool, if not exists.
-The tool will create those folders in either **User's My Documents directory path** or **Public Documents directory path** based on the available permissions. If not, it will utilize the user provided input path.
+The log file will be created under the folder `NI-Measurement-Plugin-Package-Builder/Logs`, these folders will be created during the execution of the tool, if it does not exist.
+The tool will create those folders in either **User's My Documents directory path** or **Public Documents directory path** based on the available permissions. If not, it will utilize the user-provided input path.
 
 ### Building measurement packages
 
 #### Creating required files
 
-For building the measurement plugin packages, it requires a certain template.
+Building the measurement plugin packages, requires a certain template.
 
 ![required_files](template_files_heirarchy.png)
 
-Control folder contains a single file `control` which has information about the maintainer, version, system architecture etc., Some of that information has been from the `pyproject.toml`, if the pyproject.toml doesn't have this information default values would be used in that place.
+The Control folder contains a single file `control` which has information about the maintainer, version and system architecture, etc. Some of that information has been from the `pyproject.toml`, if the pyproject.toml doesn't have this information default values would be used in that place.
 
 ![control_file](control_file.png)
 
-Data folder contains the copied measurement plugins files under the separate folder with measurement name and `instructions` file contains the information about storing the measurement files in the `discovery services` after installation of the measurement package.
+The Data folder contains the copied measurement plugin files under the separate folder with the measurement name and `instructions` file contains the information about storing the measurement files in the `discovery services` after installation of the measurement package.
 
 ![instructions_file](instructions.png)
 
@@ -105,11 +104,11 @@ Once the required files have been created under the respective folders. The tool
 
 - Run the command to install the whl file, `pip install <path_to_ni_measurement_plugin_package_builder-X_X_X-py3-none-any.whl>`
 
-- There are two ways to which user can build packages,
+- There are two ways in which users can build packages,
   - Non-interactive mode
   - interactive mode
 
-#### Non interactive mode
+#### Non-interactive mode
 
 - To build a single measurement plugin, run the command
   `ni-measurement-plugin-package-builder --plugin-dir <measurement_plugin_directory>`
@@ -135,7 +134,7 @@ Once the required files have been created under the respective folders. The tool
   `ni-measurement-plugin-package_builder -i`
 - Users will be prompted to enter the required inputs for building measurements.
 - To build multiple measurement plugins, the parent directory containing the measurement plugin folders must be provided.
-- Users can provide comma separated measurement plugin indexes, for building measurements.
+- Users can provide comma-separated measurement plugin indexes, for building measurements.
 - The command line interface will show the directory where the .nipkg files are generated.
   ![interactive_mode](interactive_mode.png)
 
