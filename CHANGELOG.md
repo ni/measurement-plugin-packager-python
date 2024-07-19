@@ -10,7 +10,7 @@ And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Transferring the sub folders inside the measurement plugins for building packages other than `cache/env` folders.
+- Transferring the subfolders inside the measurement plugins for building packages other than some unwanted files and folders.
 
 ## [1.3.0-dev1] - 2024-07-19
 
@@ -22,7 +22,7 @@ And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Integrate `nisystemlink-feeds-manager` for uploading the measurement packages to systemlink.
+- Integrate `nisystemlink-feeds-manager` for uploading the measurement packages to SystemLink.
 - Support for comma-separated inputs for `interactive mode`.
 
 ## [1.2.0-dev2] - 2024-06-18
