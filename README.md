@@ -1,8 +1,8 @@
-# NI Measurement Plugin Package builder
+# NI Measurement Plug-in Package builder
 
 ## Description
 
-NI Measurement Plugin Package builder enables user to build Python Measurement plugins as NI package files and uploading it to SystemLink feeds.
+NI Measurement Plug-in Package builder enables user to build Python Measurement plug-ins as NI package files and uploading it to SystemLink feeds.
 
 ## Prerequisites
 
@@ -36,10 +36,10 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
 
 ### Non-interactive mode
 
-- To build a single measurement plugin, run the following command,
+- To build a single measurement plug-in, run the following command,
     `ni-measurement-plugin-package-builder --plugin-dir <measurement_plugin_directory>`
     Example: `ni-measurement-plugin-package-builder --plugin-dir "C:\Users\examples\sample_measurement"`
-- To build multiple measurement plugins, run the following command,
+- To build multiple measurement plug-ins, run the following command,
     `ni-measurement-plugin-package-builder --base-dir <measurement_plugin_base_directory> --selected-meas-plugins <list_of_comma_separated_meas_plugins>`
     Example: `ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement"`
 - To upload the single measurement package to systemlink, run the following command,
@@ -52,13 +52,13 @@ NI Measurement Plugin Package builder enables user to build Python Measurement p
 
 ### Interactive mode
 
-- To build multiple measurement plugins, the parent directory containing the measurement plugin folders must be provided.
+- To build multiple measurement plug-ins, the parent directory containing the measurement plug-in folders must be provided.
 - To start the tool in interactive mode, run the following command
     `ni-measurement-plugin-package-builder -i`
 
 ## Note
 
-- Require Internet access to install the external dependencies of NI Measurement Plugin Package builder.
+- Require Internet access to install the external dependencies of NI Measurement Plug-in Package builder.
 - For uploading the packages, if the API URL and Workspace are not provided then the `SystemLink client configuration` will be utilized, whereas API key and Feed name must be provided.
 
 ## Reference Link

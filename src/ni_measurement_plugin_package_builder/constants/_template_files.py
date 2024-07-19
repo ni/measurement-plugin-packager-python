@@ -1,6 +1,6 @@
 """Constants utitlized for creation of Control and Instruction files."""
 
-MEASUREMENT_SERVICES_PATH = "C:\\ProgramData\\National Instruments\\MeasurementLink\\Services\\"
+MEASUREMENT_SERVICES_PATH = "C:\\ProgramData\\National Instruments\\Plug-Ins\\Measurements\\"
 NIPKG_EXE = "C:\\Program Files\\National Instruments\\NI Package Manager\\nipkg.exe"
 PACKAGES = "packages"
 
