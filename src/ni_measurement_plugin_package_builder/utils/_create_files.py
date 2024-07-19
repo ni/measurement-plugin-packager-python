@@ -27,9 +27,9 @@ ignore_dirs = [
     "coverage.xml",
 ]
 
+
 def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
-    """Copy the contents of the folders except few `files/folders` and place it in
-the destination path.
+    """Copy the contents of the folders except few `files/folders` and place it in the destination path. # noqa: W505.
 
     Args:
         src_path (Path): Source folder path.
