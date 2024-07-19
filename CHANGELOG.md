@@ -5,6 +5,13 @@ All notable changes to this library will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.3.0-dev2] - 2024-07-19
+
+### Fixed
+
+- Transferring the sub folders inside the measurement plugins for building packages other than `cache/env` folders.
+
 ## [1.3.0-dev1] - 2024-07-19
 
 ### Changed

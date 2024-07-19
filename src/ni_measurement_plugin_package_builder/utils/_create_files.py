@@ -13,6 +13,20 @@ from ni_measurement_plugin_package_builder.constants import (
 )
 from ni_measurement_plugin_package_builder.models import PackageInfo
 
+ignore_dirs = [
+    ".venv",
+    "__pycache__",
+    ".cache",
+    "dist",
+    ".vscode",
+    ".vs",
+    ".env",
+    "poetry.lock",
+    ".mypy_cache",
+    ".pytest_cache",
+    "coverage.xml",
+]
+
 
 def transfer_measurement_files(
     template_measurement_folder_path: str,
@@ -30,10 +44,15 @@ def transfer_measurement_files(
     src_path = Path(measurement_plugin_path)
     dest_path = Path(template_measurement_folder_path)
 
-    # Iterate over all files in the source directory.
+    # Iterate over all files and directories in the source directory
     for item in src_path.iterdir():
-        if item.is_file():
-            shutil.copy2(item, dest_path / item.name)
+        if item.name in ignore_dirs:
+            continue
+        dest_item = dest_path / item.name
+        if item.is_dir():
+            shutil.copytree(item, dest_item)
+        else:
+            shutil.copy2(item, dest_item)
 
 
 def create_template_folders(
