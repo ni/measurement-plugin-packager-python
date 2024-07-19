@@ -5,6 +5,11 @@ All notable changes to this library will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0-dev1] - 2024-07-19
+
+### Changed
+
+- Updated the Measurement plugin path for discovery services as per the latest release.
 
 ## [1.3.0-dev0] - 2024-07-18
 
