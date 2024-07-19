@@ -1,4 +1,4 @@
-"""Helper functions for creating the files for NI Measurement Plugin Package Builder."""
+"""Helper functions for creating the files for NI Measurement Plug-In Package Builder."""
 
 import os
 import platform

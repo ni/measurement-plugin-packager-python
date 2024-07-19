@@ -1,4 +1,4 @@
-"""Helper functions for NI Measurement Plugin Package Builder."""
+"""Helper functions for NI Measurement Plug-In Package Builder."""
 
 import os
 import subprocess
@@ -44,11 +44,11 @@ def valid_folder_path(path: str) -> bool:
 
 
 def display_available_measurements(logger: Logger, measurement_plugins: List[str]) -> None:
-    """Display available measurement plugins in CLI.
+    """Display available measurement plug-ins in CLI.
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugins (List[str]): List of measurement plugins.
+        measurement_plugins (List[str]): List of measurement plug-ins.
 
     Returns:
         None.
@@ -61,14 +61,14 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[str
 
 
 def validate_meas_plugin_files(path: str, logger: Logger) -> bool:
-    """Validate Measurement Plugin files.
+    """Validate measurement plug-in files.
 
     Args:
         path (str): Measurement Plugin path.
         logger (Logger): Logger object.
 
     Returns:
-        bool: True if valid measurement plugin folder else False.
+        bool: True if valid measurement plug-in folder else False.
     """
     pyproject_path = os.path.join(path, PyProjectToml.FILE_NAME)
     measurement_file_path = os.path.join(path, FileNames.MEASUREMENT_FILE)
@@ -95,15 +95,15 @@ def validate_selected_meas_plugins(
     measurement_plugins: List[str],
     logger: Logger,
 ) -> None:
-    """Validate the selected measurement plugins in `non-interactive mode`.
+    """Validate the selected measurement plug-ins in `non-interactive mode`.
 
     Args:
-        selected_meas_plugins (str): User selected measurement plugins.
-        measurement_plugins (List[str]): Measurement plugins.
+        selected_meas_plugins (str): User selected measurement plug-ins.
+        measurement_plugins (List[str]): Measurement plug-ins.
         logger (Logger): Logger object.
 
     Raises:
-        InvalidInputError: if any invalid input in the selected measurement plugins.
+        InvalidInputError: if any invalid input in the selected measurement plug-ins.
 
     Returns:
         None.
@@ -120,13 +120,13 @@ def validate_selected_meas_plugins(
 
 
 def get_measurement_plugins(measurement_plugins: List[str]) -> Dict[str, str]:
-    """Get measurement plugins with indexes.
+    """Get measurement plug-ins with indexes.
 
     Args:
-        measurement_plugins (List[str]): List of measurement plugins.
+        measurement_plugins (List[str]): List of measurement plug-ins.
 
     Returns:
-        Dict[str, str]: Measurement plugins with indexes.
+        Dict[str, str]: Measurement plug-ins with indexes.
     """
     measurement_plugins_with_indexes = {}
     for index, measurement_name in enumerate(measurement_plugins):
@@ -159,7 +159,7 @@ def get_folders(folder_path: str, logger: Logger) -> List[str]:
 
 
 def get_ni_meas_package_builder_path(logger: Logger) -> Union[str, None]:
-    """Get Folder path of `NI Measurement Plugin Package Builder`.
+    """Get Folder path of `NI Measurement Plug-in Package Builder`.
 
     Args:
         logger (Logger): Logger object.
@@ -258,11 +258,11 @@ def get_publish_package_client(
 
 
 def build_meas_package(logger: Logger, measurement_plugin_path: str) -> Union[str, None]:
-    """Build measurement plugin as NI package file.
+    """Build measurement plug-in as NI package file.
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugin_path (str): Measurement plugin path.
+        measurement_plugin_path (str): Measurement plug-in path.
 
     Returns:
         Union[str, None]: Built measurement package file path.
@@ -316,8 +316,8 @@ def publish_meas_packages(
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugin_base_path (str): Measurement plugin base path.
-        measurement_plugins (List[str]): List of measurement plugins.
+        measurement_plugin_base_path (str): Measurement plug-in base path.
+        measurement_plugins (List[str]): List of measurement plug-ins.
         publish_package_client (PublishPackagesToSystemLink): Client for publish packages to SystemLink. # noqa: W505
         upload_package_info (UploadPackageInfo): Information about the package to be uploaded.
 

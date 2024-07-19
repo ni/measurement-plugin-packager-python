@@ -1,4 +1,4 @@
-"""Implementation of non-interactive mode for NI measurement plugin package builder."""
+"""Implementation of non-interactive mode for NI Measurement Plug-In Package Builder."""
 
 from logging import Logger
 

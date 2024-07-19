@@ -1,4 +1,4 @@
-"""Implementation of NI Measurement Plugin Package Builder."""
+"""Implementation of NI Measurement Plug-In Package Builder."""
 
 import subprocess
 from pathlib import Path
@@ -76,8 +76,8 @@ def run(
     feed_name: Optional[str],
     overwrite: Optional[bool],
 ) -> None:
-    """NI Measurement Plugin Package Builder is a Command line tool for building NI package file\
- for python measurement plugins and uploading it to SystemLink Feeds."""
+    """NI Measurement Plug-In Package Builder is a Command line tool for building NI package file\
+ for python measurement plug-ins and uploading it to SystemLink Feeds."""
     try:
         logger = initialize_logger(name="console_logger")
         logger.info(UserMessages.STARTED_EXECUTION)

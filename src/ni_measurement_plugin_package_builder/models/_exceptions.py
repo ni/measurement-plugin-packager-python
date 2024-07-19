@@ -1,4 +1,4 @@
-"""Custom exceptions for NI Measurement Plugin Package Builder."""
+"""Custom exceptions for NI Measurement Plug-In Package Builder."""
 
 
 class InvalidInputError(Exception):
