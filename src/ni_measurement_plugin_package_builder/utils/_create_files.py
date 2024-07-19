@@ -27,6 +27,27 @@ ignore_dirs = [
     "coverage.xml",
 ]
 
+def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
+    """Copy the contents of the folders except few `files/folders` and place it in
+the destination path.
+
+    Args:
+        src_path (Path): Source folder path.
+        dest_path (Path): Destination folder path.
+
+    Returns:
+        None.
+    """
+    for item in src_path.iterdir():
+        if item.name in ignore_dirs:
+            continue
+        dest_item = dest_path / item.name
+        if item.is_dir():
+            dest_item.mkdir(parents=True, exist_ok=True)
+            copy_folder_contents(item, dest_item)
+        else:
+            shutil.copy2(item, dest_item)
+
 
 def transfer_measurement_files(
     template_measurement_folder_path: str,
@@ -44,13 +65,14 @@ def transfer_measurement_files(
     src_path = Path(measurement_plugin_path)
     dest_path = Path(template_measurement_folder_path)
 
-    # Iterate over all files and directories in the source directory
+    # Iterate over all files and directories in the source directory.
     for item in src_path.iterdir():
         if item.name in ignore_dirs:
             continue
         dest_item = dest_path / item.name
         if item.is_dir():
-            shutil.copytree(item, dest_item)
+            dest_item.mkdir(parents=True, exist_ok=True)
+            copy_folder_contents(item, dest_item)
         else:
             shutil.copy2(item, dest_item)
 
