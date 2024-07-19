@@ -1,6 +1,6 @@
 """CLI help Messages."""
 
-DEFAULT_DESCRIPTION = "Python Measurement Plugin"
+DEFAULT_DESCRIPTION = "Python Measurement Plug-In"
 DEFAULT_VERSION = "1.0.0"
 DEFAULT_AUTHOR = "National Instruments"
 YES = "y"
