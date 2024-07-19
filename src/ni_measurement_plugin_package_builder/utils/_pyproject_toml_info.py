@@ -92,7 +92,7 @@ def get_measurement_package_info(measurement_plugin_path: str, logger: Logger) -
     """Get measurement package information from pyproject.toml.
 
     Args:
-        measurement_plugin_path (str): Measurement Plugin path.
+        measurement_plugin_path (str): Measurement Plug-in path.
         logger (Logger): Logger object.
 
     Returns:

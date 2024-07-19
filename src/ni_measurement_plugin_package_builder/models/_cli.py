@@ -1,4 +1,4 @@
-"""Models for NI Measurement Plugin Package Builder CLI Arguments."""
+"""Models for NI Measurement Plug-In Package Builder CLI Arguments."""
 
 import os
 from typing import Optional

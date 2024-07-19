@@ -1,4 +1,4 @@
-"""Implementation of interactive mode for NI measurement plugin package builder."""
+"""Implementation of interactive mode for NI Measurement Plug-In Package builder."""
 
 from logging import Logger
 
@@ -39,7 +39,7 @@ def publish_meas_packages_in_interactive_mode(
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugin_base_path (str): Measurement plugins parent path.
+        measurement_plugin_base_path (str): Measurement plug-ins parent path.
 
     Raises:
         InvalidInputError: If API Key and Feed Name not provided by the user.

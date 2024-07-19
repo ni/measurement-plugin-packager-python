@@ -39,14 +39,14 @@ def validate_user_input_for_meas_plugins(
     user_inputs: List[str],
     measurement_plugins: Dict[str, str],
 ) -> Union[List[str], None]:
-    """Validate the user inputs for measurement plugin indexes.
+    """Validate the user inputs for measurement plug-in indexes.
 
     Args:
-        user_inputs (List[str]): User inputs for measurement plugin indexes.
-        measurement_plugins (Dict[str, str]): List of Measurement Plugins.
+        user_inputs (List[str]): User inputs for measurement plug-in indexes.
+        measurement_plugins (Dict[str, str]): List of measurement plug-ins.
 
     Returns:
-        Union[List[str], None]: User selected measurement plugins.
+        Union[List[str], None]: User selected measurement plug-ins.
     """
     if user_inputs == [ALL_MEAS]:
         user_selected_measurements = list(measurement_plugins.values())
@@ -71,7 +71,7 @@ def get_user_inputs_in_interactive_mode(
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugins_base_path (str): Measurement plugin base path.
+        measurement_plugins_base_path (str): Measurement plug-in base path.
 
     Returns:
         Union[List[str], None]: User selected measurement infomation.
