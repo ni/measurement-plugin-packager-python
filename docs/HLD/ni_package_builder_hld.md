@@ -35,9 +35,9 @@ Team: ModernLab Success
 
 ### Workflow
 
-Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the inputs required and the outputs created. It validates the provided measurement plug-in by checking for the required files `measurement.py, pyproject.toml, start.py` for running the measurement in discovery services. If any one of these files gets missed, then it warns the user with the appropriate message and does not build the package. CLI should inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path should be prompted on the CLI to check and debug the issue.
+Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `NI SystemLink Feeds Manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the inputs required and the outputs created. It validates the provided measurement plug-in by checking for the required files `measurement.py, pyproject.toml, start.py` for running the measurement in discovery services. If any one of these files gets missed, then it warns the user with the appropriate message and does not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
 
-This package should support interactive and non-interactive mode for building the packages.
+This package will support interactive and non-interactive mode for building the packages.
 
 #### Non-interactive mode
 
@@ -74,10 +74,10 @@ NISystemLink Feeds Manager is a Python package to automate the process of publis
 - Selected Measurement Plugins: List of available measurements in the provided base directory for building those packages.
 - Inputs required for uploading packages to SystemLink
   - API URL: URL of the SystemLink API Documentation.
-  - API KEY: Authentication key for uploading the built measurement packages to SystemLink.
-  - FEED NAME: Name of the feed under which the packages need to be uploaded.
-  - WORKSPACE: Name of the workspace for which the user has the access to create feed and upload packages.
-  - OVERWRITE: Boolean value for overwriting the already existing packages.
+  - API Key: Authentication key for uploading the built measurement packages to SystemLink.
+  - Feed Name: Name of the feed under which the packages need to be uploaded.
+  - Workspace: Name of the workspace for which the user has the access to create feed and upload packages.
+  - Overwrite: Boolean value for overwriting the already existing packages.
 
 Note:
   - For uploading the packages, if the API URL and Workspace are not provided then the
