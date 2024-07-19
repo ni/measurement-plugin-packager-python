@@ -10,7 +10,11 @@ And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Transferring the subfolders inside the measurement plugins for building packages other than some unwanted files and folders.
+- Copy the subfolders inside the measurement plugin directory for building .nipkg file.
+
+### Added
+
+- Ignore copying the files/folder like `.venv, __pycache__`. 
 
 ## [1.3.0-dev1] - 2024-07-19
 

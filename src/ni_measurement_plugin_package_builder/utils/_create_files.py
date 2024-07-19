@@ -49,34 +49,6 @@ def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
             shutil.copy2(item, dest_item)
 
 
-def transfer_measurement_files(
-    template_measurement_folder_path: str,
-    measurement_plugin_path: str,
-) -> None:
-    """Transfer measurement files to template data folder.
-
-    Args:
-        template_measurement_folder_path (str): Template measurement folder path.
-        measurement_plugin_path (str): Measurement plugin path from user.
-
-    Returns:
-        None.
-    """
-    src_path = Path(measurement_plugin_path)
-    dest_path = Path(template_measurement_folder_path)
-
-    # Iterate over all files and directories in the source directory.
-    for item in src_path.iterdir():
-        if item.name in ignore_dirs:
-            continue
-        dest_item = dest_path / item.name
-        if item.is_dir():
-            dest_item.mkdir(parents=True, exist_ok=True)
-            copy_folder_contents(item, dest_item)
-        else:
-            shutil.copy2(item, dest_item)
-
-
 def create_template_folders(
     mlink_package_builder_path: str,
     measurement_plugin_path: str,
@@ -106,9 +78,10 @@ def create_template_folders(
 
     os.makedirs(control_path, exist_ok=True)
     os.makedirs(template_measurement_folder_path, exist_ok=True)
-    transfer_measurement_files(
-        template_measurement_folder_path=template_measurement_folder_path,
-        measurement_plugin_path=measurement_plugin_path,
+
+    copy_folder_contents(
+        src_path=Path(measurement_plugin_path),
+        dest_path=Path(template_measurement_folder_path),
     )
     create_control_file(
         control_folder_path=control_path,
