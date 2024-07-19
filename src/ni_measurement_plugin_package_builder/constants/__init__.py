@@ -1,4 +1,4 @@
-"""Initialize the NI Measurement Plugin Package Builder constants."""
+"""Initialize the NI Measurement Plug-in Package Builder constants."""
 
 # flake8: noqa
 

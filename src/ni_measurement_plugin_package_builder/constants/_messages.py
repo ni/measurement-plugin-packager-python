@@ -1,24 +1,24 @@
-"""NI Measurement Plugin Package Builder status messages."""
+"""NI Measurement Plug-In Package Builder status messages."""
 
 
 class UserMessages:
     """User Facing console messages."""
 
-    STARTED_EXECUTION = "Starting the NI Measurement Plugin Package Builder..."
+    STARTED_EXECUTION = "Starting the NI Measurement Plug-In Package Builder..."
     CHECK_LOG_FILE = "Please check the log file for further details."
     LOG_FILE_LOCATION = "Log File Directory: {log_dir}"
     PROCESS_COMPLETED = "Process Completed."
     VERSION = "Package Version - {version}"
-    INVALID_MEAS_DIR = "Invalid measurement plugin directory - '{dir}'"
-    INVALID_BASE_DIR = "Invalid measurement plugin base directory - '{dir}',\
-\nPlease provide the parent directory containing measurement plugin folders."
+    INVALID_MEAS_DIR = "Invalid measurement plug-in directory - '{dir}'"
+    INVALID_BASE_DIR = "Invalid measurement plug-in base directory - '{dir}',\
+\nPlease provide the parent directory containing measurement plug-in folders."
     PACKAGE_BUILT = "NI Package for the measurement '{name}' built successfully at '{dir}'"
     NO_TOML_FILE = "The 'pyproject.toml' file is not found in '{dir}'"
     NO_MEAS_FILE = "The 'measurement.py' file is not found in '{dir}'"
     NO_BATCH_FILE = "The 'start.bat' Batch file is not found in '{dir}'"
     SUBPROCESS_ERR = "Command '{cmd}' returned non-zero exit status {returncode}."
     TEMPLATE_FILES_COMPLETED = "Created required components to build NI package for the python\
- measurement plugin."
+ measurement plug-in."
     FAILED_PUBLIC_DIR = "Failed to get PublicDocuments directory. Using UserDocuments for Log file."
     FAILED_USER_DIR = "Failed to get UserDocuments directory. Using Temp directory for\
  Log file."
@@ -37,7 +37,7 @@ class UserMessages:
  the measurement packages."
     PACKAGE_UPLOADED = "Measurement package '{package_name}' uploaded to the SystemLink Feed \
 '{feed_name}' successfully."
-    INVALID_MEAS_PLUGIN = "Invalid Measurement Plugin folder, as it is missing one or more of the\
+    INVALID_MEAS_PLUGIN = "Invalid measurement plug-in folder, as it is missing one or more of the\
  required files: 'measurement.py', 'start.bat', or 'pyproject.toml'."
     PACKAGE_UPLOAD_FAILED = "Failed to upload the package '{package}' to SystemLink feed '{name}'."
     API_URL_KEY_MISSING = "{key} key found missing in SystemLink Client configuration files."
@@ -50,12 +50,12 @@ class InteractiveModeMessages:
     INTERACTIVE_MODE_ON = "Interactive mode enabled."
     DIR_NOT_REQUIRED = "Interactive mode requires only the '-i' argument, and no other arguments\
  are necessary."
-    MEASUREMENT_NUMBER = "Enter Measurement Plugin index ({start}-{end}) to build\
+    MEASUREMENT_NUMBER = "Enter measurement plug-in index ({start}-{end}) to build\
  (. to build all): "
     CONTINUE_BUILDING = "Do you want to continue? (y/n): "
     AVAILABLE_MEASUREMENTS = "Available measurements: "
-    INVALID_INPUT = "Invalid measurement plugin indexes {numbers}, please provide valid\
- plugin indexes."
+    INVALID_INPUT = "Invalid measurement plug-in indexes {numbers}, please provide valid\
+ plug-in indexes."
     UPLOAD_PACKAGE = "Do you want to upload the measurement packages to SystemLink feeds? (y/n): "
     ENTER_API_KEY = "Enter the SystemLink API Key: "
     ENTER_API_URL = "Enter the SystemLink API URL: "
@@ -66,7 +66,7 @@ class InteractiveModeMessages:
  measurement packages."
     OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n): "
     INPUT_MEAS_PLUGIN_BASE_DIR = "In Interactive mode, User must provide the parent directory\
- containing the measurement plugin folders.\nEnter the Measurement Plugins parent directory: "
+ containing the measurement plug-in folders.\nEnter the measurement plug-ins parent directory: "
     DEFAULT_SYSTEMLINK_CONFIG = "API URL and Workspace will be fetched from\
  'SystemLink Client' configuration by default."
 
@@ -75,8 +75,9 @@ class NonInteractiveModeMessages:
     """Non interactive mode messages."""
 
     NON_INTERACTIVE_MODE = "Non-interactive mode enabled"
-    INVALID_SELECTED_PLUGINS = "Invalid plugin name '{input}' provided in '--selected-meas-plugins'\
-.\nPlease enter comma-separated names (Eg: sample_measurement,test_measurement). Or, '.'\
+    INVALID_SELECTED_PLUGINS = "Invalid measurement plug-in name '{input}'\
+ provided in '--selected-meas-plugins'.\nPlease enter comma-separated names\
+ (Eg: sample_measurement,test_measurement). Or, '.'\
  to build all the available measurements.\nUse interactive mode if the folder name has comma."
     UNWANTED_SYSTEMLINK_CREDENTIALS = "Please provide the argument '-u or --upload-packages' for\
  uploading the packages."

@@ -1,3 +1,3 @@
-"""NI Measurement Plugin Package Builder utility functions."""
+"""NI Measurement Plug-In Package Builder utility functions."""
 
 # flake8: noqa
