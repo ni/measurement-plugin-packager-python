@@ -35,7 +35,7 @@ Team: ModernLab Success
 
 ### Workflow
 
-Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `NI SystemLink Feeds Manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the inputs required and the outputs created. It validates the provided measurement plug-in by checking for the required files `measurement.py, pyproject.toml, start.py` for running the measurement in discovery services. If any one of these files gets missed, then it warns the user with the appropriate message and does not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
+Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `NI SystemLink Feeds Manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement and uploading to SystemLink. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the inputs required and the outputs created. It validates the provided measurement plug-in by checking for the required files `measurement.py, pyproject.toml, start.py` for running the measurement in discovery services. If any one of these files gets missed, then it warns the user with the appropriate message and should not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
 
 This package will support interactive and non-interactive mode for building the packages.
 
@@ -46,7 +46,7 @@ The non-interactive mode involves interaction with the tool through arguments. I
 #### Interactive mode
 
 Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
-It initially prompts the user with the base directory of the measurement plug-in and lists down the available measurements for a better user experience. Users can select the measurement plug-in by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plug-in.
+It initially prompts the user with the base directory of the measurement plug-in, information about uploading the packages and lists down the available measurements for a better user experience. Users can select the measurement plug-in by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plug-in.
 
 Note: The following files present in the measurement plug-ins will be ignored while building the .nipkg files,
 
