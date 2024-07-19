@@ -6,17 +6,15 @@
   - [Links to relevant work items](#links-to-relevant-work-items)
   - [Implementation and Design](#implemenation-and-design)
     - [Workflow](#work-flow)
-    - [NISystemLink Feeds Manager](#nisystemlink-feeds-manager)
-    - [CLI](#cli)
-        - [Non interactive mode](#non-interactive-mode)
+        - [Non-interactive mode](#non-interactive-mode)
         - [Interactive mode](#interactive-mode)
-        - [Logger implementation](#logger-implementation)
+    - [NISystemLink Feeds Manager](#nisystemlink-feeds-manager)
+    - [User Inputs](#user-inputs)
+    - [Logger implementation](#logger-implementation)
     - [Building measurement packages](#building-measurement-packages)
         - [Creating required files](#creating-required-files)
         - [Building measurements using nipkg exe](#building-measurements-using-nipkg-exe)
-    - [Installation](#installation)
-        - [Non-interactive mode](#non-interactive-mode)
-        - [Interactive mode](#interactive-mode)
+  - [Installation](#installation)
   - [Alternative implementations and designs](#alternative-implementations-and-designs)
   - [Open issues](#open-issues)
 
@@ -37,9 +35,20 @@ Team: ModernLab Success
 
 ### Workflow
 
-Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and the output created. It validates the provided measurement plug-in by checking for files `measurement.py, pyproject.toml, start.py` as these files are required for running the measurement in discovery services. If any one of these files gets missed it warns the user with the appropriate message and does not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
+Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the inputs required and the outputs created. It validates the provided measurement plug-in by checking for the required files `measurement.py, pyproject.toml, start.py` for running the measurement in discovery services. If any one of these files gets missed, then it warns the user with the appropriate message and does not build the package. CLI should inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path should be prompted on the CLI to check and debug the issue.
 
-For building measurements, the following files will be ignored,
+This package should support interactive and non-interactive mode for building the packages.
+
+#### Non-interactive mode
+
+The non-interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files. The inputs should be enclosed within double quotes. It validates the user-provided input and throws necessary warnings in the CLI.
+
+#### Interactive mode
+
+Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
+It initially prompts the user with the base directory of the measurement plug-in and lists down the available measurements for a better user experience. Users can select the measurement plug-in by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plug-in.
+
+Note: The following files present in the measurement plug-ins will be ignored while building the .nipkg files,
 
 - .venv
 - pycache
@@ -55,27 +64,25 @@ For building measurements, the following files will be ignored,
 
 ### NISystemLink Feeds Manager
 
-NISystemLink Feeds Manager is a Python package to automates the process of publishing packages by creating the feeds and uploading the packages to the feeds using SystemLink APIs. Please refer to this [HLD](https://github.com/ni/modernlab-ref-architecture/blob/nisystemlink-feeds-manager/nisystemlink_feeds_manager/docs/HLD/nisystemlink_feeds_manager.md) for more information about the package.
+NISystemLink Feeds Manager is a Python package to automate the process of publishing packages by creating the feeds and uploading the packages to the feeds using SystemLink APIs. Please refer to this [HLD](https://github.com/ni/modernlab-ref-architecture/blob/nisystemlink-feeds-manager/nisystemlink_feeds_manager/docs/HLD/nisystemlink_feeds_manager.md) for more information about the package.
 
-### CLI
 
-Command Line Interface implemented for `ni-measurement-plugin-package-builder` using `click` module, please refer to this [link](https://click.palletsprojects.com/en/8.1.x/) to know more about the module. `click` is designed to be simple and easy to use. It provides decorators for defining commands and options, which makes the code more readable and maintainable. The module provides strong typing and validation for command-line parameters, ensuring that the input is of the expected type and format before your code runs.
+### User inputs
 
-#### Non-interactive mode
+- Measurement Plugin Directory: This directory is for building a single measurement plugin. Provide the path to the specific measurement plugin directory.
+- Measurement Plugin Base Directory: This directory is for building multiple measurement plugins. Provide the path to the base directory that contains all the measurement plugins.
+- Selected Measurement Plugins: List of available measurements in the provided base directory for building those packages.
+- Inputs required for uploading packages to SystemLink
+  - API URL: URL of the SystemLink API Documentation.
+  - API KEY: Authentication key for uploading the built measurement packages to SystemLink.
+  - FEED NAME: Name of the feed under which the packages need to be uploaded.
+  - WORKSPACE: Name of the workspace for which the user has the access to create feed and upload packages.
+  - OVERWRITE: Boolean value for overwriting the already existing packages.
 
-The non-interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files.
-The argument `--plugin-dir` as input with the measurement plugin directory builds a single measurement. The inputs should be enclosed within double quotes.
-Arguments `--base-dir` and `--selected-meas-plugins` are used for building multiple measurements, where the `--base-dir` has the input of base directory of the measurement plugins and `--selected-meas-plugins` has the input of comma-separated measurement plug-in names under that base directory or `dot(.)` to build all the available measurement plugins under that base directory. It validates the user-provided input and throws necessary warnings in the CLI.
-
-Arguments like `--plugin-dir, --base-dir, --selected-meas-plugins` can be used with their corresponding shorthand versions `-p, -b, -s` in non-interactive mode.
-
-![non_interactive_input_example](non_interactive_input_example.png)
-
-#### Interactive mode
-
-Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
-It initially prompts the user with the base directory of the measurement plug-in and lists down the available measurements for a better user experience. Users can select the measurement plug-in by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plug-in.
-Note: User can enter (dot) '.' to build all measurements.
+Note:
+  - For uploading the packages, if the API URL and Workspace are not provided then the
+  `SystemLink client configuration` will be utilized, whereas API key and Feed name must be provided.
+  - User can enter (dot) '.' to build all measurements in both the modes.
 
 #### Logger implementation
 
@@ -85,7 +92,7 @@ Two types of loggers have been implemented in this tool, one is `console logger`
 For example,
 ![file_logger](file_logger.png)
 
-Initially, the console logger gets loaded and then the file logger gets loaded. Here in the file logger all the console messages along with any exception messages and their trace back will be logged.
+Initially, the console logger gets loaded and then the file logger gets loaded. Here in the file logger all the console messages along with any exception messages and their traceback will be logged.
 
 The log file will be created under the folder `NI-Measurement-Plugin-Package-Builder/Logs`, these folders will be created during the execution of the tool, if it does not exist.
 The tool will create those folders in either **User's My Documents directory path** or **Public Documents directory path** based on the available permissions. If not, it will utilize the user-provided input path.
@@ -94,7 +101,7 @@ The tool will create those folders in either **User's My Documents directory pat
 
 #### Creating required files
 
-Building the measurement plug-in packages, requires a certain template.
+Building the measurement plug-in packages requires a certain template.
 
 ![required_files](template_files_heirarchy.png)
 
@@ -112,48 +119,10 @@ All these folders will be placed under the folder named with the `measurement pl
 
 Once the required files have been created under the respective folders. The tool executes some commands using these [instructions](https://www.ni.com/docs/en-US/bundle/package-manager/page/build-package-using-cli.html)
 
-### Installation
 
-- Open Command Prompt.
+## Installation
 
-- Run the command to install the whl file, `pip install <path_to_ni_measurement_plugin_package_builder-X_X_X-py3-none-any.whl>`
-
-- There are two ways in which users can build packages,
-  - Non-interactive mode
-  - interactive mode
-
-#### Non-interactive mode
-
-- To build a single measurement plug-in, run the command
-  `ni-measurement-plugin-package-builder --plugin-dir <measurement_plugin_directory>`
-  For example,
-  `ni-measurement-plugin-package-builder --plugin-dir "C:/Users/examples/sample_measurement"`
-- To build multiple measurement plug-ins, run the command
-  `ni-measurement-plugin-package-builder --base-dir <measurement_plugin_base_directory> --selected-meas-plugins <list_of_comma_separated_meas_plugins>`
-  For example,
-  `ni-measurement-plugin-package-builder --base-dir "C:/Users/examples" --selected-meas-plugins "sample_measurement,test_measurement"`
-- To upload the single measurement package to systemlink, run the following command,
-    `ni-measurement-plugin-package-builder --plugin-dir <measurement_plugin_directory> --upload-packages --api-url <systemlink_api_url> --api-key <systemlink_api_key> --workspace <workspace_name> --feed-name <name_of_the_feed>`
-    Example: `ni-measurement-plugin-package-builder --plugin-dir "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"`
-- To upload the multiple measurement packages to systemlink, run the following command,
-    `ni-measurement-plugin-package-builder --base-dir <measurement_plugin_base_directory> --selected-meas-plugins <list_of_comma_separated_meas_plugins> --upload-packages --api-url <systemlink_api_url> --api-key <systemlink_api_key> --workspace <workspace_name> --feed-name <name_of_the_feed>`
-    Example: `ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"`
-- Input arguments should be provided within double quotes.
-- For building multiple measurements both the required inputs will be required like base directory and selected measurement plug-ins.
-  ![non_interactive_mode](non_interactive_mode.png)
-
-#### Interactive mode
-
-- To start the tool in interactive mode, run the command
-  `ni-measurement-plugin-package_builder -i`
-- Users will be prompted to enter the required inputs for building measurements.
-- To build multiple measurement plug-ins, the parent directory containing the measurement plug-in folders must be provided.
-- Users can provide comma-separated measurement plug-in indexes, for building measurements.
-- The command line interface will show the directory where the .nipkg files are generated.
-  ![interactive_mode](interactive_mode.png)
-
-
-Note: For uploading the packages, if the API URL and Workspace are not provided then the `SystemLink client configuration` will be utilized, whereas API key and Feed name must be provided.
+This python package can be installed using the pip install <path_to_ni_measurement_plugin_package_builder-X_X_X-py3-none-any.whl command.
 
 ## Alternative implementations and designs
 
