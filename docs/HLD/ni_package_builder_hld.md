@@ -1,6 +1,6 @@
-# NI Measurement Plugin Package builder
+# NI Measurement Plug-In Package builder
 
-- [NI Measurement Plugin Package Builder](#ni-measurement-plugin-package-builder)
+- [NI Measurement Plug-In Package Builder](#ni-measurement-plug-in-package-builder)
   - [Who](#who)
   - [Problem statement](#problem-statement)
   - [Links to relevant work items](#links-to-relevant-work-items)
@@ -27,7 +27,7 @@ Team: ModernLab Success
 
 ## Problem statement
 
-- For the test engineer, building a Python measurement plugin involves a lot of tedious processes of creating files with the required information about packaging and running the `nipkg.exe` to build the measurement, and manually uploading those packages to SystemLink through the web server.
+- For the test engineer, building a Python measurement plug-in involves a lot of tedious processes of creating files with the required information about packaging and running the `nipkg.exe` to build the measurement, and manually uploading those packages to SystemLink through the web server.
 
 ## Links to relevant work items
 
@@ -37,7 +37,7 @@ Team: ModernLab Success
 
 ### Workflow
 
-Create a Python package `NI Measurement Plugin Package Builder` which builds Python measurement plugins as NI package files and uploads them to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and the output created. It validates the provided measurement plugin by checking for files `measurement.py, pyproject.toml, start.py` as these files are required for running the measurement in discovery services. If any one of these files gets missed it warns the user with the appropriate message and does not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
+Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and the output created. It validates the provided measurement plug-in by checking for files `measurement.py, pyproject.toml, start.py` as these files are required for running the measurement in discovery services. If any one of these files gets missed it warns the user with the appropriate message and does not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
 
 ### NISystemLink Feeds Manager
 
@@ -51,7 +51,7 @@ Command Line Interface implemented for `ni-measurement-plugin-package-builder` u
 
 The non-interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files.
 The argument `--plugin-dir` as input with the measurement plugin directory builds a single measurement. The inputs should be enclosed within double quotes.
-Arguments `--base-dir` and `--selected-meas-plugins` are used for building multiple measurements, where the `--base-dir` has the input of base directory of the measurement plugins and `--selected-meas-plugins` has the input of comma-separated measurement plugin names under that base directory or `dot(.)` to build all the available measurement plugins under that base directory. It validates the user-provided input and throws necessary warnings in the CLI.
+Arguments `--base-dir` and `--selected-meas-plugins` are used for building multiple measurements, where the `--base-dir` has the input of base directory of the measurement plugins and `--selected-meas-plugins` has the input of comma-separated measurement plug-in names under that base directory or `dot(.)` to build all the available measurement plugins under that base directory. It validates the user-provided input and throws necessary warnings in the CLI.
 
 Arguments like `--plugin-dir, --base-dir, --selected-meas-plugins` can be used with their corresponding shorthand versions `-p, -b, -s` in non-interactive mode.
 
@@ -60,7 +60,7 @@ Arguments like `--plugin-dir, --base-dir, --selected-meas-plugins` can be used w
 #### Interactive mode
 
 Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
-It initially prompts the user with the base directory of the measurement plugin and lists down the available measurements for a better user experience. Users can select the measurement plugin by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plugin.
+It initially prompts the user with the base directory of the measurement plug-in and lists down the available measurements for a better user experience. Users can select the measurement plug-in by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plug-in.
 Note: User can enter (dot) '.' to build all measurements.
 
 #### Logger implementation
@@ -80,7 +80,7 @@ The tool will create those folders in either **User's My Documents directory pat
 
 #### Creating required files
 
-Building the measurement plugin packages, requires a certain template.
+Building the measurement plug-in packages, requires a certain template.
 
 ![required_files](template_files_heirarchy.png)
 
@@ -88,11 +88,11 @@ The Control folder contains a single file `control` which has information about 
 
 ![control_file](control_file.png)
 
-The Data folder contains the copied measurement plugin files under the separate folder with the measurement name and `instructions` file contains the information about storing the measurement files in the `discovery services` after installation of the measurement package.
+The Data folder contains the copied measurement plug-in files under the separate folder with the measurement name and `instructions` file contains the information about storing the measurement files in the `discovery services` after installation of the measurement package.
 
 ![instructions_file](instructions.png)
 
-All these folders will be placed under the folder named with the `measurement plugin name` parallel to the `Logs` folder.
+All these folders will be placed under the folder named with the `measurement plug-in name` parallel to the `Logs` folder.
 
 #### Building measurements using nipkg exe
 
@@ -110,11 +110,11 @@ Once the required files have been created under the respective folders. The tool
 
 #### Non-interactive mode
 
-- To build a single measurement plugin, run the command
+- To build a single measurement plug-in, run the command
   `ni-measurement-plugin-package-builder --plugin-dir <measurement_plugin_directory>`
   For example,
   `ni-measurement-plugin-package-builder --plugin-dir "C:/Users/examples/sample_measurement"`
-- To build multiple measurement plugins, run the command
+- To build multiple measurement plug-ins, run the command
   `ni-measurement-plugin-package-builder --base-dir <measurement_plugin_base_directory> --selected-meas-plugins <list_of_comma_separated_meas_plugins>`
   For example,
   `ni-measurement-plugin-package-builder --base-dir "C:/Users/examples" --selected-meas-plugins "sample_measurement,test_measurement"`
@@ -125,7 +125,7 @@ Once the required files have been created under the respective folders. The tool
     `ni-measurement-plugin-package-builder --base-dir <measurement_plugin_base_directory> --selected-meas-plugins <list_of_comma_separated_meas_plugins> --upload-packages --api-url <systemlink_api_url> --api-key <systemlink_api_key> --workspace <workspace_name> --feed-name <name_of_the_feed>`
     Example: `ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"`
 - Input arguments should be provided within double quotes.
-- For building multiple measurements both the required inputs will be required like base directory and selected measurement plugins.
+- For building multiple measurements both the required inputs will be required like base directory and selected measurement plug-ins.
   ![non_interactive_mode](non_interactive_mode.png)
 
 #### Interactive mode
@@ -133,8 +133,8 @@ Once the required files have been created under the respective folders. The tool
 - To start the tool in interactive mode, run the command
   `ni-measurement-plugin-package_builder -i`
 - Users will be prompted to enter the required inputs for building measurements.
-- To build multiple measurement plugins, the parent directory containing the measurement plugin folders must be provided.
-- Users can provide comma-separated measurement plugin indexes, for building measurements.
+- To build multiple measurement plug-ins, the parent directory containing the measurement plug-in folders must be provided.
+- Users can provide comma-separated measurement plug-in indexes, for building measurements.
 - The command line interface will show the directory where the .nipkg files are generated.
   ![interactive_mode](interactive_mode.png)
 
@@ -147,4 +147,4 @@ No alternative implementations.
 
 ## Open issues
 
-- Measurement plugin name with commas cannot be used for building the measurement through non-interactive mode for multiple measurements.
+- Measurement plug-in name with commas cannot be used for building the measurement through non-interactive mode for multiple measurements.
