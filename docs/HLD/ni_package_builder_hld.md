@@ -39,6 +39,20 @@ Team: ModernLab Success
 
 Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `nisystemlink-feeds-manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the input required and the output created. It validates the provided measurement plug-in by checking for files `measurement.py, pyproject.toml, start.py` as these files are required for running the measurement in discovery services. If any one of these files gets missed it warns the user with the appropriate message and does not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
 
+For building measurements, the following files will be ignored,
+
+- .venv
+- pycache
+- .cache
+- dist
+- .vscode
+- .vs
+- .env
+- poetry.lock
+- .mypy_cache
+- .pytest_cache
+- coverage.xml
+
 ### NISystemLink Feeds Manager
 
 NISystemLink Feeds Manager is a Python package to automates the process of publishing packages by creating the feeds and uploading the packages to the feeds using SystemLink APIs. Please refer to this [HLD](https://github.com/ni/modernlab-ref-architecture/blob/nisystemlink-feeds-manager/nisystemlink_feeds_manager/docs/HLD/nisystemlink_feeds_manager.md) for more information about the package.
