@@ -48,7 +48,7 @@ The non-interactive mode involves interaction with the tool through arguments. I
 Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
 It initially prompts the user with the base directory of the measurement plug-in, information about uploading the packages, and lists down the available measurements for a better user experience. Users can select the measurement plug-in by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plug-in.
 
-Note: The following files present in the measurement plug-ins will be ignored while building the .nipkg files,
+Note: The following files present in the measurement plug-in folder will be ignored while building the .nipkg files,
 
 - .venv
 - pycache
@@ -69,15 +69,14 @@ NISystemLink Feeds Manager is a Python package to automate the process of publis
 
 ### User inputs
 
-- Measurement Plugin Directory: This directory is for building a single measurement plugin. Provide the path to the specific measurement plugin directory.
-- Measurement Plugin Base Directory: This directory is for building multiple measurement plugins. Provide the path to the base directory that contains all the measurement plugins.
-- Selected Measurement Plugins: List of available measurements in the provided base directory for building those packages.
-- Inputs required for uploading packages to SystemLink
-  - API URL: URL of the SystemLink API Documentation.
-  - API Key: Authentication key for uploading the built measurement packages to SystemLink.
-  - Feed Name: Name of the feed under which the packages need to be uploaded.
-  - Workspace: Name of the workspace for which the user has access to create feed and upload packages.
-  - Overwrite: Boolean value for overwriting the already existing packages.
+- To build a single measurement plugin, user should pass the measurement plugin directory.
+- To build multiple measurement plugins, user should provide the path to the base directory that contains all the measurement plugins and should pass the list of measurements plugins available in the base directory.
+- To upload the packages to SystemLink, user should pass the following inputs:
+    - SystemLink Server API URL
+    - SystemLink API Key
+    - Workspace - Name of the workspace for which the user has access to create feed and upload packages
+    - Feed Name - Name of the feed under which the packages need to be uploaded.
+    - Overwrite - Boolean value for overwriting the already existing packages.
 
 Note:
   - For uploading the packages, if the API URL and Workspace are not provided then the
@@ -122,7 +121,7 @@ Once the required files have been created under the respective folders. The tool
 
 ## Installation
 
-This python package can be installed using the pip install <path_to_ni_measurement_plugin_package_builder-X_X_X-py3-none-any.whl command.
+This python package can be installed using the pip install `<path_to_ni_measurement_plugin_package_builder-X_X_X-py3-none-any.whl>` command.
 
 ## Alternative implementations and designs
 
