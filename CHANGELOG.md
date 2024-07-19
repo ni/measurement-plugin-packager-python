@@ -10,7 +10,7 @@ And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Copy the subfolders inside the measurement plugin directory for building .nipkg file.
+- Copy the subfolders inside the measurement plug-in directory for building .nipkg file.
 
 ### Added
 
@@ -20,7 +20,7 @@ And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update the discovery services Measurement Plugin path.
+- Update the discovery services Measurement Plug-in path.
 
 ## [1.3.0-dev0] - 2024-07-18
 
@@ -53,7 +53,7 @@ And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support for selecting measurement from the provided list of measurements.
-- Autoupgradation of version for measurement packages using config.ini file
+- Auto upgrade of version for measurement packages using config.ini file
 
 ## [1.0.1] - 2024-05-21
 
@@ -65,4 +65,4 @@ And this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Building NI package files for python Measurement plugins from the provided plugin path.
+- Building NI package files for python Measurement plug-ins from the provided plug-in path.
