@@ -63,6 +63,9 @@ ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-
 Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
 It initially prompts the user with the base directory of the measurement plug-in, information about uploading the packages, and lists down the available measurements for a better user experience. Users can select the measurement plug-in by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plug-in.
 
+```
+ni-measurement-plugin-package-builder -i
+```
 ![interactive_mode_flow_chart](interactive_mode_flow_chart.png)
 
 Note: The following files present in the measurement plug-in folder will be ignored while building the .nipkg files,
