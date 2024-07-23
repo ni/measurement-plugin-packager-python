@@ -45,17 +45,27 @@ If any of these files get missed, it warns the user of the appropriate message a
 
 #### Non-interactive mode
 
-The non-interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files. The inputs should be enclosed within double quotes. It validates the user-provided input and throws necessary warnings in the CLI.
+The non-interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files and uploading them to SystemLink. The inputs should be enclosed within double quotes. It validates the user-provided input and throws necessary warnings in the CLI.
 
-To build single measurement
+To build single measurement,
 
 ```
 ni-measurement-plugin-package-builder --plugin-dir "C:\Users\examples\sample_measurement"
 ```
 
-To build multiple measurements
+To build multiple measurements,
 ```
 ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement"
+```
+
+To upload the single measurement package to SystemLink,
+```
+ni-measurement-plugin-package-builder --plugin-dir "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
+```
+
+To upload the multiple measurement packages to SystemLink,
+```
+ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
 ```
 
 #### Interactive mode
