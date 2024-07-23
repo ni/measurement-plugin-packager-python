@@ -8,7 +8,7 @@
     - [Workflow](#work-flow)
         - [Non-interactive mode](#non-interactive-mode)
         - [Interactive mode](#interactive-mode)
-    - [NISystemLink Feeds Manager](#nisystemlink-feeds-manager)
+    - [NI SystemLink Feeds Manager](#ni-systemlink-feeds-manager)
     - [User Inputs](#user-inputs)
     - [Logger implementation](#logger-implementation)
     - [Building measurement packages](#building-measurement-packages)
@@ -35,18 +35,35 @@ Team: ModernLab Success
 
 ### Workflow
 
-Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using `NI SystemLink Feeds Manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement and uploading to SystemLink. The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the inputs required and the outputs created. It validates the provided measurement plug-in by checking for the required files `measurement.py, pyproject.toml, start.py` for running the measurement in discovery services. If any one of these files gets missed, then it warns the user with the appropriate message and should not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, then the `log.txt` file path will be prompted on the CLI to check and debug the issue.
+Create a Python package `NI Measurement Plug-in Package Builder` which builds Python measurement plug-ins as NI package files and uploads them to SystemLink feeds using the `NI SystemLink Feeds Manager` package, thereby reducing the manual efforts of creating the files with packaging information and running the `nipkg.exe` to build the measurement and uploading to SystemLink.
 
-This package will support interactive and non-interactive modes for building the packages.
+The built measurements are available under the specific file location shown in the CLI. The CLI Tool prompts the user with necessary information about the inputs required and the outputs created.
+
+It validates the provided measurement plug-in by checking for the required files `measurement.py, pyproject.toml, start.py` for running the measurement in discovery services.
+
+If any of these files get missed, it warns the user of the appropriate message and does not build the package. CLI will inform the user about the progress of building packages and uploading to SystemLink through status messages. If any unexpected event occurs, the `log.txt` file path will be prompted on the CLI to check and debug the issue.
 
 #### Non-interactive mode
 
 The non-interactive mode involves interaction with the tool through arguments. It supports building both single and multiple measurement package files. The inputs should be enclosed within double quotes. It validates the user-provided input and throws necessary warnings in the CLI.
 
+To build single measurement
+
+```
+ni-measurement-plugin-package-builder --plugin-dir "C:\Users\examples\sample_measurement"
+```
+
+To build multiple measurements
+```
+ni-measurement-plugin-package-builder --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement"
+```
+
 #### Interactive mode
 
 Interactive mode involves interaction with the tool through prompting. Once the user runs the tool with this argument `-i`, it starts prompting the user for inputs.
 It initially prompts the user with the base directory of the measurement plug-in, information about uploading the packages, and lists down the available measurements for a better user experience. Users can select the measurement plug-in by its index number to build the packages. Once the package is built, the prompt will ask the user for the next plug-in.
+
+![interactive_mode_flow_chart](interactive_mode_flow_chart.png)
 
 Note: The following files present in the measurement plug-in folder will be ignored while building the .nipkg files,
 
@@ -62,15 +79,15 @@ Note: The following files present in the measurement plug-in folder will be igno
 - .pytest_cache
 - coverage.xml
 
-### NISystemLink Feeds Manager
+### NI SystemLink Feeds Manager
 
-NISystemLink Feeds Manager is a Python package to automate the process of publishing packages by creating the feeds and uploading the packages to the feeds using SystemLink APIs. Please refer to this [HLD](https://github.com/ni/modernlab-ref-architecture/blob/nisystemlink-feeds-manager/nisystemlink_feeds_manager/docs/HLD/nisystemlink_feeds_manager.md) for more information about the package.
+NI SystemLink Feeds Manager is a Python package to automate the process of publishing packages by creating the feeds and uploading the packages to the feeds using SystemLink APIs. Please refer to this [HLD](https://github.com/ni/modernlab-ref-architecture/blob/nisystemlink-feeds-manager/nisystemlink_feeds_manager/docs/HLD/nisystemlink_feeds_manager.md) for more information about the package.
 
 
 ### User inputs
 
-- To build a single measurement plugin, user should pass the measurement plugin directory.
-- To build multiple measurement plugins, user should provide the path to the base directory that contains all the measurement plugins and should pass the list of measurements plugins available in the base directory.
+- To build a single measurement plug-in package, users should pass the measurement plug-in directory.
+- To build multiple measurement plug-ins, users should provide the path to the base directory that contains all the measurement plug-ins and can pass the list of measurement plugins to be packaged from the base directory.
 - To upload the packages to SystemLink, user should pass the following inputs:
     - SystemLink Server API URL
     - SystemLink API Key
@@ -91,7 +108,7 @@ Two types of loggers have been implemented in this tool, one is `console logger`
 For example,
 ![file_logger](file_logger.png)
 
-Initially, the console logger gets loaded and then the file logger gets loaded. Here in the file logger all the console messages along with any exception messages and their traceback will be logged.
+Initially, the console logger gets loaded followed by the file logger. The file logger contains all messages, including console messages, as well as any exception messages and their traceback.
 
 The log file will be created under the folder `NI-Measurement-Plugin-Package-Builder/Logs`, these folders will be created during the execution of the tool, if it does not exist.
 The tool will create those folders in either **User's My Documents directory path** or **Public Documents directory path** based on the available permissions. If not, it will utilize the user-provided input path.
@@ -108,7 +125,7 @@ The Control folder contains a single file `control` which has information about 
 
 ![control_file](control_file.png)
 
-The Data folder contains the copied measurement plug-in files under the separate folder with the measurement name and `instructions` file contains the information about storing the measurement files in the `discovery services` after installation of the measurement package.
+The Data folder contains the copied measurement plug-in files under the separate folder with the measurement name and the `instructions` file contains the information about statically registering the measurement after installation of the measurement package
 
 ![instructions_file](instructions.png)
 
