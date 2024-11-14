@@ -296,7 +296,8 @@ def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optiona
     os.makedirs(package_folder_path, exist_ok=True)
 
     logger.info(UserMessages.TEMPLATE_FILES_COMPLETED)
-    subprocess.run(f"{NIPKG_EXE} pack {template_folder_path} {package_folder_path}", check=True)
+    command = f"{NIPKG_EXE} pack {template_folder_path} {package_folder_path}"
+    subprocess.run(command, shell=False, check=True)
     logger.info(
         UserMessages.PACKAGE_BUILT.format(
             name=measurement_package_info.measurement_name,

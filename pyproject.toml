@@ -33,6 +33,10 @@ ni-python-styleguide = "^0.4.5"
 lint = "^1.2.1"
 
 [tool.bandit]
+skips = [
+  "B404", # blacklist
+  "B603", # subprocess_without_shell_equals_true
+]
 exclude_dirs = [".venv"]
 
 [[tool.mypy.overrides]]
