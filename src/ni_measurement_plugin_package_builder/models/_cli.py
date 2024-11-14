@@ -1,6 +1,7 @@
 """Models for NI Measurement Plug-In Package Builder CLI Arguments."""
 
 import os
+from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseModel, model_validator
@@ -30,13 +31,13 @@ class UploadPackageInfo(BaseModel):
 class CliInputs(BaseModel):
     """Represent Command Line Interface inputs."""
 
-    measurement_plugin_base_path: Optional[str] = None
-    measurement_plugin_path: Optional[str] = None
+    measurement_plugin_base_path: Optional[Path] = None
+    measurement_plugin_path: Optional[Path] = None
     selected_meas_plugins: Optional[str] = None
     interactive_mode: bool = False
     upload_packages: bool = False
-    systemlink_config: Optional[SystemLinkConfig] = None
-    upload_package_info: Optional[UploadPackageInfo] = None
+    systemlink_config: SystemLinkConfig = SystemLinkConfig()
+    upload_package_info: UploadPackageInfo = UploadPackageInfo()
 
     @model_validator(mode="after")
     def validate_non_interactive_mode_inputs(self) -> "CliInputs":

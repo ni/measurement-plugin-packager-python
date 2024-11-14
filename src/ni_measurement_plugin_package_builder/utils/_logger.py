@@ -2,7 +2,6 @@
 
 import logging
 import logging.handlers
-import os
 import sys
 from logging import Logger, StreamHandler
 from pathlib import Path
@@ -16,10 +15,12 @@ from ni_measurement_plugin_package_builder.constants import (
     LOG_FILE_SIZE_LIMIT_IN_BYTES,
     UserMessages,
 )
-from ni_measurement_plugin_package_builder.utils._log_file_path import get_log_folder_path
+from ni_measurement_plugin_package_builder.utils._log_file_path import (
+    get_log_folder_path,
+)
 
 
-def add_file_handler(logger: Logger, log_folder_path: str) -> None:
+def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
     """Add file handler.
 
     Args:
@@ -34,10 +35,10 @@ def add_file_handler(logger: Logger, log_folder_path: str) -> None:
 
 
 def __create_file_handler(
-    log_folder_path: str,
+    log_folder_path: Path,
     file_name: str,
 ) -> logging.handlers.RotatingFileHandler:
-    log_file = os.path.join(log_folder_path, file_name)
+    log_file = Path(log_folder_path) / file_name
     folder_path_obj = Path(log_folder_path)
 
     if not folder_path_obj.exists():
@@ -56,7 +57,7 @@ def __create_file_handler(
     return handler
 
 
-def setup_logger_with_file_handler(output_path: str, logger: Logger) -> Tuple[Logger, str]:
+def setup_logger_with_file_handler(output_path: Path, logger: Logger) -> Tuple[Logger, Path]:
     """Adds a file handler to the provided logger.
 
     Args:

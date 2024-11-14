@@ -23,8 +23,8 @@ from ni_measurement_plugin_package_builder.models import (
 from ni_measurement_plugin_package_builder.utils._helpers import (
     build_meas_package,
     get_publish_package_client,
-    valid_folder_path,
     publish_package_to_systemlink,
+    valid_folder_path,
 )
 from ni_measurement_plugin_package_builder.utils._interactive_mode import (
     publish_meas_packages_in_interactive_mode,
@@ -43,11 +43,17 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.option("-i", "--interactive-mode", is_flag=True, help=CliInterface.INTERACTIVE_BUILDER)
-@click.option("-p", "--plugin-dir", type=click.Path(), required=False, help=CliInterface.MLINK_DIR)
+@click.option(
+    "-p",
+    "--plugin-dir",
+    type=click.Path(exists=True, file_okay=False, resolve_path=True),
+    required=False,
+    help=CliInterface.MLINK_DIR,
+)
 @click.option(
     "-b",
     "--base-dir",
-    type=click.Path(),
+    type=click.Path(exists=True, file_okay=False, resolve_path=True),
     required=False,
     help=CliInterface.MLINK_BASE_DIR,
 )
@@ -84,7 +90,7 @@ def run(
 
         systemlink_config = SystemLinkConfig(api_key=api_key, api_url=api_url, workspace=workspace)
         upload_package_info = UploadPackageInfo(feed_name=feed_name, overwrite_packages=overwrite)
-        interactive_mode_input_parent_dir = None
+        interactive_mode_input_parent_dir: Optional[Path] = None
 
         cli_args = CliInputs(
             measurement_plugin_base_path=base_dir,
@@ -97,9 +103,9 @@ def run(
         )
 
         if interactive_mode:
-            interactive_mode_input_parent_dir = input(
-                InteractiveModeMessages.INPUT_MEAS_PLUGIN_BASE_DIR
-            ).strip()
+            interactive_mode_input_parent_dir = Path(
+                input(InteractiveModeMessages.INPUT_MEAS_PLUGIN_BASE_DIR).strip()
+            )
             if not valid_folder_path(interactive_mode_input_parent_dir):
                 raise FileNotFoundError(
                     UserMessages.INVALID_BASE_DIR.format(dir=interactive_mode_input_parent_dir)
@@ -107,12 +113,15 @@ def run(
 
         remove_handlers(logger)
         logger = initialize_logger(name="debug_logger")
+        output_path: Path
+        if cli_args.measurement_plugin_base_path:
+            output_path = cli_args.measurement_plugin_base_path
+        elif cli_args.measurement_plugin_path:
+            output_path = cli_args.measurement_plugin_path
+        elif interactive_mode_input_parent_dir:
+            output_path = interactive_mode_input_parent_dir
         logger, log_folder_path = setup_logger_with_file_handler(
-            output_path=(
-                cli_args.measurement_plugin_base_path
-                or cli_args.measurement_plugin_path
-                or interactive_mode_input_parent_dir
-            ),
+            output_path,
             logger=logger,
         )
         logger.debug(UserMessages.VERSION.format(version=__version__))
@@ -162,7 +171,7 @@ def run(
                 logger.info("")
 
     except ApiException as ex:
-        measurement_plugin = Path(cli_args.measurement_plugin_path).name
+        measurement_plugin = Path(str(cli_args.measurement_plugin_path)).name
         logger.debug(ex, exc_info=True)
         logger.info(
             UserMessages.PACKAGE_UPLOAD_FAILED.format(

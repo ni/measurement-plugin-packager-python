@@ -1,6 +1,7 @@
 """Implementation of Command Line Interface."""
 
 from logging import Logger
+from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 from ni_measurement_plugin_package_builder.constants import (
@@ -65,7 +66,7 @@ def validate_user_input_for_meas_plugins(
 
 def get_user_inputs_in_interactive_mode(
     logger: Logger,
-    measurement_plugins_base_path: str,
+    measurement_plugins_base_path: Path,
 ) -> Union[List[str], None]:
     """Get user inputs for measurement package builder in `interactive mode`.
 

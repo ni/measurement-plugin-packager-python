@@ -4,7 +4,7 @@ import os
 import subprocess
 from logging import FileHandler, Logger
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Optional
 
 from nisystemlink_feeds_manager.clients.core import ApiException
 from nisystemlink_feeds_manager.clients.feeds.models import UploadPackageResponse
@@ -25,13 +25,15 @@ from ni_measurement_plugin_package_builder.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_package_builder.utils._create_files import create_template_folders
+from ni_measurement_plugin_package_builder.utils._create_files import (
+    create_template_folders,
+)
 from ni_measurement_plugin_package_builder.utils._pyproject_toml_info import (
     get_measurement_package_info,
 )
 
 
-def valid_folder_path(path: str) -> bool:
+def valid_folder_path(path: Path) -> bool:
     """Check if the provided folder path is valid or not.
 
     Args:
@@ -60,7 +62,7 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[str
     logger.info("")
 
 
-def validate_meas_plugin_files(path: str, logger: Logger) -> bool:
+def validate_meas_plugin_files(path: Path, logger: Logger) -> bool:
     """Validate measurement plug-in files.
 
     Args:
@@ -135,7 +137,7 @@ def get_measurement_plugins(measurement_plugins: List[str]) -> Dict[str, str]:
     return measurement_plugins_with_indexes
 
 
-def get_folders(folder_path: str, logger: Logger) -> List[str]:
+def get_folders(folder_path: Path, logger: Logger) -> List[str]:
     """Get list of folders present in a path.
 
     Args:
@@ -150,7 +152,7 @@ def get_folders(folder_path: str, logger: Logger) -> List[str]:
             name
             for name in os.listdir(folder_path)
             if os.path.isdir(os.path.join(folder_path, name))
-            and validate_meas_plugin_files(os.path.join(folder_path, name), logger)
+            and validate_meas_plugin_files(Path(folder_path) / name, logger)
         ]
         return folders
 
@@ -158,7 +160,7 @@ def get_folders(folder_path: str, logger: Logger) -> List[str]:
         raise FileNotFoundError(UserMessages.INVALID_BASE_DIR.format(dir=folder_path)) from exp
 
 
-def get_ni_meas_package_builder_path(logger: Logger) -> Union[str, None]:
+def get_ni_meas_package_builder_path(logger: Logger) -> Optional[Path]:
     """Get Folder path of `NI Measurement Plug-in Package Builder`.
 
     Args:
@@ -169,13 +171,13 @@ def get_ni_meas_package_builder_path(logger: Logger) -> Union[str, None]:
     """
     for handler in logger.handlers:
         if isinstance(handler, FileHandler):
-            folder_two_levels_up = os.path.abspath(os.path.join(handler.baseFilename, "../../"))
+            folder_two_levels_up = Path(handler.baseFilename).resolve().parent.parent
             return folder_two_levels_up
 
     return None
 
 
-def get_file_path(folder_path: str, file_name: str) -> str:
+def get_file_path(folder_path: Path, file_name: str) -> Optional[Path]:
     """Searches for a file in the specified folder that contains the given file name.
 
     Args:
@@ -188,7 +190,7 @@ def get_file_path(folder_path: str, file_name: str) -> str:
     file_path = None
     for name in os.listdir(folder_path):
         if file_name in name:
-            file_path = os.path.join(folder_path, name)
+            file_path = folder_path / name
             break
 
     return file_path
@@ -196,7 +198,7 @@ def get_file_path(folder_path: str, file_name: str) -> str:
 
 def publish_package_to_systemlink(
     publish_package_client: PublishPackagesToSystemLink,
-    meas_package_path: str,
+    meas_package_path: Path,
     upload_package_info: UploadPackageInfo,
 ) -> UploadPackageResponse:
     """Publish package to SystemLink feeds services.
@@ -257,7 +259,7 @@ def get_publish_package_client(
         logger.info(UserMessages.CHECK_LOG_FILE)
 
 
-def build_meas_package(logger: Logger, measurement_plugin_path: str) -> Union[str, None]:
+def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Path]:
     """Build measurement plug-in as NI package file.
 
     Args:
@@ -272,6 +274,10 @@ def build_meas_package(logger: Logger, measurement_plugin_path: str) -> Union[st
     logger.info(UserMessages.BUILDING_MEAS.format(name=measurement_plugin))
 
     mlink_package_builder_path = get_ni_meas_package_builder_path(logger=logger)
+    if not mlink_package_builder_path:
+        logger.info(UserMessages.LOG_FILE_LOCATION)  # TODO: handle the message well
+        return None
+
     if not validate_meas_plugin_files(path=measurement_plugin_path, logger=logger):
         logger.info(UserMessages.INVALID_MEAS_PLUGIN)
         return None
@@ -286,7 +292,7 @@ def build_meas_package(logger: Logger, measurement_plugin_path: str) -> Union[st
         measurement_package_info=measurement_package_info,
     )
 
-    package_folder_path = os.path.join(mlink_package_builder_path, PACKAGES)
+    package_folder_path = Path(mlink_package_builder_path) / PACKAGES
     os.makedirs(package_folder_path, exist_ok=True)
 
     logger.info(UserMessages.TEMPLATE_FILES_COMPLETED)
@@ -307,7 +313,7 @@ def build_meas_package(logger: Logger, measurement_plugin_path: str) -> Union[st
 
 def publish_meas_packages(
     logger: Logger,
-    measurement_plugin_base_path: str,
+    measurement_plugin_base_path: Path,
     measurement_plugins: List[str],
     publish_package_client: PublishPackagesToSystemLink,
     upload_package_info: UploadPackageInfo,
@@ -325,7 +331,7 @@ def publish_meas_packages(
         None.
     """
     for measurement_plugin in measurement_plugins:
-        measurement_plugin_path = os.path.join(measurement_plugin_base_path, measurement_plugin)
+        measurement_plugin_path = Path(measurement_plugin_base_path) / measurement_plugin
         try:
             measurement_package_path = build_meas_package(
                 logger=logger,

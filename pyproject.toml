@@ -32,6 +32,13 @@ ni-measurement-plugin-package-builder = "ni_measurement_plugin_package_builder.m
 ni-python-styleguide = "^0.4.5"
 lint = "^1.2.1"
 
+[tool.bandit]
+exclude_dirs = [".venv"]
+
+[[tool.mypy.overrides]]
+module = "nisystemlink_feeds_manager.*"
+ignore_missing_imports = true
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

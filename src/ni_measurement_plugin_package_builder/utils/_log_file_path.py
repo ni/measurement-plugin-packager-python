@@ -1,6 +1,5 @@
 """Implementation of Get Log folder path."""
 
-import os
 from pathlib import Path, WindowsPath
 from typing import Tuple
 
@@ -29,7 +28,7 @@ def get_user_docs() -> Path:
     return public_documents_path.expanduser()
 
 
-def get_log_folder_path(output_path: str) -> Tuple[str, bool, bool]:
+def get_log_folder_path(output_path: Path) -> Tuple[Path, bool, bool]:
     """Return log file path and status public paths and user paths.
 
     1. Try Getting Public documents directory. if not possible,
@@ -55,6 +54,6 @@ def get_log_folder_path(output_path: str) -> Tuple[str, bool, bool]:
             user_path_status = False
             log_folder_path = output_path
 
-    log_folder_path = os.path.join(log_folder_path, "NI-Measurement-Plugin-Package-Builder", "Logs")
+    log_folder_path = Path(log_folder_path) / "NI-Measurement-Plugin-Package-Builder" / "Logs"
 
     return log_folder_path, public_path_status, user_path_status

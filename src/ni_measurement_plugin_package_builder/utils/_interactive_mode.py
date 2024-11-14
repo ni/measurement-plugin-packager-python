@@ -1,6 +1,7 @@
 """Implementation of interactive mode for NI Measurement Plug-In Package builder."""
 
 from logging import Logger
+from pathlib import Path
 
 from ni_measurement_plugin_package_builder.constants import InteractiveModeMessages
 from ni_measurement_plugin_package_builder.models import (
@@ -33,7 +34,7 @@ def __update_upload_package_inputs(upload_package_info: UploadPackageInfo) -> Up
 
 def publish_meas_packages_in_interactive_mode(
     logger: Logger,
-    measurement_plugin_base_path: str,
+    measurement_plugin_base_path: Path,
 ) -> None:
     """Publish Measurement Packages in interactive mode.
 

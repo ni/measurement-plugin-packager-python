@@ -1,6 +1,5 @@
 """Helper functions for creating the files for NI Measurement Plug-In Package Builder."""
 
-import os
 import platform
 import shutil
 from pathlib import Path
@@ -50,10 +49,10 @@ def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
 
 
 def create_template_folders(
-    mlink_package_builder_path: str,
-    measurement_plugin_path: str,
+    mlink_package_builder_path: Path,
+    measurement_plugin_path: Path,
     measurement_package_info: PackageInfo,
-) -> str:
+) -> Path:
     """Create Template folders for building NI Packages.
 
     Args:
@@ -64,20 +63,18 @@ def create_template_folders(
     Returns:
         str: Template folder path.
     """
-    template_path = os.path.join(
-        mlink_package_builder_path, measurement_package_info.measurement_name
-    )
-    if os.path.isdir(template_path):
+    template_path = Path(mlink_package_builder_path) / measurement_package_info.measurement_name
+
+    if template_path.is_dir():
         shutil.rmtree(template_path)
 
-    data_path = os.path.join(template_path, FileNames.DATA)
-    template_measurement_folder_path = os.path.join(
-        data_path, measurement_package_info.package_name
-    )
-    control_path = os.path.join(template_path, FileNames.CONTROL)
+    data_path = template_path / FileNames.DATA
+    template_measurement_folder_path = data_path / measurement_package_info.package_name
 
-    os.makedirs(control_path, exist_ok=True)
-    os.makedirs(template_measurement_folder_path, exist_ok=True)
+    control_path = template_path / FileNames.CONTROL
+
+    control_path.mkdir(parents=True, exist_ok=True)
+    template_measurement_folder_path.mkdir(parents=True, exist_ok=True)
 
     copy_folder_contents(
         src_path=Path(measurement_plugin_path),
@@ -93,7 +90,7 @@ def create_template_folders(
         package_name=measurement_package_info.package_name,
     )
 
-    debian_binary_file = os.path.join(template_path, FileNames.DEBIAN_BIN)
+    debian_binary_file = template_path / FileNames.DEBIAN_BIN
     with open(debian_binary_file, "w", encoding="utf-8") as fp:
         fp.write("2.0")
 
@@ -116,7 +113,7 @@ def __get_system_type() -> str:
     return f"{system}_{architecture}"
 
 
-def create_control_file(control_folder_path: str, package_info: PackageInfo) -> None:
+def create_control_file(control_folder_path: Path, package_info: PackageInfo) -> None:
     """Create control file for storing information about measurement package.
 
     Args:
@@ -126,7 +123,7 @@ def create_control_file(control_folder_path: str, package_info: PackageInfo) -> 
     Returns:
         None
     """
-    control_file_path = os.path.join(control_folder_path, FileNames.CONTROL)
+    control_file_path = control_folder_path / FileNames.CONTROL
 
     package_version = package_info.version
     package_description = package_info.description
@@ -152,7 +149,7 @@ def create_control_file(control_folder_path: str, package_info: PackageInfo) -> 
         fp.write(control_file_data)
 
 
-def create_instruction_file(data_path: str, measurement_name: str, package_name: str) -> None:
+def create_instruction_file(data_path: Path, measurement_name: str, package_name: str) -> None:
     """Create instruction file for storing measurement directory information.
 
     Args:
@@ -163,8 +160,8 @@ def create_instruction_file(data_path: str, measurement_name: str, package_name:
     Returns:
         None.
     """
-    measurement_service_path = os.path.join(MEASUREMENT_SERVICES_PATH, measurement_name)
-    instruction_path = os.path.join(data_path, InstructionFile.INSTRUCTION)
+    measurement_service_path = Path(MEASUREMENT_SERVICES_PATH) / measurement_name
+    instruction_path = data_path / InstructionFile.INSTRUCTION
 
     instruction_data = (
         InstructionFile.START_TAG + InstructionFile.INSTRUCTION + InstructionFile.END_TAG + "\n"
@@ -188,7 +185,7 @@ def create_instruction_file(data_path: str, measurement_name: str, package_name:
         + InstructionFile.PATH
         + "="
         + '"'
-        + measurement_service_path
+        + str(measurement_service_path)
         + '"'
         + InstructionFile.CLOSE_END_TAG
         + "\n"
