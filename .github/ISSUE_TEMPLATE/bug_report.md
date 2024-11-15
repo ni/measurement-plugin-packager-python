@@ -46,4 +46,6 @@ Search open/closed issues before submitting. Someone may have reported the same 
 * OS & Device: [e.g. macOS, Windows, Linux] on [Mac, PC]
 * `nisystemlink-feeds-manager` version [e.g. 1.0.0.dev1]
 * `ni-measurement-plugin-packager` version [e.g. 1.3.0]
+* `ni-measurement-plugin-sdk-service` version [e.g. 2.1.0]
+* InstrumentStudio version [e.g. 2024 Q4]
 * Python version [e.g. 3.9]
