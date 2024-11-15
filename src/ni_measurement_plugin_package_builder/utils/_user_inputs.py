@@ -2,7 +2,7 @@
 
 from logging import Logger
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
 from ni_measurement_plugin_package_builder.constants import (
     YES,
@@ -38,8 +38,8 @@ def get_yes_no_response(question: str) -> bool:
 
 def validate_user_input_for_meas_plugins(
     user_inputs: List[str],
-    measurement_plugins: Dict[str, str],
-) -> Union[List[str], None]:
+    measurement_plugins: Dict[str, Path],
+) -> Optional[List[Path]]:
     """Validate the user inputs for measurement plug-in indexes.
 
     Args:
@@ -67,7 +67,7 @@ def validate_user_input_for_meas_plugins(
 def get_user_inputs_in_interactive_mode(
     logger: Logger,
     measurement_plugins_base_path: Path,
-) -> Union[List[str], None]:
+) -> Optional[List[Path]]:
     """Get user inputs for measurement package builder in `interactive mode`.
 
     Args:

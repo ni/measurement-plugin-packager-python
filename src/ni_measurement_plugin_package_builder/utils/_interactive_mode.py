@@ -65,10 +65,11 @@ def publish_meas_packages_in_interactive_mode(
         if not measurement_plugins:
             break
 
+        plugins_to_process = [str(path) for path in measurement_plugins]
         publish_meas_packages(
             logger=logger,
             measurement_plugin_base_path=measurement_plugin_base_path,
-            measurement_plugins=measurement_plugins,
+            measurement_plugins=plugins_to_process,
             publish_package_client=publish_package_client,
             upload_package_info=upload_package_info,
         )

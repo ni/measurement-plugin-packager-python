@@ -1,6 +1,5 @@
 """Models for NI Measurement Plug-In Package Builder CLI Arguments."""
 
-import os
 from pathlib import Path
 from typing import Optional
 
@@ -59,13 +58,13 @@ class CliInputs(BaseModel):
             raise FileNotFoundError(NonInteractiveModeMessages.MEAS_DIR_REQUIRED)
 
         if self.measurement_plugin_base_path and (
-            not os.path.isdir(self.measurement_plugin_base_path)
+            not Path(self.measurement_plugin_base_path).is_dir()
         ):
             raise FileNotFoundError(
                 UserMessages.INVALID_BASE_DIR.format(dir=self.measurement_plugin_base_path)
             )
 
-        if self.measurement_plugin_path and not os.path.isdir(self.measurement_plugin_path):
+        if self.measurement_plugin_path and not Path(self.measurement_plugin_path).is_dir():
             raise FileNotFoundError(
                 UserMessages.INVALID_MEAS_DIR.format(dir=self.measurement_plugin_path)
             )

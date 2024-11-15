@@ -1,6 +1,5 @@
 """Helper functions for NI Measurement Plug-In Package Builder."""
 
-import os
 import subprocess
 from logging import FileHandler, Logger
 from pathlib import Path
@@ -42,10 +41,10 @@ def valid_folder_path(path: Path) -> bool:
     Returns:
         bool: True if valid folder path else False.
     """
-    return os.path.isdir(path)
+    return path.is_dir()
 
 
-def display_available_measurements(logger: Logger, measurement_plugins: List[str]) -> None:
+def display_available_measurements(logger: Logger, measurement_plugins: List[Path]) -> None:
     """Display available measurement plug-ins in CLI.
 
     Args:
@@ -72,20 +71,20 @@ def validate_meas_plugin_files(path: Path, logger: Logger) -> bool:
     Returns:
         bool: True if valid measurement plug-in folder else False.
     """
-    pyproject_path = os.path.join(path, PyProjectToml.FILE_NAME)
-    measurement_file_path = os.path.join(path, FileNames.MEASUREMENT_FILE)
-    batch_file_path = os.path.join(path, FileNames.BATCH_FILE)
-    valid_file = True
+    pyproject_path: Path = path / PyProjectToml.FILE_NAME
+    measurement_file_path: Path = path / FileNames.MEASUREMENT_FILE
+    batch_file_path: Path = path / FileNames.BATCH_FILE
+    valid_file: bool = True
 
-    if not os.path.isfile(pyproject_path):
+    if not pyproject_path.is_file():
         logger.debug(UserMessages.NO_TOML_FILE.format(dir=path))
         valid_file = False
 
-    if not os.path.isfile(measurement_file_path):
+    if not measurement_file_path.is_file():
         logger.debug(UserMessages.NO_MEAS_FILE.format(dir=path))
         valid_file = False
 
-    if not os.path.isfile(batch_file_path):
+    if not batch_file_path.is_file():
         logger.debug(UserMessages.NO_BATCH_FILE.format(dir=path))
         valid_file = False
 
@@ -94,7 +93,7 @@ def validate_meas_plugin_files(path: Path, logger: Logger) -> bool:
 
 def validate_selected_meas_plugins(
     selected_meas_plugins: str,
-    measurement_plugins: List[str],
+    measurement_plugins: List[Path],
     logger: Logger,
 ) -> None:
     """Validate the selected measurement plug-ins in `non-interactive mode`.
@@ -121,7 +120,7 @@ def validate_selected_meas_plugins(
             )
 
 
-def get_measurement_plugins(measurement_plugins: List[str]) -> Dict[str, str]:
+def get_measurement_plugins(measurement_plugins: List[Path]) -> Dict[str, Path]:
     """Get measurement plug-ins with indexes.
 
     Args:
@@ -137,7 +136,7 @@ def get_measurement_plugins(measurement_plugins: List[str]) -> Dict[str, str]:
     return measurement_plugins_with_indexes
 
 
-def get_folders(folder_path: Path, logger: Logger) -> List[str]:
+def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
     """Get list of folders present in a path.
 
     Args:
@@ -150,9 +149,9 @@ def get_folders(folder_path: Path, logger: Logger) -> List[str]:
     try:
         folders = [
             name
-            for name in os.listdir(folder_path)
-            if os.path.isdir(os.path.join(folder_path, name))
-            and validate_meas_plugin_files(Path(folder_path) / name, logger)
+            for name in folder_path.iterdir()
+            if (folder_path / name).is_dir()
+            and validate_meas_plugin_files(folder_path / name, logger)
         ]
         return folders
 
@@ -188,8 +187,8 @@ def get_file_path(folder_path: Path, file_name: str) -> Optional[Path]:
         str: File path.
     """
     file_path = None
-    for name in os.listdir(folder_path):
-        if file_name in name:
+    for name in folder_path.iterdir():
+        if file_name in str(name):
             file_path = folder_path / name
             break
 
@@ -275,7 +274,9 @@ def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optiona
 
     mlink_package_builder_path = get_ni_meas_package_builder_path(logger=logger)
     if not mlink_package_builder_path:
-        logger.info(UserMessages.LOG_FILE_LOCATION)  # TODO: handle the message well
+        logger.info(
+            UserMessages.LOG_FILE_LOCATION
+        )  # TODO: handle the exception with proper user message
         return None
 
     if not validate_meas_plugin_files(path=measurement_plugin_path, logger=logger):
@@ -293,7 +294,7 @@ def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optiona
     )
 
     package_folder_path = Path(mlink_package_builder_path) / PACKAGES
-    os.makedirs(package_folder_path, exist_ok=True)
+    package_folder_path.mkdir(parents=True, exist_ok=True)
 
     logger.info(UserMessages.TEMPLATE_FILES_COMPLETED)
     command = f"{NIPKG_EXE} pack {template_folder_path} {package_folder_path}"

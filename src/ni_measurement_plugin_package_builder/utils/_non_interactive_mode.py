@@ -36,7 +36,7 @@ def publish_meas_packages_in_non_interactive_mode(
     Raises:
         InvalidInputError: If API Key and Feed Name not provided by the user.
     """
-    measurement_plugins: list[str] = get_folders(
+    measurement_plugins: list[Path] = get_folders(
         folder_path=measurement_plugin_base_path, logger=logger
     )
 
@@ -47,7 +47,7 @@ def publish_meas_packages_in_non_interactive_mode(
 
     plugins_to_process: list[str]
     if selected_meas_plugins == ".":
-        plugins_to_process = measurement_plugins
+        plugins_to_process = [str(path) for path in measurement_plugins]
     else:
         validate_selected_meas_plugins(
             measurement_plugins=measurement_plugins,
