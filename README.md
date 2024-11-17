@@ -17,7 +17,7 @@ NI Measurement Plug-in Package builder enables user to build Python Measurement 
 ## Setup Virtual Environment
 
 - Open terminal.
-- Run `cd ni_measurement_plugin_package_builder`
+- Run `cd measurement_plugin_packager`
 - Run `poetry env use <py3.8.exe path>`.
 - Run `poetry shell` to activate virtual environment.
 - Run `pip install ..\dependencies\nisystemlink_feeds_manager-X.X.X-py3-none-any.whl`.

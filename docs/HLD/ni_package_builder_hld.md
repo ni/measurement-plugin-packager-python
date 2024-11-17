@@ -151,7 +151,7 @@ Once the required files have been created under the respective folders. The tool
 
 ## Installation
 
-This python package can be installed using the pip install `<path_to_ni_measurement_plugin_package_builder-X_X_X-py3-none-any.whl>` command.
+This python package can be installed using the pip install `<path_to_measurement_plugin_packager-X_X_X-py3-none-any.whl>` command.
 
 ## Alternative implementations and designs
 
