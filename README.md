@@ -2,32 +2,28 @@
 
 - [NI Measurement Plugin Python Packager](#ni-measurement-plugin-python-packager)
   - [Overview](#overview)
-  - [Prerequisites](#prerequisites)
+  - [Dependencies](#dependencies)
     - [Software Requirements](#software-requirements)
   - [Installation](#installation)
   - [Usage](#usage)
     - [1. Non-Interactive Mode](#1-non-interactive-mode)
-      - [Building Single Plugin](#building-single-plugin)
-      - [Building Multiple Plugins](#building-multiple-plugins)
-      - [Uploading Single Plugin to SystemLink](#uploading-single-plugin-to-systemlink)
-      - [Uploading Multiple Plugins to SystemLink](#uploading-multiple-plugins-to-systemlink)
     - [2. Interactive Mode](#2-interactive-mode)
   - [Notes](#notes)
     - [File Exclusions](#file-exclusions)
     - [SystemLink Upload Requirements](#systemlink-upload-requirements)
-  - [Command Line Tips](#command-line-tips)
+    - [Command Line Tips](#command-line-tips)
   - [Additional Resources](#additional-resources)
 
 ## Overview
 
-The NI Measurement Plugin Packager enables users to build Python Measurement Plugins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the process of package creation and distribution for NI measurement plugins.
+The NI Measurement Plugin Packager enables users to build Python Measurement Plug-Ins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the process of package creation and distribution for NI measurement plugins.
 
-## Prerequisites
+## Dependencies
 
 ### Software Requirements
 
 - Python 3.9 or higher
-- NI Package Manager 2022 Q4 or higher
+- NI Package Manager 2024 Q4 or higher
 - NI SystemLink Feeds Manager 1.0.0-dev1 or higher
 
 ## Installation
@@ -45,53 +41,53 @@ The tool supports two modes of operation:
 
 ### 1. Non-Interactive Mode
 
-#### Building Single Plugin
+- #### Building Single Plugin
 
-```bash
-measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>"
-```
+  ```bash
+  measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>"
+  ```
 
-Example:
+  Example:
 
-```bash
-measurement-plugin-packager --plugin-dir "C:/Users/examples/sample_measurement"
-```
+  ```bash
+  measurement-plugin-packager --plugin-dir "C:/Users/examples/sample_measurement"
+  ```
 
-#### Building Multiple Plugins
+- #### Building Multiple Plugins
 
-```bash
-measurement-plugin-packager --base-dir "<measurement_plugin_base_directory>" --selected-meas-plugins "<plugin1,plugin2>"
-```
+  ```bash
+  measurement-plugin-packager --base-dir "<measurement_plugin_base_directory>" --selected-meas-plugins "<plugin1,plugin2>"
+  ```
+  
+  Example:
+  
+  ```bash
+  measurement-plugin-packager --base-dir "C:/Users/examples" --selected-meas-plugins "sample_measurement,test_measurement"
+  ```
 
-Example:
+- #### Uploading Single Plugin to SystemLink
 
-```bash
-measurement-plugin-packager --base-dir "C:/Users/examples" --selected-meas-plugins "sample_measurement,test_measurement"
-```
+  ```bash
+  measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace   "<workspace_name>" --feed-name "<feed_name>"
+  ```
+  
+  Example:
+  
+  ```bash
+  measurement-plugin-packager --plugin-dir "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/"   --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
+  ```
 
-#### Uploading Single Plugin to SystemLink
+- #### Uploading Multiple Plugins to SystemLink
 
-```bash
-measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
-```
-
-Example:
-
-```bash
-measurement-plugin-packager --plugin-dir "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
-```
-
-#### Uploading Multiple Plugins to SystemLink
-
-```bash
-measurement-plugin-packager --base-dir "<base_directory>" --selected-meas-plugins "<plugin1,plugin2>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
-```
-
-Example:
-
-```bash
-measurement-plugin-packager --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
-```
+  ```bash
+  measurement-plugin-packager --base-dir "<base_directory>" --selected-meas-plugins "<plugin1,plugin2>" --upload-packages --api-url "<systemlink_api_url>"   --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
+  ```
+  
+  Example:
+  
+  ```bash
+  measurement-plugin-packager --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://  dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
+  ```
 
 ### 2. Interactive Mode
 
@@ -132,7 +128,7 @@ The following files/directories are automatically ignored during package buildin
   - API URL and Workspace are optional (defaults to SystemLink client configuration if not provided).
 - All command-line arguments should be enclosed in double quotes.
 
-## Command Line Tips
+### Command Line Tips
 
 - For building multiple plugins, both the base directory and selected measurement plugins must be specified.
 - The tool will display the output directory where `.nipkg` files are generated.
