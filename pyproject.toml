@@ -26,7 +26,7 @@ nisystemlink-feeds-manager = "^1.0.0.dev1"
 
 
 [tool.poetry.scripts]
-ni-measurement-plugin-package-builder = "measurement_plugin_packager.main:run"
+measurement-plugin-packager = "measurement_plugin_packager.main:run"
 
 [tool.poetry.group.dev.dependencies]
 ni-python-styleguide = "^0.4.5"
