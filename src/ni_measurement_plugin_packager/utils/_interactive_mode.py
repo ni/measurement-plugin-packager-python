@@ -2,16 +2,16 @@
 
 from logging import Logger
 
-from measurement_plugin_packager.constants import InteractiveModeMessages
-from measurement_plugin_packager.models import (
+from ni_measurement_plugin_packager.constants import InteractiveModeMessages
+from ni_measurement_plugin_packager.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from measurement_plugin_packager.utils._helpers import (
+from ni_measurement_plugin_packager.utils._helpers import (
     get_publish_package_client,
     publish_meas_packages,
 )
-from measurement_plugin_packager.utils._user_inputs import (
+from ni_measurement_plugin_packager.utils._user_inputs import (
     get_feed_name,
     get_user_input_for_upload_packages,
     get_user_inputs_in_interactive_mode,

@@ -3,17 +3,17 @@
 from logging import Logger
 from typing import Dict, List, Tuple, Union
 
-from measurement_plugin_packager.constants import (
+from ni_measurement_plugin_packager.constants import (
     YES,
     InteractiveModeMessages,
     UserMessages,
 )
-from measurement_plugin_packager.models import (
+from ni_measurement_plugin_packager.models import (
     InvalidInputError,
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from measurement_plugin_packager.utils._helpers import (
+from ni_measurement_plugin_packager.utils._helpers import (
     display_available_measurements,
     get_folders,
     get_measurement_plugins,

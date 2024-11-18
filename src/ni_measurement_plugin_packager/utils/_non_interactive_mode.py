@@ -4,12 +4,12 @@ from logging import Logger
 
 from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
 
-from measurement_plugin_packager.constants import UserMessages
-from measurement_plugin_packager.models import (
+from ni_measurement_plugin_packager.constants import UserMessages
+from ni_measurement_plugin_packager.models import (
     InvalidInputError,
     UploadPackageInfo,
 )
-from measurement_plugin_packager.utils._helpers import (
+from ni_measurement_plugin_packager.utils._helpers import (
     get_folders,
     publish_meas_packages,
     validate_selected_meas_plugins,
