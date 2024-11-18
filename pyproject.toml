@@ -25,7 +25,7 @@ click = "^8.1.7"
 nisystemlink-feeds-manager = "^1.0.0.dev1"
 
 [tool.poetry.scripts]
-ni-measurement-plugin-package-builder = "ni_measurement_plugin_package_builder.main:run"
+ni-measurement-plugin-package-builder = "ni_measurement_plugin_package_builder:run"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.11.2"

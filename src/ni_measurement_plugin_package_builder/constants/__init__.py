@@ -1,7 +1,5 @@
 """Initialize the NI Measurement Plug-in Package Builder constants."""
 
-# flake8: noqa
-
 from ni_measurement_plugin_package_builder.constants._cli import (
     DEFAULT_AUTHOR,
     DEFAULT_DESCRIPTION,
@@ -14,7 +12,7 @@ from ni_measurement_plugin_package_builder.constants._log import (
     LOG_FILE_COUNT_LIMIT,
     LOG_FILE_MSG_FORMAT,
     LOG_FILE_NAME,
-    LOG_FILE_SIZE_LIMIT_IN_BYTES
+    LOG_FILE_SIZE_LIMIT_IN_BYTES,
 )
 from ni_measurement_plugin_package_builder.constants._messages import (
     InteractiveModeMessages,
