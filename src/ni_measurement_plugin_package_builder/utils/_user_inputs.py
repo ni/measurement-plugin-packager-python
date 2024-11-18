@@ -44,10 +44,10 @@ def validate_user_input_for_meas_plugins(
 
     Args:
         user_inputs (List[str]): User inputs for measurement plug-in indexes.
-        measurement_plugins (Dict[str, str]): List of measurement plug-ins.
+        measurement_plugins (Dict[str, Path]): List of measurement plug-ins.
 
     Returns:
-        Union[List[str], None]: User selected measurement plug-ins.
+        Optional[List[Path]]: User selected measurement plug-ins.
     """
     if user_inputs == [ALL_MEAS]:
         user_selected_measurements = list(measurement_plugins.values())
@@ -72,10 +72,10 @@ def get_user_inputs_in_interactive_mode(
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugins_base_path (str): Measurement plug-in base path.
+        measurement_plugins_base_path (Path): Measurement plug-in base path.
 
     Returns:
-        Union[List[str], None]: User selected measurement infomation.
+       Optional[List[Path]]: User selected measurement infomation.
     """
     measurement_plugins = get_folders(measurement_plugins_base_path, logger)
 

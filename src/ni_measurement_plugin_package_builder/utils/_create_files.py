@@ -27,6 +27,22 @@ ignore_dirs = [
 ]
 
 
+def __get_system_type() -> str:
+    system = platform.system().lower()
+    architecture = platform.machine().lower()
+
+    if architecture in ["amd64", "x86_64"]:
+        architecture = "x64"
+    elif architecture in ["x86", "i386", "i686"]:
+        architecture = "x86"
+    elif architecture in ["arm64", "aarch64"]:
+        architecture = "arm64"
+    elif architecture in ["arm", "armv7l"]:
+        architecture = "arm"
+
+    return f"{system}_{architecture}"
+
+
 def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
     """Copy the contents of the folders except few `files/folders` and place it in the destination path. # noqa: W505.
 
@@ -56,12 +72,12 @@ def create_template_folders(
     """Create Template folders for building NI Packages.
 
     Args:
-        mlink_package_builder_path (str): Measurement Package builder path.
-        measurement_plugin_path (str): Measurement Plugin path from user.
+        mlink_package_builder_path (Path): Measurement Package builder path.
+        measurement_plugin_path (Path): Measurement Plugin path from user.
         measurement_package_info (PackageInfo): Measurement package information.
 
     Returns:
-        str: Template folder path.
+        Path: Template folder path.
     """
     template_path = Path(mlink_package_builder_path) / measurement_package_info.measurement_name
 
@@ -97,27 +113,11 @@ def create_template_folders(
     return template_path
 
 
-def __get_system_type() -> str:
-    system = platform.system().lower()
-    architecture = platform.machine().lower()
-
-    if architecture in ["amd64", "x86_64"]:
-        architecture = "x64"
-    elif architecture in ["x86", "i386", "i686"]:
-        architecture = "x86"
-    elif architecture in ["arm64", "aarch64"]:
-        architecture = "arm64"
-    elif architecture in ["arm", "armv7l"]:
-        architecture = "arm"
-
-    return f"{system}_{architecture}"
-
-
 def create_control_file(control_folder_path: Path, package_info: PackageInfo) -> None:
     """Create control file for storing information about measurement package.
 
     Args:
-        control_folder_path (str): Control folder path.
+        control_folder_path (Path): Control folder path.
         package_info (PackageInfo): Measurement Package information.
 
     Returns:
@@ -153,9 +153,9 @@ def create_instruction_file(data_path: Path, measurement_name: str, package_name
     """Create instruction file for storing measurement directory information.
 
     Args:
-        data_path (str): Data folder path.
-        measurement_name (str): Measurement service name.
-        package_name (str): Measurement package name.
+        data_path (Path): Data folder path.
+        measurement_name (Path): Measurement service name.
+        package_name (Path): Measurement package name.
 
     Returns:
         None.

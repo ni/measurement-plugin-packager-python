@@ -42,6 +42,7 @@ class UserMessages:
     PACKAGE_UPLOAD_FAILED = "Failed to upload the package '{package}' to SystemLink feed '{name}'."
     API_URL_KEY_MISSING = "{key} key found missing in SystemLink Client configuration files."
     FAILED_CLIENT_CREATION = "Failed to instantiate the client for publish packages to SystemLink."
+    INVALID_BUILDER_PATH = "Measurement Plug-In package builder path is None."
 
 
 class InteractiveModeMessages:

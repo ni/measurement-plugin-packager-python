@@ -23,7 +23,7 @@ def get_pyproject_toml_info(pyproject_toml_path: Path) -> Dict[str, Any]:
     """Get `pyproject.toml` information.
 
     Args:
-        pyproject_toml_path (str): File path of pyproject.toml.
+        pyproject_toml_path (Path): File path of pyproject.toml.
 
     Returns:
         Dict[str, Any]: Pyproject toml information.
@@ -43,7 +43,7 @@ def get_updated_package_data(
 
     Args:
         logger (Logger): Logger object.
-        pyproject_toml_data (Dict[str, str]): Pyproject toml data.
+        pyproject_toml_data (Dict[str, Any]): Pyproject toml data.
         measurement_name (str): Measurement name.
 
     Returns:
@@ -91,7 +91,7 @@ def get_measurement_package_info(measurement_plugin_path: Path, logger: Logger) 
     """Get measurement package information from pyproject.toml.
 
     Args:
-        measurement_plugin_path (str): Measurement Plug-in path.
+        measurement_plugin_path (Path): Measurement Plug-in path.
         logger (Logger): Logger object.
 
     Returns:

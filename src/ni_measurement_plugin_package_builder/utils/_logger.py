@@ -20,20 +20,6 @@ from ni_measurement_plugin_package_builder.utils._log_file_path import (
 )
 
 
-def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
-    """Add file handler.
-
-    Args:
-        logger (Logger): Logger object.
-        log_folder_path (str): Log folder path.
-
-    Returns:
-        None.
-    """
-    handler = __create_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
-    logger.addHandler(handler)
-
-
 def __create_file_handler(
     log_folder_path: Path,
     file_name: str,
@@ -57,15 +43,36 @@ def __create_file_handler(
     return handler
 
 
+def __create_stream_handler() -> StreamHandler:
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.INFO)
+
+    return handler
+
+
+def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
+    """Add file handler.
+
+    Args:
+        logger (Logger): Logger object.
+        log_folder_path (Path): Log folder path.
+
+    Returns:
+        None.
+    """
+    handler = __create_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
+    logger.addHandler(handler)
+
+
 def setup_logger_with_file_handler(output_path: Path, logger: Logger) -> Tuple[Logger, Path]:
     """Adds a file handler to the provided logger.
 
     Args:
-        output_path (str): Output path
+        output_path (Path): Output path
         logger (Logger): Logger object.
 
     Returns:
-        Tuple[Logger, str]: Logger object and logger folder path.
+        Tuple[Logger, Path]: Logger object and logger folder path.
     """
     log_folder_path, public_path_status, user_path_status = get_log_folder_path(output_path)
     add_file_handler(logger=logger, log_folder_path=log_folder_path)
@@ -89,13 +96,6 @@ def add_stream_handler(logger: Logger) -> None:
     """
     stream_handler = __create_stream_handler()
     logger.addHandler(stream_handler)
-
-
-def __create_stream_handler() -> StreamHandler:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.INFO)
-
-    return handler
 
 
 def initialize_logger(name: str) -> Logger:

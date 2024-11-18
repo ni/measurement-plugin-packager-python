@@ -36,10 +36,10 @@ def get_log_folder_path(output_path: Path) -> Tuple[Path, bool, bool]:
     3. Return the output path provided.
 
     Args:
-        output_path (str): Output path for logger from config file.
+        output_path (Path): Output path for logger from config file.
 
     Returns:
-        Tuple[str, bool, bool]: Output path for logger and status of public paths and user paths.
+        Tuple[Path, bool, bool]: Output path for logger and status of public paths and user paths.
     """
     public_path_status = True
     user_path_status = True

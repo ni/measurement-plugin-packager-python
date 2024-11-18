@@ -36,7 +36,7 @@ def valid_folder_path(path: Path) -> bool:
     """Check if the provided folder path is valid or not.
 
     Args:
-        path (str): Folder path.
+        path (Path): Folder path.
 
     Returns:
         bool: True if valid folder path else False.
@@ -49,7 +49,7 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[Pat
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugins (List[str]): List of measurement plug-ins.
+        measurement_plugins (List[Path]): List of measurement plug-ins.
 
     Returns:
         None.
@@ -65,7 +65,7 @@ def validate_meas_plugin_files(path: Path, logger: Logger) -> bool:
     """Validate measurement plug-in files.
 
     Args:
-        path (str): Measurement Plugin path.
+        path (Path): Measurement Plugin path.
         logger (Logger): Logger object.
 
     Returns:
@@ -100,7 +100,7 @@ def validate_selected_meas_plugins(
 
     Args:
         selected_meas_plugins (str): User selected measurement plug-ins.
-        measurement_plugins (List[str]): Measurement plug-ins.
+        measurement_plugins (List[Path]): Measurement plug-ins.
         logger (Logger): Logger object.
 
     Raises:
@@ -124,10 +124,10 @@ def get_measurement_plugins(measurement_plugins: List[Path]) -> Dict[str, Path]:
     """Get measurement plug-ins with indexes.
 
     Args:
-        measurement_plugins (List[str]): List of measurement plug-ins.
+        measurement_plugins (List[Path]): List of measurement plug-ins.
 
     Returns:
-        Dict[str, str]: Measurement plug-ins with indexes.
+        Dict[str, Path]: Measurement plug-ins with indexes.
     """
     measurement_plugins_with_indexes = {}
     for index, measurement_name in enumerate(measurement_plugins):
@@ -140,11 +140,11 @@ def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
     """Get list of folders present in a path.
 
     Args:
-        folder_path (str): Folder path provided by the user.
+        folder_path (Path): Folder path provided by the user.
         logger (Logger): Logger object.
 
     Returns:
-        List[str]: List of folders.
+        List[Path]: List of folders.
     """
     try:
         folders = [
@@ -166,7 +166,7 @@ def get_ni_meas_package_builder_path(logger: Logger) -> Optional[Path]:
         logger (Logger): Logger object.
 
     Returns:
-        Union[str, None]: Folder path.
+        Optional[Path]: Folder path.
     """
     for handler in logger.handlers:
         if isinstance(handler, FileHandler):
@@ -180,11 +180,11 @@ def get_file_path(folder_path: Path, file_name: str) -> Optional[Path]:
     """Searches for a file in the specified folder that contains the given file name.
 
     Args:
-        folder_path (str): Folder path.
+        folder_path (Path): Folder path.
         file_name (str): File name.
 
     Returns:
-        str: File path.
+        Optional[Path]: File path.
     """
     file_path = None
     for name in folder_path.iterdir():
@@ -263,10 +263,10 @@ def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optiona
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugin_path (str): Measurement plug-in path.
+        measurement_plugin_path (Path): Measurement plug-in path.
 
     Returns:
-        Union[str, None]: Built measurement package file path.
+        Optional[Path]: Built measurement package file path.
     """
     logger.info("")
     measurement_plugin = Path(measurement_plugin_path).name
@@ -274,9 +274,7 @@ def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optiona
 
     mlink_package_builder_path = get_ni_meas_package_builder_path(logger=logger)
     if not mlink_package_builder_path:
-        logger.info(
-            UserMessages.LOG_FILE_LOCATION
-        )  # TODO: handle the exception with proper user message
+        logger.info(UserMessages.INVALID_BUILDER_PATH)
         return None
 
     if not validate_meas_plugin_files(path=measurement_plugin_path, logger=logger):
@@ -324,7 +322,7 @@ def publish_meas_packages(
 
     Args:
         logger (Logger): Logger object.
-        measurement_plugin_base_path (str): Measurement plug-in base path.
+        measurement_plugin_base_path (Path): Measurement plug-in base path.
         measurement_plugins (List[str]): List of measurement plug-ins.
         publish_package_client (PublishPackagesToSystemLink): Client for publish packages to SystemLink. # noqa: W505
         upload_package_info (UploadPackageInfo): Information about the package to be uploaded.
