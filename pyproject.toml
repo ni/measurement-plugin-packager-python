@@ -33,10 +33,6 @@ ni-python-styleguide = "^0.4.6"
 bandit = { version = "^1.7", extras = ["toml"] }
 
 [tool.bandit]
-skips = [
-  "B404", # blacklist
-  "B603", # subprocess_without_shell_equals_true
-]
 exclude_dirs = [".venv"]
 
 [[tool.mypy.overrides]]

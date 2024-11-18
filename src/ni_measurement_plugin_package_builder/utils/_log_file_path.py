@@ -10,7 +10,7 @@ def get_public_documents_dir() -> Path:
     Robust method agnostic of OS installed drive.
 
     Returns:
-        Path: Public Documents directory path.
+        Public Documents directory path.
     """
     public_documents_path = WindowsPath("~Public") / "Documents"
     return public_documents_path.expanduser()
@@ -22,7 +22,7 @@ def get_user_docs() -> Path:
     Robust method agnostic of OS installed drive.
 
     Returns:
-        Path: user's My Documents directory path.
+        User's My Documents directory path.
     """
     public_documents_path = Path.home() / "Documents"
     return public_documents_path.expanduser()
@@ -36,10 +36,10 @@ def get_log_folder_path(output_path: Path) -> Tuple[Path, bool, bool]:
     3. Return the output path provided.
 
     Args:
-        output_path (Path): Output path for logger from config file.
+        output_path: Output path for logger from config file.
 
     Returns:
-        Tuple[Path, bool, bool]: Output path for logger and status of public paths and user paths.
+        Output path for logger and status of public paths and user paths.
     """
     public_path_status = True
     user_path_status = True

@@ -1,6 +1,6 @@
 """Implementation of NI Measurement Plug-In Package Builder."""
 
-import subprocess
+import subprocess  # nosec: B404
 from pathlib import Path
 from typing import Optional
 
@@ -24,7 +24,7 @@ from ni_measurement_plugin_package_builder.utils._helpers import (
     build_meas_package,
     get_publish_package_client,
     publish_package_to_systemlink,
-    valid_folder_path,
+    is_valid_folder,
 )
 from ni_measurement_plugin_package_builder.utils._interactive_mode import (
     publish_meas_packages_in_interactive_mode,
@@ -106,7 +106,7 @@ def run(
             interactive_mode_input_parent_dir = Path(
                 input(InteractiveModeMessages.INPUT_MEAS_PLUGIN_BASE_DIR).strip()
             )
-            if not valid_folder_path(interactive_mode_input_parent_dir):
+            if not is_valid_folder(interactive_mode_input_parent_dir):
                 raise FileNotFoundError(
                     UserMessages.INVALID_BASE_DIR.format(dir=interactive_mode_input_parent_dir)
                 )

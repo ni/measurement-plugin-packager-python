@@ -39,8 +39,8 @@ def publish_meas_packages_in_interactive_mode(
     """Publish Measurement Packages in interactive mode.
 
     Args:
-        logger (Logger): Logger object.
-        measurement_plugin_base_path (Path): Measurement plug-ins parent path.
+        logger: Logger object.
+        measurement_plugin_base_path: Measurement plug-ins parent path.
 
     Raises:
         InvalidInputError: If API Key and Feed Name not provided by the user.
@@ -65,11 +65,10 @@ def publish_meas_packages_in_interactive_mode(
         if not measurement_plugins:
             break
 
-        plugins_to_process = [str(path) for path in measurement_plugins]
         publish_meas_packages(
             logger=logger,
             measurement_plugin_base_path=measurement_plugin_base_path,
-            measurement_plugins=plugins_to_process,
+            measurement_plugins=[str(path) for path in measurement_plugins],
             publish_package_client=publish_package_client,
             upload_package_info=upload_package_info,
         )

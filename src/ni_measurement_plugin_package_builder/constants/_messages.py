@@ -10,6 +10,7 @@ class UserMessages:
     PROCESS_COMPLETED = "Process Completed."
     VERSION = "Package Version - {version}"
     INVALID_MEAS_DIR = "Invalid measurement plug-in directory - '{dir}'"
+    INVALID_BUILDER_PATH = "Invalid measurement plug-in package builder directory."
     INVALID_BASE_DIR = "Invalid measurement plug-in base directory - '{dir}',\
 \nPlease provide the parent directory containing measurement plug-in folders."
     PACKAGE_BUILT = "NI Package for the measurement '{name}' built successfully at '{dir}'"
@@ -42,7 +43,6 @@ class UserMessages:
     PACKAGE_UPLOAD_FAILED = "Failed to upload the package '{package}' to SystemLink feed '{name}'."
     API_URL_KEY_MISSING = "{key} key found missing in SystemLink Client configuration files."
     FAILED_CLIENT_CREATION = "Failed to instantiate the client for publish packages to SystemLink."
-    INVALID_BUILDER_PATH = "Measurement Plug-In package builder path is None."
 
 
 class InteractiveModeMessages:

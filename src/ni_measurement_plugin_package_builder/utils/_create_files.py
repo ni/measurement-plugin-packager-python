@@ -47,8 +47,8 @@ def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
     """Copy the contents of the folders except few `files/folders` and place it in the destination path. # noqa: W505.
 
     Args:
-        src_path (Path): Source folder path.
-        dest_path (Path): Destination folder path.
+        src_path: Source folder path.
+        dest_path: Destination folder path.
 
     Returns:
         None.
@@ -65,21 +65,21 @@ def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
 
 
 def create_template_folders(
-    mlink_package_builder_path: Path,
+    plugin_package_builder_path: Path,
     measurement_plugin_path: Path,
     measurement_package_info: PackageInfo,
 ) -> Path:
     """Create Template folders for building NI Packages.
 
     Args:
-        mlink_package_builder_path (Path): Measurement Package builder path.
-        measurement_plugin_path (Path): Measurement Plugin path from user.
-        measurement_package_info (PackageInfo): Measurement package information.
+        plugin_package_builder_path: Measurement Package builder path.
+        measurement_plugin_path: Measurement Plugin path from user.
+        measurement_package_info: Measurement package information.
 
     Returns:
-        Path: Template folder path.
+        Template folder path.
     """
-    template_path = Path(mlink_package_builder_path) / measurement_package_info.measurement_name
+    template_path = Path(plugin_package_builder_path) / measurement_package_info.measurement_name
 
     if template_path.is_dir():
         shutil.rmtree(template_path)
@@ -117,8 +117,8 @@ def create_control_file(control_folder_path: Path, package_info: PackageInfo) ->
     """Create control file for storing information about measurement package.
 
     Args:
-        control_folder_path (Path): Control folder path.
-        package_info (PackageInfo): Measurement Package information.
+        control_folder_path: Control folder path.
+        package_info: Measurement Package information.
 
     Returns:
         None
@@ -153,9 +153,9 @@ def create_instruction_file(data_path: Path, measurement_name: str, package_name
     """Create instruction file for storing measurement directory information.
 
     Args:
-        data_path (Path): Data folder path.
-        measurement_name (Path): Measurement service name.
-        package_name (Path): Measurement package name.
+        data_path: Data folder path.
+        measurement_name: Measurement service name.
+        package_name: Measurement package name.
 
     Returns:
         None.

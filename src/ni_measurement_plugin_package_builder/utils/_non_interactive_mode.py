@@ -2,6 +2,7 @@
 
 from logging import Logger
 from pathlib import Path
+from typing import List
 
 from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
 
@@ -27,11 +28,11 @@ def publish_meas_packages_in_non_interactive_mode(
     """Publish measurement packages in non interactive mode.
 
     Args:
-        logger (Logger): Logger object.
-        measurement_plugin_base_path (Path): Measurement plugins parent path.
-        selected_meas_plugins (str): Selected measurement plugins.
-        publish_package_client (PublishPackagesToSystemLink): Client for publish packages to SystemLink. # noqa:  W505
-        upload_package_info (UploadPackageInfo): Information about the package to be uploaded.
+        logger: Logger object.
+        measurement_plugin_base_path: Measurement plugins parent path.
+        selected_meas_plugins: Selected measurement plugins.
+        publish_package_client: Client for publish packages to SystemLink. # noqa:  W505
+        upload_package_info: Information about the package to be uploaded.
 
     Raises:
         InvalidInputError: If API Key and Feed Name not provided by the user.
@@ -45,7 +46,7 @@ def publish_meas_packages_in_non_interactive_mode(
             UserMessages.INVALID_BASE_DIR.format(dir=measurement_plugin_base_path)
         )
 
-    plugins_to_process: list[str]
+    plugins_to_process: List[str]
     if selected_meas_plugins == ".":
         plugins_to_process = [str(path) for path in measurement_plugins]
     else:

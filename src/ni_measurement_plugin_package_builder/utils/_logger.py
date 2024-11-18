@@ -54,8 +54,8 @@ def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
     """Add file handler.
 
     Args:
-        logger (Logger): Logger object.
-        log_folder_path (Path): Log folder path.
+        logger: Logger object.
+        log_folder_path: Log folder path.
 
     Returns:
         None.
@@ -68,11 +68,11 @@ def setup_logger_with_file_handler(output_path: Path, logger: Logger) -> Tuple[L
     """Adds a file handler to the provided logger.
 
     Args:
-        output_path (Path): Output path
-        logger (Logger): Logger object.
+        output_path: Output path
+        logger: Logger object.
 
     Returns:
-        Tuple[Logger, Path]: Logger object and logger folder path.
+        Logger object and logger folder path.
     """
     log_folder_path, public_path_status, user_path_status = get_log_folder_path(output_path)
     add_file_handler(logger=logger, log_folder_path=log_folder_path)
@@ -89,7 +89,7 @@ def add_stream_handler(logger: Logger) -> None:
     """Add stream handler.
 
     Args:
-        logger (Logger): Logger object.
+        logger: Logger object.
 
     Returns:
         None.
@@ -102,10 +102,10 @@ def initialize_logger(name: str) -> Logger:
     """Initialize logger object for logging.
 
     Args:
-        name (str): Logger name.
+        name: Logger name.
 
     Returns:
-        Logger: Logger object.
+        Logger object.
     """
     new_logger = logging.getLogger(name)
     new_logger.setLevel(logging.DEBUG)
@@ -118,7 +118,7 @@ def remove_handlers(log: Logger) -> None:
     """Remove Log Handlers.
 
     Args:
-        logger (Logger): Logger object.
+        logger: Logger object.
 
     Returns:
         None.

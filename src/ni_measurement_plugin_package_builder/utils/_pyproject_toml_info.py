@@ -23,10 +23,10 @@ def get_pyproject_toml_info(pyproject_toml_path: Path) -> Dict[str, Any]:
     """Get `pyproject.toml` information.
 
     Args:
-        pyproject_toml_path (Path): File path of pyproject.toml.
+        pyproject_toml_path: File path of pyproject.toml.
 
     Returns:
-        Dict[str, Any]: Pyproject toml information.
+        Pyproject toml information.
     """
     with open(pyproject_toml_path, "rb") as file:
         pyproject_data = tomli.load(file)
@@ -42,12 +42,12 @@ def get_updated_package_data(
     """Get updated package data from `pyproject toml` data.
 
     Args:
-        logger (Logger): Logger object.
-        pyproject_toml_data (Dict[str, Any]): Pyproject toml data.
-        measurement_name (str): Measurement name.
+        logger: Logger object.
+        pyproject_toml_data: Pyproject toml data.
+        measurement_name: Measurement name.
 
     Returns:
-        PackageInfo: Updated measurement package info.
+        Updated measurement package info.
     """
     package_info = pyproject_toml_data[PyProjectToml.TOOL][PyProjectToml.POETRY]
     package_description = package_info[PyProjectToml.DESCRIPTION]
@@ -91,11 +91,11 @@ def get_measurement_package_info(measurement_plugin_path: Path, logger: Logger) 
     """Get measurement package information from pyproject.toml.
 
     Args:
-        measurement_plugin_path (Path): Measurement Plug-in path.
-        logger (Logger): Logger object.
+        measurement_plugin_path: Measurement Plug-in path.
+        logger: Logger object.
 
     Returns:
-       PackageInfo: Measurement package info.
+       Measurement package info.
     """
     pyproject_toml_path = Path(measurement_plugin_path) / PyProjectToml.FILE_NAME
     measurement_name = Path(measurement_plugin_path).name
