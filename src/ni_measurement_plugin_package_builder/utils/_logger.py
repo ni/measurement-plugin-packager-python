@@ -20,7 +20,7 @@ from ni_measurement_plugin_package_builder.utils._log_file_path import (
 )
 
 
-def __create_file_handler(
+def _create_file_handler(
     log_folder_path: Path,
     file_name: str,
 ) -> logging.handlers.RotatingFileHandler:
@@ -43,7 +43,7 @@ def __create_file_handler(
     return handler
 
 
-def __create_stream_handler() -> StreamHandler:
+def _create_stream_handler() -> StreamHandler:
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.INFO)
 
@@ -60,7 +60,7 @@ def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
     Returns:
         None.
     """
-    handler = __create_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
+    handler = _create_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
     logger.addHandler(handler)
 
 
@@ -94,7 +94,7 @@ def add_stream_handler(logger: Logger) -> None:
     Returns:
         None.
     """
-    stream_handler = __create_stream_handler()
+    stream_handler = _create_stream_handler()
     logger.addHandler(stream_handler)
 
 

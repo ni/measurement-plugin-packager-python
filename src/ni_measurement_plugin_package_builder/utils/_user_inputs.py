@@ -187,7 +187,7 @@ def get_user_input_for_upload_packages(
         logger: Logger object.
 
     Returns:
-        SystemLink config credentials and Upload package information. # noqa: W505.
+        SystemLink config credentials and Upload package information.
     """
     systemlink_config = get_systemlink_config(logger=logger)
     upload_packages_info = get_upload_package_info()

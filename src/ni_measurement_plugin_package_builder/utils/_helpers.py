@@ -223,7 +223,7 @@ def publish_package_to_systemlink(
     """Publish package to SystemLink feeds services.
 
     Args:
-        publish_package_client: Client for publish packages to SystemLink. # noqa: W505
+        publish_package_client: Client for publish packages to SystemLink.
         meas_package_path: Measurement package path.
         upload_package_info: Information about the package to be uploaded.
 
@@ -345,7 +345,7 @@ def publish_meas_packages(
         logger: Logger object.
         measurement_plugin_base_path: Measurement plug-in base path.
         measurement_plugins: List of measurement plug-ins.
-        publish_package_client: Client for publish packages to SystemLink. # noqa: W505
+        publish_package_client: Client for publish packages to SystemLink.
         upload_package_info: Information about the package to be uploaded.
 
     Returns:

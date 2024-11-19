@@ -20,7 +20,7 @@ from ni_measurement_plugin_package_builder.utils._user_inputs import (
 )
 
 
-def __update_upload_package_inputs(upload_package_info: UploadPackageInfo) -> UploadPackageInfo:
+def _update_upload_package_inputs(upload_package_info: UploadPackageInfo) -> UploadPackageInfo:
     user_input_for_same_feed = get_yes_no_response(InteractiveModeMessages.SAME_FEED)
 
     if not user_input_for_same_feed:
@@ -79,4 +79,4 @@ def publish_meas_packages_in_interactive_mode(
             break
 
         if upload_packages:
-            upload_package_info = __update_upload_package_inputs(upload_package_info)
+            upload_package_info = _update_upload_package_inputs(upload_package_info)

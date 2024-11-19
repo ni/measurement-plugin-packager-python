@@ -27,7 +27,7 @@ ignore_dirs = [
 ]
 
 
-def __get_system_type() -> str:
+def _get_system_type() -> str:
     system = platform.system().lower()
     architecture = platform.machine().lower()
 
@@ -44,7 +44,7 @@ def __get_system_type() -> str:
 
 
 def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
-    """Copy the contents of the folders except few `files/folders` and place it in the destination path. # noqa: W505.
+    """Copy contents of folders to destination, excluding specified files/folders.
 
     Args:
         src_path: Source folder path.
@@ -138,7 +138,7 @@ def create_control_file(control_folder_path: Path, package_info: PackageInfo) ->
     control_file_data += ControlFile.XB_STOREPRODUCT + ": " + ControlFile.NO + "\n"
     control_file_data += ControlFile.XB_USER_VISIBLE + ": " + ControlFile.YES + "\n"
     control_file_data += ControlFile.XB_VISIBLE_RUNTIME + ": " + ControlFile.NO + "\n"
-    control_file_data += ControlFile.ARCHITECTURE + ": " + __get_system_type() + "\n"
+    control_file_data += ControlFile.ARCHITECTURE + ": " + _get_system_type() + "\n"
     control_file_data += ControlFile.DESCRIPTION + ": " + package_description + "\n"
     control_file_data += ControlFile.VERSION + ": " + package_version + "\n"
     control_file_data += ControlFile.XB_DISPLAY_NAME + ": " + measurement_name + "\n"

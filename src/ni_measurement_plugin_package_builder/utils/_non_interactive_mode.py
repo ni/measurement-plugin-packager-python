@@ -31,7 +31,7 @@ def publish_meas_packages_in_non_interactive_mode(
         logger: Logger object.
         measurement_plugin_base_path: Measurement plugins parent path.
         selected_meas_plugins: Selected measurement plugins.
-        publish_package_client: Client for publish packages to SystemLink. # noqa:  W505
+        publish_package_client: Client for publish packages to SystemLink.
         upload_package_info: Information about the package to be uploaded.
 
     Raises:
