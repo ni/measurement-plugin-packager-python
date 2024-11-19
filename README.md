@@ -1,9 +1,8 @@
 # NI Measurement Plugin Python Packager
 
 - [NI Measurement Plugin Python Packager](#ni-measurement-plugin-python-packager)
-  - [Overview](#overview)
+  - [Introduction](#introduction)
   - [Dependencies](#dependencies)
-    - [Software Requirements](#software-requirements)
   - [Installation](#installation)
   - [Usage](#usage)
     - [1. Non-Interactive Mode](#1-non-interactive-mode)
@@ -14,33 +13,33 @@
     - [Command Line Tips](#command-line-tips)
   - [Additional Resources](#additional-resources)
 
-## Overview
+## Introduction
 
 The NI Measurement Plugin Packager enables users to build Python Measurement Plug-Ins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the process of package creation and distribution for NI measurement plugins.
 
 ## Dependencies
 
-### Software Requirements
-
-- Python 3.9 or higher
-- NI Package Manager 2024 Q4 or higher
-- NI SystemLink Feeds Manager 1.0.0-dev1 or higher
+- Python 3.9 or later
+- NI Package Manager 2024 Q4 or later
+- NI SystemLink Feeds Manager 1.0.0-dev1 or later
 
 ## Installation
 
-1. Open Command Prompt/Terminal
-2. Install the required wheel files:
+1. Download the required wheel files from the latest release:
+    - `measurement_plugin_packager-X.X.X-py3-none-any.whl`
+    - `nisystemlink_feeds_manager-X.X.X-py3-none-any.whl`
+2. Install using the command below:
 
-```bash
-pip install <path_to_measurement_plugin_packager-X.X.X-py3-none-any.whl> <path_to_nisystemlink_feeds_manager-X.X.X-py3-none-any.whl>
-```
+    ```bash
+    pip install <path_to_measurement_plugin_packager-X.X.X-py3-none-any.whl> <path_to_nisystemlink_feeds_manager-X.X.X-py3-none-any.whl>
+    ```
 
 ## Usage
 
 The tool supports two modes of operation:
 
 ### 1. Non-Interactive Mode
-
+<!-- TODO: Update the flag names -->
 - #### Building Single Plugin
 
   ```bash
@@ -89,6 +88,7 @@ The tool supports two modes of operation:
   measurement-plugin-packager --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://  dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
   ```
 
+<!-- To be decided -->
 ### 2. Interactive Mode
 
 Start the interactive mode with:
@@ -132,6 +132,7 @@ The following files/directories are automatically ignored during package buildin
 
 - For building multiple plugins, both the base directory and selected measurement plugins must be specified.
 - The tool will display the output directory where `.nipkg` files are generated.
+  <!-- To be decided -->
 - Use the interactive mode (-i) for a guided experience through the build and upload process.
 
 ## Additional Resources
