@@ -5,7 +5,7 @@ from typing import Optional
 
 from pydantic import BaseModel, model_validator
 
-from ni_measurement_plugin_package_builder.constants import (
+from ni_measurement_plugin_packager.constants import (
     InteractiveModeMessages,
     NonInteractiveModeMessages,
     UserMessages,

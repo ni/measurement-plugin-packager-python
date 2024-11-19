@@ -7,14 +7,14 @@ from typing import Any, Dict
 
 import tomli
 
-from ni_measurement_plugin_package_builder.constants import (
+from ni_measurement_plugin_packager.constants import (
     DEFAULT_AUTHOR,
     DEFAULT_DESCRIPTION,
     DEFAULT_VERSION,
     PyProjectToml,
     UserMessages,
 )
-from ni_measurement_plugin_package_builder.models import PackageInfo
+from ni_measurement_plugin_packager.models import PackageInfo
 
 
 UNDERSCORE_SPACE_REGEX = r"[_ ]"
