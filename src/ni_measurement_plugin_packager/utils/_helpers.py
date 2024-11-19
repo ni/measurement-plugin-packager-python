@@ -12,7 +12,7 @@ from nisystemlink_feeds_manager.clients.feeds.models import UploadPackageRespons
 from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
 from nisystemlink_feeds_manager.models import PackageInfo
 
-from ni_measurement_plugin_package_builder.constants import (
+from ni_measurement_plugin_packager.constants import (
     PACKAGES,
     FileNames,
     InteractiveModeMessages,
@@ -20,15 +20,15 @@ from ni_measurement_plugin_package_builder.constants import (
     PyProjectToml,
     UserMessages,
 )
-from ni_measurement_plugin_package_builder.models import (
+from ni_measurement_plugin_packager.models import (
     InvalidInputError,
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_package_builder.utils._create_files import (
+from ni_measurement_plugin_packager.utils._create_files import (
     create_template_folders,
 )
-from ni_measurement_plugin_package_builder.utils._pyproject_toml_info import (
+from ni_measurement_plugin_packager.utils._pyproject_toml_info import (
     get_measurement_package_info,
 )
 

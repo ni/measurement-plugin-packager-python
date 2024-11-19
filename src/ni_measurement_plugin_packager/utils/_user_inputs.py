@@ -4,17 +4,17 @@ from logging import Logger
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from ni_measurement_plugin_package_builder.constants import (
+from ni_measurement_plugin_packager.constants import (
     YES,
     InteractiveModeMessages,
     UserMessages,
 )
-from ni_measurement_plugin_package_builder.models import (
+from ni_measurement_plugin_packager.models import (
     InvalidInputError,
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_package_builder.utils._helpers import (
+from ni_measurement_plugin_packager.utils._helpers import (
     display_available_measurements,
     get_folders,
     get_measurement_plugins,

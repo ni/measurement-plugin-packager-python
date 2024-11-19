@@ -4,13 +4,13 @@ import platform
 import shutil
 from pathlib import Path
 
-from ni_measurement_plugin_package_builder.constants import (
+from ni_measurement_plugin_packager.constants import (
     MEASUREMENT_SERVICES_PATH,
     ControlFile,
     FileNames,
     InstructionFile,
 )
-from ni_measurement_plugin_package_builder.models import PackageInfo
+from ni_measurement_plugin_packager.models import PackageInfo
 
 ignore_dirs = [
     ".venv",

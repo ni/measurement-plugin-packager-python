@@ -10,32 +10,32 @@ import click
 from nisystemlink_feeds_manager.clients.core import ApiException
 from pydantic import ValidationError
 
-from ni_measurement_plugin_package_builder.constants import (
+from ni_measurement_plugin_packager.constants import (
     CliInterface,
     InteractiveModeMessages,
     NonInteractiveModeMessages,
     UserMessages,
 )
-from ni_measurement_plugin_package_builder.models import (
+from ni_measurement_plugin_packager.models import (
     CliInputs,
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_package_builder.utils._helpers import (
+from ni_measurement_plugin_packager.utils._helpers import (
     build_meas_package,
     get_publish_package_client,
     publish_package_to_systemlink,
     is_valid_folder,
 )
-from ni_measurement_plugin_package_builder.utils._interactive_mode import (
+from ni_measurement_plugin_packager.utils._interactive_mode import (
     publish_meas_packages_in_interactive_mode,
 )
-from ni_measurement_plugin_package_builder.utils._logger import (
+from ni_measurement_plugin_packager.utils._logger import (
     initialize_logger,
     remove_handlers,
     setup_logger_with_file_handler,
 )
-from ni_measurement_plugin_package_builder.utils._non_interactive_mode import (
+from ni_measurement_plugin_packager.utils._non_interactive_mode import (
     publish_meas_packages_in_non_interactive_mode,
 )
 
