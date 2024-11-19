@@ -21,7 +21,6 @@ from ni_measurement_plugin_package_builder.constants._messages import (
 )
 from ni_measurement_plugin_package_builder.constants._template_files import (
     MEASUREMENT_SERVICES_PATH,
-    NIPKG_EXE,
     PACKAGES,
     ControlFile,
     FileNames,

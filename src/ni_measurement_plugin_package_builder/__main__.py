@@ -2,6 +2,6 @@
 python measurement plug-ins and uploading it to SystemLink Feeds.
 """
 
-from ni_measurement_plugin_package_builder.start import run
+from ni_measurement_plugin_package_builder import run
 
 run()
