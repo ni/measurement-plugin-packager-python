@@ -1,6 +1,6 @@
-# NI Measurement Plugin Python Packager
+# NI Measurement Plugin Packager Python
 
-- [NI Measurement Plugin Python Packager](#ni-measurement-plugin-python-packager)
+- [NI Measurement Plugin Packager Python](#ni-measurement-plugin-packager-python)
   - [Introduction](#introduction)
   - [Dependencies](#dependencies)
   - [Installation](#installation)
