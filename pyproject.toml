@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "ni_measurement_plugin_packager"
 version = "1.3.0-dev3"
-description = "NI Package builder for python measurement plug-ins"
+description = "Packager for Python measurement plug-ins"
 authors = ["NI <opensource@ni.com>"]
 readme = "README.md"
+repository = "https://github.com/ni/measurement-plugin-python-packager/"
 packages = [{include = "ni_measurement_plugin_packager", from = "src"}]
 license = "MIT"
 classifiers = [
@@ -18,19 +19,26 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 pydantic = "^2.7.1"
 tomli = "^2.0.1"
 click = "^8.1.7"
 nisystemlink-feeds-manager = "^1.0.0.dev1"
 
-
 [tool.poetry.scripts]
-ni-measurement-plugin-packager = "ni_measurement_plugin_packager.main:run"
+ni-measurement-plugin-packager = "ni_measurement_plugin_packager:run"
 
 [tool.poetry.group.dev.dependencies]
-ni-python-styleguide = "^0.4.5"
-lint = "^1.2.1"
+mypy = "^1.11.2"
+ni-python-styleguide = "^0.4.6"
+bandit = { version = "^1.7", extras = ["toml"] }
+
+[tool.bandit]
+exclude_dirs = [".venv"]
+
+[[tool.mypy.overrides]]
+module = "nisystemlink_feeds_manager.*"
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core"]
