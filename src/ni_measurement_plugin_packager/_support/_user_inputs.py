@@ -14,7 +14,7 @@ from ni_measurement_plugin_packager.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_packager.utils._helpers import (
+from ni_measurement_plugin_packager._support._helpers import (
     display_available_measurements,
     get_folders,
     get_measurement_plugins,

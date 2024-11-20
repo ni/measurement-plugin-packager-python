@@ -15,9 +15,7 @@ from ni_measurement_plugin_packager.constants import (
     LOG_FILE_SIZE_LIMIT_IN_BYTES,
     UserMessages,
 )
-from ni_measurement_plugin_packager.utils._log_file_path import (
-    get_log_folder_path,
-)
+from ni_measurement_plugin_packager._support._log_file_path import get_log_folder_path
 
 
 def _create_file_handler(
@@ -108,11 +106,11 @@ def initialize_logger(name: str) -> Logger:
     return new_logger
 
 
-def remove_handlers(log: Logger) -> None:
+def remove_handlers(logger: Logger) -> None:
     """Remove Log Handlers.
 
     Args:
         logger: Logger object.
     """
-    for handler in log.handlers:
-        log.removeHandler(handler)
+    for handler in logger.handlers:
+        logger.removeHandler(handler)

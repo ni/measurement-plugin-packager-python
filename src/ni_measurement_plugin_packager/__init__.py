@@ -21,21 +21,21 @@ from ni_measurement_plugin_packager.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_packager.utils._helpers import (
+from ni_measurement_plugin_packager._support._helpers import (
     build_package,
     get_publish_package_client,
     publish_package_to_systemlink,
     is_valid_folder,
 )
-from ni_measurement_plugin_packager.utils._interactive_mode import (
+from ni_measurement_plugin_packager._support._interactive_mode import (
     publish_packages_in_interactive_mode,
 )
-from ni_measurement_plugin_packager.utils._logger import (
+from ni_measurement_plugin_packager._support._logger import (
     initialize_logger,
     remove_handlers,
     setup_logger_with_file_handler,
 )
-from ni_measurement_plugin_packager.utils._non_interactive_mode import (
+from ni_measurement_plugin_packager._support._non_interactive_mode import (
     publish_packages_in_non_interactive_mode,
 )
 
@@ -60,7 +60,7 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 )
 @click.option(
     "-s",
-    "--selected-meas-plugins",
+    "--selected-plugins",
     default="",
     required=False,
     help=CliInterface.SELECTED_PLUGINS,

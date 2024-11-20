@@ -2,8 +2,9 @@
 
 import platform
 import shutil
-from pathlib import Path
 import sys
+from pathlib import Path
+
 import winreg
 
 from ni_measurement_plugin_packager.constants import (
@@ -27,6 +28,7 @@ ignore_dirs = [
     "coverage.xml",
 ]
 
+
 def _get_measurement_services_path(measurement_name: str) -> Path:
     return _get_nipath("NIPUBAPPDATADIR") / "Plug-Ins" / "Measurements" / measurement_name
 
@@ -44,8 +46,8 @@ def _get_nipath(name: str) -> Path:
             value, type = winreg.QueryValueEx(key, name)
             assert type == winreg.REG_SZ  # nosec: B101
             return Path(value)
-        
-        
+
+
 def _get_system_type() -> str:
     system = platform.system().lower()
     architecture = platform.machine().lower()

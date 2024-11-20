@@ -14,5 +14,4 @@ __all__ = [
     "UploadPackageInfo",
     "InvalidInputError",
     "PackageInfo",
-
 ]

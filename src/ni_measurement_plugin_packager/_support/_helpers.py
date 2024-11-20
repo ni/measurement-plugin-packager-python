@@ -25,10 +25,8 @@ from ni_measurement_plugin_packager.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_packager.utils._create_files import (
-    create_template_folders,
-)
-from ni_measurement_plugin_packager.utils._pyproject_toml_info import (
+from ni_measurement_plugin_packager._support._create_files import create_template_folders
+from ni_measurement_plugin_packager._support._pyproject_toml_info import (
     get_measurement_package_info,
 )
 
@@ -164,8 +162,7 @@ def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
         folders = [
             name
             for name in folder_path.iterdir()
-            if (folder_path / name).is_dir()
-            and validate_plugin_files(folder_path / name, logger)
+            if (folder_path / name).is_dir() and validate_plugin_files(folder_path / name, logger)
         ]
         return folders
 

@@ -8,11 +8,11 @@ from ni_measurement_plugin_packager.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_packager.utils._helpers import (
+from ni_measurement_plugin_packager._support._helpers import (
     get_publish_package_client,
     publish_packages,
 )
-from ni_measurement_plugin_packager.utils._user_inputs import (
+from ni_measurement_plugin_packager._support._user_inputs import (
     get_feed_name,
     get_user_input_for_upload_packages,
     get_user_inputs_in_interactive_mode,
