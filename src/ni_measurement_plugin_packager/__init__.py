@@ -1,4 +1,4 @@
-"""Implementation of NI Measurement Plug-In Package Builder."""
+"""Implementation of Measurement Plug-In Package Builder."""
 
 __version__ = "1.3.0-dev3"
 
@@ -22,13 +22,13 @@ from ni_measurement_plugin_packager.models import (
     UploadPackageInfo,
 )
 from ni_measurement_plugin_packager.utils._helpers import (
-    build_meas_package,
+    build_package,
     get_publish_package_client,
     publish_package_to_systemlink,
     is_valid_folder,
 )
 from ni_measurement_plugin_packager.utils._interactive_mode import (
-    publish_meas_packages_in_interactive_mode,
+    publish_packages_in_interactive_mode,
 )
 from ni_measurement_plugin_packager.utils._logger import (
     initialize_logger,
@@ -36,7 +36,7 @@ from ni_measurement_plugin_packager.utils._logger import (
     setup_logger_with_file_handler,
 )
 from ni_measurement_plugin_packager.utils._non_interactive_mode import (
-    publish_meas_packages_in_non_interactive_mode,
+    publish_packages_in_non_interactive_mode,
 )
 
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
@@ -75,7 +75,7 @@ def run(
     interactive_mode: bool,
     plugin_dir: Optional[Path],
     base_dir: Optional[Path],
-    selected_meas_plugins: Optional[str],
+    selected_plugins: Optional[str],
     upload_packages: bool,
     api_url: Optional[str],
     api_key: Optional[str],
@@ -83,8 +83,7 @@ def run(
     feed_name: Optional[str],
     overwrite: Optional[bool],
 ) -> None:
-    """NI Measurement Plug-In Package Builder is a Command line tool for building NI package file\
- for python measurement plug-ins and uploading it to SystemLink Feeds."""
+    """Create and upload package files for Python measurement plug-ins to SystemLink Feeds."""
     try:
         logger = initialize_logger(name="console_logger")
         logger.info(UserMessages.STARTED_EXECUTION)
@@ -98,7 +97,7 @@ def run(
             interactive_mode=interactive_mode,
             measurement_plugin_path=plugin_dir,
             upload_packages=upload_packages,
-            selected_meas_plugins=selected_meas_plugins,
+            selected_plugins=selected_plugins,
             systemlink_config=systemlink_config,
             upload_package_info=upload_package_info,
         )
@@ -130,7 +129,7 @@ def run(
 
         if interactive_mode_input_parent_dir and interactive_mode:
             logger.debug(InteractiveModeMessages.INTERACTIVE_MODE_ON)
-            publish_meas_packages_in_interactive_mode(
+            publish_packages_in_interactive_mode(
                 logger=logger,
                 measurement_plugin_base_path=interactive_mode_input_parent_dir,
             )
@@ -143,23 +142,23 @@ def run(
                     systemlink_config=systemlink_config,
                 )
 
-            if cli_args.measurement_plugin_base_path and cli_args.selected_meas_plugins:
-                publish_meas_packages_in_non_interactive_mode(
+            if cli_args.measurement_plugin_base_path and cli_args.selected_plugins:
+                publish_packages_in_non_interactive_mode(
                     logger=logger,
                     measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
-                    selected_meas_plugins=cli_args.selected_meas_plugins,
+                    selected_plugins=cli_args.selected_plugins,
                     publish_package_client=publish_package_client,
                     upload_package_info=upload_package_info,
                 )
 
             if cli_args.measurement_plugin_path:
-                meas_package_path = build_meas_package(
+                package_path = build_package(
                     logger=logger,
                     measurement_plugin_path=cli_args.measurement_plugin_path,
                 )
-                if publish_package_client and meas_package_path:
+                if publish_package_client and package_path:
                     upload_response = publish_package_to_systemlink(
-                        meas_package_path=meas_package_path,
+                        package_path=package_path,
                         publish_package_client=publish_package_client,
                         upload_package_info=upload_package_info,
                     )

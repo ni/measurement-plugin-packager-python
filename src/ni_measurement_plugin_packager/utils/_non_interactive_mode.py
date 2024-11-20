@@ -1,4 +1,4 @@
-"""Implementation of non-interactive mode for NI Measurement Plug-In Package Builder."""
+"""Implementation of non-interactive mode for Measurement Plug-In Package Builder."""
 
 from logging import Logger
 from pathlib import Path
@@ -13,15 +13,15 @@ from ni_measurement_plugin_packager.models import (
 )
 from ni_measurement_plugin_packager.utils._helpers import (
     get_folders,
-    publish_meas_packages,
-    validate_selected_meas_plugins,
+    publish_packages,
+    validate_selected_plugins,
 )
 
 
-def publish_meas_packages_in_non_interactive_mode(
+def publish_packages_in_non_interactive_mode(
     logger: Logger,
     measurement_plugin_base_path: Path,
-    selected_meas_plugins: str,
+    selected_plugins: str,
     publish_package_client: PublishPackagesToSystemLink,
     upload_package_info: UploadPackageInfo,
 ) -> None:
@@ -29,8 +29,8 @@ def publish_meas_packages_in_non_interactive_mode(
 
     Args:
         logger: Logger object.
-        measurement_plugin_base_path: Measurement plugins parent path.
-        selected_meas_plugins: Selected measurement plugins.
+        measurement_plugin_base_path: Measurement plugins root folder path.
+        selected_plugins: Selected measurement plugins.
         publish_package_client: Client for publish packages to SystemLink.
         upload_package_info: Information about the package to be uploaded.
 
@@ -47,19 +47,19 @@ def publish_meas_packages_in_non_interactive_mode(
         )
 
     plugins_to_process: List[str]
-    if selected_meas_plugins == ".":
+    if selected_plugins == ".":
         plugins_to_process = [str(path) for path in measurement_plugins]
     else:
-        validate_selected_meas_plugins(
+        validate_selected_plugins(
             measurement_plugins=measurement_plugins,
-            selected_meas_plugins=selected_meas_plugins,
+            selected_plugins=selected_plugins,
             logger=logger,
         )
         plugins_to_process = [
-            meas_plugin.strip("'\"").strip() for meas_plugin in selected_meas_plugins.split(",")
+            plugin.strip("'\"").strip() for plugin in selected_plugins.split(",")
         ]
 
-    publish_meas_packages(
+    publish_packages(
         logger=logger,
         measurement_plugin_base_path=measurement_plugin_base_path,
         measurement_plugins=plugins_to_process,

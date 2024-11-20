@@ -1,4 +1,4 @@
-"""Helper functions for NI Measurement Plug-In Package Builder."""
+"""Helper functions for Measurement Plug-In Package Builder."""
 
 import subprocess  # nosec: B404
 import sys
@@ -59,7 +59,7 @@ def is_valid_folder(folder_path: Path) -> bool:
         folder_path: Folder path.
 
     Returns:
-        True if valid folder path else False.
+        True, if valid folder path. Else, False.
     """
     return folder_path.is_dir()
 
@@ -70,9 +70,6 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[Pat
     Args:
         logger: Logger object.
         measurement_plugins: List of measurement plug-ins.
-
-    Returns:
-        None.
     """
     logger.info("\n")
     logger.info(InteractiveModeMessages.AVAILABLE_MEASUREMENTS)
@@ -81,7 +78,7 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[Pat
     logger.info("")
 
 
-def validate_meas_plugin_files(plugin_path: Path, logger: Logger) -> bool:
+def validate_plugin_files(plugin_path: Path, logger: Logger) -> bool:
     """Validate measurement plug-in files.
 
     Args:
@@ -89,7 +86,7 @@ def validate_meas_plugin_files(plugin_path: Path, logger: Logger) -> bool:
         logger: Logger object.
 
     Returns:
-        True if valid measurement plug-in folder else False.
+        True, if measurement plug-in folder is valid. Else, False.
     """
     pyproject_path: Path = plugin_path / PyProjectToml.FILE_NAME
     measurement_file_path: Path = plugin_path / FileNames.MEASUREMENT_FILE
@@ -111,25 +108,22 @@ def validate_meas_plugin_files(plugin_path: Path, logger: Logger) -> bool:
     return valid_file
 
 
-def validate_selected_meas_plugins(
-    selected_meas_plugins: str,
+def validate_selected_plugins(
+    selected_plugins: str,
     measurement_plugins: List[Path],
     logger: Logger,
 ) -> None:
     """Validate the selected measurement plug-ins in `non-interactive mode`.
 
     Args:
-        selected_meas_plugins: User selected measurement plug-ins.
+        selected_plugins: User selected measurement plug-ins.
         measurement_plugins: Measurement plug-ins.
         logger: Logger object.
 
     Raises:
         InvalidInputError: if any invalid input in the selected measurement plug-ins.
-
-    Returns:
-        None.
     """
-    for measurement_plugin in selected_meas_plugins.split(","):
+    for measurement_plugin in selected_plugins.split(","):
         plugin_name = measurement_plugin.strip("'\"").strip()
 
         if plugin_name not in measurement_plugins:
@@ -171,7 +165,7 @@ def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
             name
             for name in folder_path.iterdir()
             if (folder_path / name).is_dir()
-            and validate_meas_plugin_files(folder_path / name, logger)
+            and validate_plugin_files(folder_path / name, logger)
         ]
         return folders
 
@@ -179,8 +173,8 @@ def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
         raise FileNotFoundError(UserMessages.INVALID_BASE_DIR.format(dir=folder_path)) from exp
 
 
-def get_ni_meas_package_builder_path(logger: Logger) -> Optional[Path]:
-    """Get Folder path of `NI Measurement Plug-in Package Builder`.
+def get_ni_package_builder_path(logger: Logger) -> Optional[Path]:
+    """Get Folder path of `Measurement Plug-in Package Builder`.
 
     Args:
         logger: Logger object.
@@ -217,14 +211,14 @@ def get_file_path(folder_path: Path, file_name: str) -> Optional[Path]:
 
 def publish_package_to_systemlink(
     publish_package_client: PublishPackagesToSystemLink,
-    meas_package_path: Path,
+    package_path: Path,
     upload_package_info: UploadPackageInfo,
 ) -> UploadPackageResponse:
     """Publish package to SystemLink feeds services.
 
     Args:
         publish_package_client: Client for publish packages to SystemLink.
-        meas_package_path: Measurement package path.
+        package_path: Measurement package path.
         upload_package_info: Information about the package to be uploaded.
 
     Returns:
@@ -233,7 +227,7 @@ def publish_package_to_systemlink(
     upload_response = publish_package_client.upload_package(
         package_info=PackageInfo(
             feed_name=upload_package_info.feed_name,
-            path=meas_package_path,
+            path=package_path,
             overwrite=upload_package_info.overwrite_packages,
         )
     )
@@ -278,7 +272,7 @@ def get_publish_package_client(
         logger.info(UserMessages.CHECK_LOG_FILE)
 
 
-def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Path]:
+def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Path]:
     """Build measurement plug-in as NI package file.
 
     Args:
@@ -292,12 +286,12 @@ def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optiona
     measurement_plugin = Path(measurement_plugin_path).name
     logger.info(UserMessages.BUILDING_MEAS.format(name=measurement_plugin))
 
-    plugin_package_builder_path = get_ni_meas_package_builder_path(logger=logger)
+    plugin_package_builder_path = get_ni_package_builder_path(logger=logger)
     if not plugin_package_builder_path:
         logger.info(UserMessages.INVALID_BUILDER_PATH)
         return None
 
-    if not validate_meas_plugin_files(plugin_path=measurement_plugin_path, logger=logger):
+    if not validate_plugin_files(plugin_path=measurement_plugin_path, logger=logger):
         logger.info(UserMessages.INVALID_MEAS_PLUGIN)
         return None
 
@@ -332,7 +326,7 @@ def build_meas_package(logger: Logger, measurement_plugin_path: Path) -> Optiona
     return measurement_package_path
 
 
-def publish_meas_packages(
+def publish_packages(
     logger: Logger,
     measurement_plugin_base_path: Path,
     measurement_plugins: List[str],
@@ -347,21 +341,18 @@ def publish_meas_packages(
         measurement_plugins: List of measurement plug-ins.
         publish_package_client: Client for publish packages to SystemLink.
         upload_package_info: Information about the package to be uploaded.
-
-    Returns:
-        None.
     """
     for measurement_plugin in measurement_plugins:
         measurement_plugin_path = Path(measurement_plugin_base_path) / measurement_plugin
         try:
-            measurement_package_path = build_meas_package(
+            measurement_package_path = build_package(
                 logger=logger,
                 measurement_plugin_path=measurement_plugin_path,
             )
             if publish_package_client and measurement_package_path:
                 upload_response = publish_package_to_systemlink(
                     publish_package_client=publish_package_client,
-                    meas_package_path=measurement_package_path,
+                    package_path=measurement_package_path,
                     upload_package_info=upload_package_info,
                 )
                 logger.info(

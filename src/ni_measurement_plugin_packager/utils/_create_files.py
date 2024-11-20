@@ -1,11 +1,12 @@
-"""Helper functions for creating the files for NI Measurement Plug-In Package Builder."""
+"""Helper functions for creating the files for Measurement Plug-In Package Builder."""
 
 import platform
 import shutil
 from pathlib import Path
+import sys
+import winreg
 
 from ni_measurement_plugin_packager.constants import (
-    MEASUREMENT_SERVICES_PATH,
     ControlFile,
     FileNames,
     InstructionFile,
@@ -26,7 +27,25 @@ ignore_dirs = [
     "coverage.xml",
 ]
 
+def _get_measurement_services_path(measurement_name: str) -> Path:
+    return _get_nipath("NIPUBAPPDATADIR") / "Plug-Ins" / "Measurements" / measurement_name
 
+
+def _get_nipath(name: str) -> Path:
+    if sys.platform == "win32":
+        access: int = winreg.KEY_READ
+        if "64" in name:
+            access |= winreg.KEY_WOW64_64KEY
+        with winreg.OpenKey(
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\National Instruments\Common\Installer",
+            access=access,
+        ) as key:
+            value, type = winreg.QueryValueEx(key, name)
+            assert type == winreg.REG_SZ  # nosec: B101
+            return Path(value)
+        
+        
 def _get_system_type() -> str:
     system = platform.system().lower()
     architecture = platform.machine().lower()
@@ -49,9 +68,6 @@ def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
     Args:
         src_path: Source folder path.
         dest_path: Destination folder path.
-
-    Returns:
-        None.
     """
     for item in src_path.iterdir():
         if item.name in ignore_dirs:
@@ -119,9 +135,6 @@ def create_control_file(control_folder_path: Path, package_info: PackageInfo) ->
     Args:
         control_folder_path: Control folder path.
         package_info: Measurement Package information.
-
-    Returns:
-        None
     """
     control_file_path = control_folder_path / FileNames.CONTROL
 
@@ -156,11 +169,8 @@ def create_instruction_file(data_path: Path, measurement_name: str, package_name
         data_path: Data folder path.
         measurement_name: Measurement service name.
         package_name: Measurement package name.
-
-    Returns:
-        None.
     """
-    measurement_service_path = Path(MEASUREMENT_SERVICES_PATH) / measurement_name
+    measurement_service_path = _get_measurement_services_path(measurement_name=measurement_name)
     instruction_path = data_path / InstructionFile.INSTRUCTION
 
     instruction_data = (

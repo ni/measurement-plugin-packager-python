@@ -30,13 +30,13 @@ def get_yes_no_response(question: str) -> bool:
         question: Question to be prompted to the user.
 
     Returns:
-        True if user provides yes else False.
+        True, if the user provides 'yes'. Else, False.
     """
     user_input = input(question).strip().lower()
     return user_input == YES
 
 
-def validate_user_input_for_meas_plugins(
+def validate_user_input_for_plugins(
     user_inputs: List[str],
     measurement_plugins: Dict[str, Path],
 ) -> Optional[List[Path]]:
@@ -75,7 +75,7 @@ def get_user_inputs_in_interactive_mode(
         measurement_plugins_base_path: Measurement plug-in base path.
 
     Returns:
-       User selected measurement infomation.
+       User selected measurement information.
     """
     measurement_plugins = get_folders(measurement_plugins_base_path, logger)
 
@@ -103,7 +103,7 @@ def get_user_inputs_in_interactive_mode(
             .split(",")
         )
 
-        validated_user_inputs = validate_user_input_for_meas_plugins(
+        validated_user_inputs = validate_user_input_for_plugins(
             user_selected_plugin_numbers,
             measurement_plugins_with_indexes,
         )

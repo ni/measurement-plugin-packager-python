@@ -1,4 +1,4 @@
-"""Implementation of interactive mode for NI Measurement Plug-In Package builder."""
+"""Implementation of interactive mode for Measurement Plug-In Package builder."""
 
 from logging import Logger
 from pathlib import Path
@@ -10,7 +10,7 @@ from ni_measurement_plugin_packager.models import (
 )
 from ni_measurement_plugin_packager.utils._helpers import (
     get_publish_package_client,
-    publish_meas_packages,
+    publish_packages,
 )
 from ni_measurement_plugin_packager.utils._user_inputs import (
     get_feed_name,
@@ -32,7 +32,7 @@ def _update_upload_package_inputs(upload_package_info: UploadPackageInfo) -> Upl
     return upload_package_info
 
 
-def publish_meas_packages_in_interactive_mode(
+def publish_packages_in_interactive_mode(
     logger: Logger,
     measurement_plugin_base_path: Path,
 ) -> None:
@@ -65,7 +65,7 @@ def publish_meas_packages_in_interactive_mode(
         if not measurement_plugins:
             break
 
-        publish_meas_packages(
+        publish_packages(
             logger=logger,
             measurement_plugin_base_path=measurement_plugin_base_path,
             measurement_plugins=[str(path) for path in measurement_plugins],

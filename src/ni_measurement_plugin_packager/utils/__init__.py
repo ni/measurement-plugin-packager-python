@@ -1,1 +1,1 @@
-"""NI Measurement Plug-In Package Builder utility functions."""
+"""Measurement Plug-In Package Builder helper functions."""

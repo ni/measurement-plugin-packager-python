@@ -1,4 +1,4 @@
-"""Models for NI Measurement Plug-In Package Builder CLI Arguments."""
+"""Models for Measurement Plug-In Package Builder CLI Arguments."""
 
 from pathlib import Path
 from typing import Optional
@@ -32,7 +32,7 @@ class CliInputs(BaseModel):
 
     measurement_plugin_base_path: Optional[Path] = None
     measurement_plugin_path: Optional[Path] = None
-    selected_meas_plugins: Optional[str] = None
+    selected_plugins: Optional[str] = None
     interactive_mode: bool = False
     upload_packages: bool = False
     systemlink_config: SystemLinkConfig = SystemLinkConfig()
@@ -44,14 +44,14 @@ class CliInputs(BaseModel):
         if not self.interactive_mode and (
             (
                 self.measurement_plugin_path
-                and any([self.measurement_plugin_base_path, self.selected_meas_plugins])
+                and any([self.measurement_plugin_base_path, self.selected_plugins])
             )
             or (
-                all([self.measurement_plugin_base_path, self.selected_meas_plugins])
+                all([self.measurement_plugin_base_path, self.selected_plugins])
                 and self.measurement_plugin_path
             )
             or (
-                not all([self.measurement_plugin_base_path, self.selected_meas_plugins])
+                not all([self.measurement_plugin_base_path, self.selected_plugins])
                 and not self.measurement_plugin_path
             )
         ):
@@ -78,7 +78,7 @@ class CliInputs(BaseModel):
             [
                 self.measurement_plugin_base_path,
                 self.measurement_plugin_path,
-                self.selected_meas_plugins,
+                self.selected_plugins,
                 self.upload_packages,
                 self.systemlink_config.api_key,
                 self.systemlink_config.api_url,

@@ -56,9 +56,6 @@ def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
     Args:
         logger: Logger object.
         log_folder_path: Log folder path.
-
-    Returns:
-        None.
     """
     handler = _create_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
     logger.addHandler(handler)
@@ -90,9 +87,6 @@ def add_stream_handler(logger: Logger) -> None:
 
     Args:
         logger: Logger object.
-
-    Returns:
-        None.
     """
     stream_handler = _create_stream_handler()
     logger.addHandler(stream_handler)
@@ -119,9 +113,6 @@ def remove_handlers(log: Logger) -> None:
 
     Args:
         logger: Logger object.
-
-    Returns:
-        None.
     """
     for handler in log.handlers:
         log.removeHandler(handler)

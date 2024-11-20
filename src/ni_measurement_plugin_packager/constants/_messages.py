@@ -1,10 +1,10 @@
-"""NI Measurement Plug-In Package Builder status messages."""
+"""Measurement Plug-In Package Builder status messages."""
 
 
 class UserMessages:
     """User Facing console messages."""
 
-    STARTED_EXECUTION = "Starting the NI Measurement Plug-In Package Builder..."
+    STARTED_EXECUTION = "Starting the Measurement Plug-In Package Builder..."
     CHECK_LOG_FILE = "Please check the log file for further details."
     LOG_FILE_LOCATION = "Log File Directory: {log_dir}"
     PROCESS_COMPLETED = "Process Completed."

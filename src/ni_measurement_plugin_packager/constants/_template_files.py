@@ -1,6 +1,5 @@
 """Constants utilized for creation of Control and Instruction files."""
 
-MEASUREMENT_SERVICES_PATH = "C:\\ProgramData\\National Instruments\\Plug-Ins\\Measurements\\"
 PACKAGES = "packages"
 
 
