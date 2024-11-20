@@ -15,7 +15,6 @@ from ni_measurement_plugin_packager.constants._log import (
     LOG_FILE_SIZE_LIMIT_IN_BYTES,
 )
 from ni_measurement_plugin_packager.constants._messages import (
-    InteractiveModeMessages,
     NonInteractiveModeMessages,
     UserMessages,
 )
@@ -38,7 +37,6 @@ __all__ = [
     "LOG_FILE_MSG_FORMAT",
     "LOG_FILE_NAME",
     "LOG_FILE_SIZE_LIMIT_IN_BYTES",
-    "InteractiveModeMessages",
     "NonInteractiveModeMessages",
     "UserMessages",
     "PACKAGES",

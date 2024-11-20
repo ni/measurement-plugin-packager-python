@@ -45,42 +45,18 @@ class UserMessages:
     FAILED_CLIENT_CREATION = "Failed to instantiate the client for publish packages to SystemLink."
 
 
-class InteractiveModeMessages:
-    """Non interactive mode messages."""
-
-    INTERACTIVE_MODE_ON = "Interactive mode enabled."
-    DIR_NOT_REQUIRED = "Interactive mode requires only the '-i' argument, and no other arguments\
- are necessary."
-    MEASUREMENT_NUMBER = "Enter measurement plug-in index ({start}-{end}) to build\
- (. to build all): "
-    CONTINUE_BUILDING = "Do you want to continue? (y/n): "
-    AVAILABLE_MEASUREMENTS = "Available measurements: "
-    INVALID_INPUT = "Invalid measurement plug-in indexes {numbers}, please provide valid\
- plug-in indexes."
-    UPLOAD_PACKAGE = "Do you want to upload the measurement packages to SystemLink feeds? (y/n): "
-    ENTER_API_KEY = "Enter the SystemLink API Key: "
-    ENTER_API_URL = "Enter the SystemLink API URL: "
-    ENTER_WORKSPACE = "Enter the Workspace Name: "
-    ENTER_FEED_NAME = "Enter the Feed Name: "
-    SAME_FEED = "Do you want to use same feed? (y/n): "
-    NO_FEED_NAME = "No feed name, Please provide a valid feed name for uploading the\
- measurement packages."
-    OVERWRITE_MEAS = "Do you want to overwrite the existing measurement packages? (y/n): "
-    INPUT_MEAS_PLUGIN_BASE_DIR = "In Interactive mode, User must provide the parent directory\
- containing the measurement plug-in folders.\nEnter the measurement plug-ins parent directory: "
-    DEFAULT_SYSTEMLINK_CONFIG = "API URL and Workspace will be fetched from\
- 'SystemLink Client' configuration by default."
-
-
 class NonInteractiveModeMessages:
     """Non interactive mode messages."""
 
+    MEAS_DIR_REQUIRED = "Either '--plugin-dir' or '--base-dir' with '--selected-meas-plugins'\
+ arguments are required."
     NON_INTERACTIVE_MODE = "Non-interactive mode enabled"
+    AVAILABLE_MEASUREMENTS = "Available measurements: "
     INVALID_SELECTED_PLUGINS = "Invalid measurement plug-in name '{input}'\
  provided in '--selected-meas-plugins'.\nPlease enter comma-separated names\
  (Eg: sample_measurement,test_measurement). Or, '.'\
- to build all the available measurements.\nUse interactive mode if the folder name has comma."
+ to build all the available measurements."
     UNWANTED_SYSTEMLINK_CREDENTIALS = "Please provide the argument '-u or --upload-packages' for\
  uploading the packages."
-    MEAS_DIR_REQUIRED = "Either '--plugin-dir' or '--base-dir' with '--selected-meas-plugins'\
- arguments are required."
+    NO_FEED_NAME = "No feed name, Please provide a valid feed name for uploading the\
+ measurement packages."

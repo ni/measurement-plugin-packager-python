@@ -18,7 +18,6 @@ from ni_measurement_plugin_packager._support._pyproject_toml_info import (
 from ni_measurement_plugin_packager.constants import (
     PACKAGES,
     FileNames,
-    InteractiveModeMessages,
     NonInteractiveModeMessages,
     PyProjectToml,
     UserMessages,
@@ -34,18 +33,6 @@ def _get_nipkg_exe_directory() -> Path:
     return _get_nipath("NIDIR64") / "NI Package Manager" / "nipkg.exe"
 
 
-def is_valid_folder(folder_path: Path) -> bool:
-    """Check if the provided folder path is valid or not.
-
-    Args:
-        folder_path: Folder path.
-
-    Returns:
-        True, if valid folder path. Else, False.
-    """
-    return folder_path.is_dir()
-
-
 def display_available_measurements(logger: Logger, measurement_plugins: List[Path]) -> None:
     """Display available measurement plug-ins in CLI.
 
@@ -54,7 +41,7 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[Pat
         measurement_plugins: List of measurement plug-ins.
     """
     logger.info("\n")
-    logger.info(InteractiveModeMessages.AVAILABLE_MEASUREMENTS)
+    logger.info(NonInteractiveModeMessages.AVAILABLE_MEASUREMENTS)
     for index, measurement_name in enumerate(measurement_plugins):
         logger.info(f"{index + 1}. {measurement_name}")
     logger.info("")
@@ -108,28 +95,12 @@ def validate_selected_plugins(
     for measurement_plugin in selected_plugins.split(","):
         plugin_name = measurement_plugin.strip("'\"").strip()
 
-        if plugin_name not in measurement_plugins:
+        if plugin_name not in str(measurement_plugins):
             display_available_measurements(logger=logger, measurement_plugins=measurement_plugins)
 
             raise InvalidInputError(
                 NonInteractiveModeMessages.INVALID_SELECTED_PLUGINS.format(input=plugin_name)
             )
-
-
-def get_measurement_plugins(measurement_plugins: List[Path]) -> Dict[str, Path]:
-    """Get measurement plug-ins with indexes.
-
-    Args:
-        measurement_plugins: List of measurement plug-ins.
-
-    Returns:
-        Measurement plug-ins with indexes.
-    """
-    measurement_plugins_with_indexes = {}
-    for index, measurement_name in enumerate(measurement_plugins):
-        measurement_plugins_with_indexes[str(index + 1)] = measurement_name
-
-    return measurement_plugins_with_indexes
 
 
 def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
@@ -208,7 +179,7 @@ def publish_package_to_systemlink(
     upload_response = publish_package_client.upload_package(
         package_info=PackageInfo(
             feed_name=upload_package_info.feed_name,
-            path=package_path,
+            path=str(package_path),
             overwrite=upload_package_info.overwrite_packages,
         )
     )

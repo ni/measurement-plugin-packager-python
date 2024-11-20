@@ -14,10 +14,6 @@ from ni_measurement_plugin_packager._support._helpers import (
     build_package,
     get_publish_package_client,
     publish_package_to_systemlink,
-    is_valid_folder,
-)
-from ni_measurement_plugin_packager._support._interactive_mode import (
-    publish_packages_in_interactive_mode,
 )
 from ni_measurement_plugin_packager._support._logger import (
     initialize_logger,
@@ -29,7 +25,6 @@ from ni_measurement_plugin_packager._support._non_interactive_mode import (
 )
 from ni_measurement_plugin_packager.constants import (
     CliInterface,
-    InteractiveModeMessages,
     NonInteractiveModeMessages,
     UserMessages,
 )
@@ -43,7 +38,6 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
-@click.option("-i", "--interactive-mode", is_flag=True, help=CliInterface.INTERACTIVE_BUILDER)
 @click.option(
     "-p",
     "--plugin-dir",
@@ -72,7 +66,6 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 @click.option("-f", "--feed-name", default=None, required=False, help=CliInterface.FEED_NAME)
 @click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
 def run(
-    interactive_mode: bool,
     plugin_dir: Optional[Path],
     base_dir: Optional[Path],
     selected_plugins: Optional[str],
@@ -90,11 +83,9 @@ def run(
 
         systemlink_config = SystemLinkConfig(api_key=api_key, api_url=api_url, workspace=workspace)
         upload_package_info = UploadPackageInfo(feed_name=feed_name, overwrite_packages=overwrite)
-        interactive_mode_input_parent_dir: Optional[Path] = None
 
         cli_args = CliInputs(
             measurement_plugin_base_path=base_dir,
-            interactive_mode=interactive_mode,
             measurement_plugin_path=plugin_dir,
             upload_packages=upload_packages,
             selected_plugins=selected_plugins,
@@ -102,24 +93,11 @@ def run(
             upload_package_info=upload_package_info,
         )
 
-        if interactive_mode:
-            interactive_mode_input_parent_dir = Path(
-                input(InteractiveModeMessages.INPUT_MEAS_PLUGIN_BASE_DIR).strip()
-            )
-            if not is_valid_folder(interactive_mode_input_parent_dir):
-                raise FileNotFoundError(
-                    UserMessages.INVALID_BASE_DIR.format(dir=interactive_mode_input_parent_dir)
-                )
-
         remove_handlers(logger)
         logger = initialize_logger(name="debug_logger")
-        output_path: Path
-        if cli_args.measurement_plugin_base_path:
-            output_path = cli_args.measurement_plugin_base_path
-        elif cli_args.measurement_plugin_path:
-            output_path = cli_args.measurement_plugin_path
-        elif interactive_mode_input_parent_dir:
-            output_path = interactive_mode_input_parent_dir
+        output_path = cli_args.measurement_plugin_base_path or cli_args.measurement_plugin_path
+        if not output_path:
+            raise FileNotFoundError(NonInteractiveModeMessages.MEAS_DIR_REQUIRED)
         logger, log_folder_path = setup_logger_with_file_handler(
             output_path,
             logger=logger,
@@ -127,48 +105,41 @@ def run(
         logger.debug(UserMessages.VERSION.format(version=__version__))
         logger.info(UserMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
 
-        if interactive_mode_input_parent_dir and interactive_mode:
-            logger.debug(InteractiveModeMessages.INTERACTIVE_MODE_ON)
-            publish_packages_in_interactive_mode(
+        logger.debug(NonInteractiveModeMessages.NON_INTERACTIVE_MODE)
+        publish_package_client = None
+        if upload_packages:
+            publish_package_client = get_publish_package_client(
                 logger=logger,
-                measurement_plugin_base_path=interactive_mode_input_parent_dir,
+                systemlink_config=systemlink_config,
             )
-        else:
-            logger.debug(NonInteractiveModeMessages.NON_INTERACTIVE_MODE)
-            publish_package_client = None
-            if upload_packages:
-                publish_package_client = get_publish_package_client(
-                    logger=logger,
-                    systemlink_config=systemlink_config,
-                )
 
-            if cli_args.measurement_plugin_base_path and cli_args.selected_plugins:
-                publish_packages_in_non_interactive_mode(
-                    logger=logger,
-                    measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
-                    selected_plugins=cli_args.selected_plugins,
+        if cli_args.measurement_plugin_base_path and cli_args.selected_plugins:
+            publish_packages_in_non_interactive_mode(
+                logger=logger,
+                measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
+                selected_plugins=cli_args.selected_plugins,
+                publish_package_client=publish_package_client,
+                upload_package_info=upload_package_info,
+            )
+
+        if cli_args.measurement_plugin_path:
+            package_path = build_package(
+                logger=logger,
+                measurement_plugin_path=cli_args.measurement_plugin_path,
+            )
+            if publish_package_client and package_path:
+                upload_response = publish_package_to_systemlink(
+                    package_path=package_path,
                     publish_package_client=publish_package_client,
                     upload_package_info=upload_package_info,
                 )
-
-            if cli_args.measurement_plugin_path:
-                package_path = build_package(
-                    logger=logger,
-                    measurement_plugin_path=cli_args.measurement_plugin_path,
+                logger.info(
+                    UserMessages.PACKAGE_UPLOADED.format(
+                        package_name=upload_response.file_name,
+                        feed_name=upload_package_info.feed_name,
+                    )
                 )
-                if publish_package_client and package_path:
-                    upload_response = publish_package_to_systemlink(
-                        package_path=package_path,
-                        publish_package_client=publish_package_client,
-                        upload_package_info=upload_package_info,
-                    )
-                    logger.info(
-                        UserMessages.PACKAGE_UPLOADED.format(
-                            package_name=upload_response.file_name,
-                            feed_name=upload_package_info.feed_name,
-                        )
-                    )
-                logger.info("")
+            logger.info("")
 
     except ApiException as ex:
         measurement_plugin = Path(str(cli_args.measurement_plugin_path)).name
