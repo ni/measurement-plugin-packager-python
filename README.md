@@ -6,7 +6,6 @@
   - [Installation](#installation)
   - [Usage](#usage)
     - [1. Non-Interactive Mode](#1-non-interactive-mode)
-    - [2. Interactive Mode](#2-interactive-mode)
   - [Notes](#notes)
     - [File Exclusions](#file-exclusions)
     - [SystemLink Upload Requirements](#systemlink-upload-requirements)
@@ -88,19 +87,6 @@ The tool supports two modes of operation:
   measurement-plugin-packager --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://  dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
   ```
 
-<!-- To be decided -->
-### 2. Interactive Mode
-
-Start the interactive mode with:
-
-```bash
-measurement-plugin-packager -i
-```
-
-Follow the prompts to input required information for building and uploading packages.
-
-<!-- TODO: Include example screenshots -->
-
 ## Notes
 
 ### File Exclusions
@@ -132,8 +118,6 @@ The following files/directories are automatically ignored during package buildin
 
 - For building multiple plugins, both the base directory and selected measurement plugins must be specified.
 - The tool will display the output directory where `.nipkg` files are generated.
-  <!-- To be decided -->
-- Use the interactive mode (-i) for a guided experience through the build and upload process.
 
 ## Additional Resources
 
