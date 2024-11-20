@@ -7,6 +7,7 @@ from logging import Logger, StreamHandler
 from pathlib import Path
 from typing import Tuple
 
+from ni_measurement_plugin_packager._support._log_file_path import get_log_folder_path
 from ni_measurement_plugin_packager.constants import (
     LOG_DATE_FORMAT,
     LOG_FILE_COUNT_LIMIT,
@@ -15,7 +16,6 @@ from ni_measurement_plugin_packager.constants import (
     LOG_FILE_SIZE_LIMIT_IN_BYTES,
     UserMessages,
 )
-from ni_measurement_plugin_packager._support._log_file_path import get_log_folder_path
 
 
 def _create_file_handler(

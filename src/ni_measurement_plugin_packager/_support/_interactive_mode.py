@@ -3,11 +3,6 @@
 from logging import Logger
 from pathlib import Path
 
-from ni_measurement_plugin_packager.constants import InteractiveModeMessages
-from ni_measurement_plugin_packager.models import (
-    SystemLinkConfig,
-    UploadPackageInfo,
-)
 from ni_measurement_plugin_packager._support._helpers import (
     get_publish_package_client,
     publish_packages,
@@ -18,6 +13,8 @@ from ni_measurement_plugin_packager._support._user_inputs import (
     get_user_inputs_in_interactive_mode,
     get_yes_no_response,
 )
+from ni_measurement_plugin_packager.constants import InteractiveModeMessages
+from ni_measurement_plugin_packager.models import SystemLinkConfig, UploadPackageInfo
 
 
 def _update_upload_package_inputs(upload_package_info: UploadPackageInfo) -> UploadPackageInfo:

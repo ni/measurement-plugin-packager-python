@@ -1,17 +1,20 @@
 """Helper functions for Measurement Plug-In Package Builder."""
 
 import subprocess  # nosec: B404
-import sys
 from logging import FileHandler, Logger
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import winreg
 from nisystemlink_feeds_manager.clients.core import ApiException
 from nisystemlink_feeds_manager.clients.feeds.models import UploadPackageResponse
 from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
 from nisystemlink_feeds_manager.models import PackageInfo
 
+from ni_measurement_plugin_packager._support import _get_nipath
+from ni_measurement_plugin_packager._support._create_files import create_template_folders
+from ni_measurement_plugin_packager._support._pyproject_toml_info import (
+    get_measurement_package_info,
+)
 from ni_measurement_plugin_packager.constants import (
     PACKAGES,
     FileNames,
@@ -25,29 +28,10 @@ from ni_measurement_plugin_packager.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_packager._support._create_files import create_template_folders
-from ni_measurement_plugin_packager._support._pyproject_toml_info import (
-    get_measurement_package_info,
-)
 
 
 def _get_nipkg_exe_directory() -> Path:
     return _get_nipath("NIDIR64") / "NI Package Manager" / "nipkg.exe"
-
-
-def _get_nipath(name: str) -> Path:
-    if sys.platform == "win32":
-        access: int = winreg.KEY_READ
-        if "64" in name:
-            access |= winreg.KEY_WOW64_64KEY
-        with winreg.OpenKey(
-            winreg.HKEY_LOCAL_MACHINE,
-            r"SOFTWARE\National Instruments\Common\Installer",
-            access=access,
-        ) as key:
-            value, type = winreg.QueryValueEx(key, name)
-            assert type == winreg.REG_SZ  # nosec: B101
-            return Path(value)
 
 
 def is_valid_folder(folder_path: Path) -> bool:
