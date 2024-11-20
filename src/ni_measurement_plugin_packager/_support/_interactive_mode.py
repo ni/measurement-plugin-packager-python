@@ -1,25 +1,23 @@
-"""Implementation of interactive mode for NI Measurement Plug-In Package builder."""
+"""Implementation of interactive mode for Measurement Plug-In Package builder."""
 
 from logging import Logger
+from pathlib import Path
 
-from ni_measurement_plugin_packager.constants import InteractiveModeMessages
-from ni_measurement_plugin_packager.models import (
-    SystemLinkConfig,
-    UploadPackageInfo,
-)
-from ni_measurement_plugin_packager.utils._helpers import (
+from ni_measurement_plugin_packager._support._helpers import (
     get_publish_package_client,
-    publish_meas_packages,
+    publish_packages,
 )
-from ni_measurement_plugin_packager.utils._user_inputs import (
+from ni_measurement_plugin_packager._support._user_inputs import (
     get_feed_name,
     get_user_input_for_upload_packages,
     get_user_inputs_in_interactive_mode,
     get_yes_no_response,
 )
+from ni_measurement_plugin_packager.constants import InteractiveModeMessages
+from ni_measurement_plugin_packager.models import SystemLinkConfig, UploadPackageInfo
 
 
-def __update_upload_package_inputs(upload_package_info: UploadPackageInfo) -> UploadPackageInfo:
+def _update_upload_package_inputs(upload_package_info: UploadPackageInfo) -> UploadPackageInfo:
     user_input_for_same_feed = get_yes_no_response(InteractiveModeMessages.SAME_FEED)
 
     if not user_input_for_same_feed:
@@ -31,15 +29,15 @@ def __update_upload_package_inputs(upload_package_info: UploadPackageInfo) -> Up
     return upload_package_info
 
 
-def publish_meas_packages_in_interactive_mode(
+def publish_packages_in_interactive_mode(
     logger: Logger,
-    measurement_plugin_base_path: str,
+    measurement_plugin_base_path: Path,
 ) -> None:
     """Publish Measurement Packages in interactive mode.
 
     Args:
-        logger (Logger): Logger object.
-        measurement_plugin_base_path (str): Measurement plug-ins parent path.
+        logger: Logger object.
+        measurement_plugin_base_path: Measurement plug-ins parent path.
 
     Raises:
         InvalidInputError: If API Key and Feed Name not provided by the user.
@@ -64,10 +62,10 @@ def publish_meas_packages_in_interactive_mode(
         if not measurement_plugins:
             break
 
-        publish_meas_packages(
+        publish_packages(
             logger=logger,
             measurement_plugin_base_path=measurement_plugin_base_path,
-            measurement_plugins=measurement_plugins,
+            measurement_plugins=[str(path) for path in measurement_plugins],
             publish_package_client=publish_package_client,
             upload_package_info=upload_package_info,
         )
@@ -78,4 +76,4 @@ def publish_meas_packages_in_interactive_mode(
             break
 
         if upload_packages:
-            upload_package_info = __update_upload_package_inputs(upload_package_info)
+            upload_package_info = _update_upload_package_inputs(upload_package_info)

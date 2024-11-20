@@ -1,8 +1,8 @@
 """Getting measurement information from pyproject.toml file."""
 
-import os
 import re
 from logging import Logger
+from pathlib import Path
 from typing import Any, Dict
 
 import tomli
@@ -16,18 +16,17 @@ from ni_measurement_plugin_packager.constants import (
 )
 from ni_measurement_plugin_packager.models import PackageInfo
 
-
 UNDERSCORE_SPACE_REGEX = r"[_ ]"
 
 
-def get_pyproject_toml_info(pyproject_toml_path: str) -> Dict[str, Any]:
+def get_pyproject_toml_info(pyproject_toml_path: Path) -> Dict[str, Any]:
     """Get `pyproject.toml` information.
 
     Args:
-        pyproject_toml_path (str): File path of pyproject.toml.
+        pyproject_toml_path: File path of pyproject.toml.
 
     Returns:
-        Dict[str, Any]: Pyproject toml information.
+        Pyproject toml information.
     """
     with open(pyproject_toml_path, "rb") as file:
         pyproject_data = tomli.load(file)
@@ -37,18 +36,18 @@ def get_pyproject_toml_info(pyproject_toml_path: str) -> Dict[str, Any]:
 
 def get_updated_package_data(
     logger: Logger,
-    pyproject_toml_data: Dict[str, str],
+    pyproject_toml_data: Dict[str, Any],
     measurement_name: str,
 ) -> PackageInfo:
     """Get updated package data from `pyproject toml` data.
 
     Args:
-        logger (Logger): Logger object.
-        pyproject_toml_data (Dict[str, str]): Pyproject toml data.
-        measurement_name (str): Measurement name.
+        logger: Logger object.
+        pyproject_toml_data: Pyproject toml data.
+        measurement_name: Measurement name.
 
     Returns:
-        PackageInfo: Updated measurement package info.
+        Updated measurement package info.
     """
     package_info = pyproject_toml_data[PyProjectToml.TOOL][PyProjectToml.POETRY]
     package_description = package_info[PyProjectToml.DESCRIPTION]
@@ -88,18 +87,18 @@ def get_updated_package_data(
     return updated_package_info
 
 
-def get_measurement_package_info(measurement_plugin_path: str, logger: Logger) -> PackageInfo:
+def get_measurement_package_info(measurement_plugin_path: Path, logger: Logger) -> PackageInfo:
     """Get measurement package information from pyproject.toml.
 
     Args:
-        measurement_plugin_path (str): Measurement Plug-in path.
-        logger (Logger): Logger object.
+        measurement_plugin_path: Measurement Plug-in path.
+        logger: Logger object.
 
     Returns:
-       PackageInfo: Measurement package info.
+       Measurement package info.
     """
-    pyproject_toml_path = os.path.join(measurement_plugin_path, PyProjectToml.FILE_NAME)
-    measurement_name = os.path.basename(measurement_plugin_path)
+    pyproject_toml_path = Path(measurement_plugin_path) / PyProjectToml.FILE_NAME
+    measurement_name = Path(measurement_plugin_path).name
 
     pyproject_toml_data = get_pyproject_toml_info(pyproject_toml_path=pyproject_toml_path)
 

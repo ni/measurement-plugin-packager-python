@@ -1,7 +1,5 @@
-"""NI Measurement Plug-In Package Builder is a Command line tool for building NI package files for \
-python measurement plug-ins and uploading it to SystemLink Feeds.
-"""
+"""Measurement Plug-In Packager is a CLI tool to build NI packages and upload to SystemLink."""
 
-from ni_measurement_plugin_packager.main import run
+from ni_measurement_plugin_packager import run
 
 run()

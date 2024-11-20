@@ -2,12 +2,12 @@
 
 import logging
 import logging.handlers
-import os
 import sys
 from logging import Logger, StreamHandler
 from pathlib import Path
 from typing import Tuple
 
+from ni_measurement_plugin_packager._support._log_file_path import get_log_folder_path
 from ni_measurement_plugin_packager.constants import (
     LOG_DATE_FORMAT,
     LOG_FILE_COUNT_LIMIT,
@@ -16,28 +16,13 @@ from ni_measurement_plugin_packager.constants import (
     LOG_FILE_SIZE_LIMIT_IN_BYTES,
     UserMessages,
 )
-from ni_measurement_plugin_packager.utils._log_file_path import get_log_folder_path
 
 
-def add_file_handler(logger: Logger, log_folder_path: str) -> None:
-    """Add file handler.
-
-    Args:
-        logger (Logger): Logger object.
-        log_folder_path (str): Log folder path.
-
-    Returns:
-        None.
-    """
-    handler = __create_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
-    logger.addHandler(handler)
-
-
-def __create_file_handler(
-    log_folder_path: str,
+def _create_file_handler(
+    log_folder_path: Path,
     file_name: str,
 ) -> logging.handlers.RotatingFileHandler:
-    log_file = os.path.join(log_folder_path, file_name)
+    log_file = Path(log_folder_path) / file_name
     folder_path_obj = Path(log_folder_path)
 
     if not folder_path_obj.exists():
@@ -56,15 +41,33 @@ def __create_file_handler(
     return handler
 
 
-def setup_logger_with_file_handler(output_path: str, logger: Logger) -> Tuple[Logger, str]:
+def _create_stream_handler() -> StreamHandler:
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.INFO)
+
+    return handler
+
+
+def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
+    """Add file handler.
+
+    Args:
+        logger: Logger object.
+        log_folder_path: Log folder path.
+    """
+    handler = _create_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
+    logger.addHandler(handler)
+
+
+def setup_logger_with_file_handler(output_path: Path, logger: Logger) -> Tuple[Logger, Path]:
     """Adds a file handler to the provided logger.
 
     Args:
-        output_path (str): Output path
-        logger (Logger): Logger object.
+        output_path: Output path
+        logger: Logger object.
 
     Returns:
-        Tuple[Logger, str]: Logger object and logger folder path.
+        Logger object and logger folder path.
     """
     log_folder_path, public_path_status, user_path_status = get_log_folder_path(output_path)
     add_file_handler(logger=logger, log_folder_path=log_folder_path)
@@ -81,30 +84,20 @@ def add_stream_handler(logger: Logger) -> None:
     """Add stream handler.
 
     Args:
-        logger (Logger): Logger object.
-
-    Returns:
-        None.
+        logger: Logger object.
     """
-    stream_handler = __create_stream_handler()
+    stream_handler = _create_stream_handler()
     logger.addHandler(stream_handler)
-
-
-def __create_stream_handler() -> StreamHandler:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.INFO)
-
-    return handler
 
 
 def initialize_logger(name: str) -> Logger:
     """Initialize logger object for logging.
 
     Args:
-        name (str): Logger name.
+        name: Logger name.
 
     Returns:
-        Logger: Logger object.
+        Logger object.
     """
     new_logger = logging.getLogger(name)
     new_logger.setLevel(logging.DEBUG)
@@ -113,14 +106,11 @@ def initialize_logger(name: str) -> Logger:
     return new_logger
 
 
-def remove_handlers(log: Logger) -> None:
+def remove_handlers(logger: Logger) -> None:
     """Remove Log Handlers.
 
     Args:
-        logger (Logger): Logger object.
-
-    Returns:
-        None.
+        logger: Logger object.
     """
-    for handler in log.handlers:
-        log.removeHandler(handler)
+    for handler in logger.handlers:
+        logger.removeHandler(handler)

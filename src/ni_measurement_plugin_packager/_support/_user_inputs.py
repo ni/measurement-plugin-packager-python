@@ -1,8 +1,14 @@
 """Implementation of Command Line Interface."""
 
 from logging import Logger
-from typing import Dict, List, Tuple, Union
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
+from ni_measurement_plugin_packager._support._helpers import (
+    display_available_measurements,
+    get_folders,
+    get_measurement_plugins,
+)
 from ni_measurement_plugin_packager.constants import (
     YES,
     InteractiveModeMessages,
@@ -13,11 +19,6 @@ from ni_measurement_plugin_packager.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
-from ni_measurement_plugin_packager.utils._helpers import (
-    display_available_measurements,
-    get_folders,
-    get_measurement_plugins,
-)
 
 ALL_MEAS = "."
 
@@ -26,27 +27,27 @@ def get_yes_no_response(question: str) -> bool:
     """Get yes or no response from the user.
 
     Args:
-        question (str): Question to be prompted to the user.
+        question: Question to be prompted to the user.
 
     Returns:
-        bool: True if user provides yes else False.
+        True, if the user provides 'yes'. Else, False.
     """
     user_input = input(question).strip().lower()
     return user_input == YES
 
 
-def validate_user_input_for_meas_plugins(
+def validate_user_input_for_plugins(
     user_inputs: List[str],
-    measurement_plugins: Dict[str, str],
-) -> Union[List[str], None]:
+    measurement_plugins: Dict[str, Path],
+) -> Optional[List[Path]]:
     """Validate the user inputs for measurement plug-in indexes.
 
     Args:
-        user_inputs (List[str]): User inputs for measurement plug-in indexes.
-        measurement_plugins (Dict[str, str]): List of measurement plug-ins.
+        user_inputs: User inputs for measurement plug-in indexes.
+        measurement_plugins: List of measurement plug-ins.
 
     Returns:
-        Union[List[str], None]: User selected measurement plug-ins.
+        User selected measurement plug-ins.
     """
     if user_inputs == [ALL_MEAS]:
         user_selected_measurements = list(measurement_plugins.values())
@@ -65,16 +66,16 @@ def validate_user_input_for_meas_plugins(
 
 def get_user_inputs_in_interactive_mode(
     logger: Logger,
-    measurement_plugins_base_path: str,
-) -> Union[List[str], None]:
+    measurement_plugins_base_path: Path,
+) -> Optional[List[Path]]:
     """Get user inputs for measurement package builder in `interactive mode`.
 
     Args:
-        logger (Logger): Logger object.
-        measurement_plugins_base_path (str): Measurement plug-in base path.
+        logger: Logger object.
+        measurement_plugins_base_path: Measurement plug-in base path.
 
     Returns:
-        Union[List[str], None]: User selected measurement infomation.
+       User selected measurement information.
     """
     measurement_plugins = get_folders(measurement_plugins_base_path, logger)
 
@@ -102,7 +103,7 @@ def get_user_inputs_in_interactive_mode(
             .split(",")
         )
 
-        validated_user_inputs = validate_user_input_for_meas_plugins(
+        validated_user_inputs = validate_user_input_for_plugins(
             user_selected_plugin_numbers,
             measurement_plugins_with_indexes,
         )
@@ -122,10 +123,10 @@ def get_systemlink_config(logger: Logger) -> SystemLinkConfig:
     """Get SystemLink config from the user.
 
     Args:
-        logger (Logger): Logger object.
+        logger: Logger object.
 
     Returns:
-        SystemLinkConfig: SystemLink config credentials.
+        SystemLink config credentials.
     """
     systemlink_config = SystemLinkConfig()
 
@@ -151,7 +152,7 @@ def get_feed_name() -> str:
         InvalidInputError: If feed name not provided by the user.
 
     Returns:
-        str: Feed name.
+        Feed name.
     """
     feed_name = input(InteractiveModeMessages.ENTER_FEED_NAME).strip()
 
@@ -165,7 +166,7 @@ def get_upload_package_info() -> UploadPackageInfo:
     """Get upload package information from the user.
 
     Returns:
-        UploadPackageInfo: Upload package information.
+        Upload package information.
     """
     upload_packages_info = UploadPackageInfo()
     feed_name = get_feed_name()
@@ -183,10 +184,10 @@ def get_user_input_for_upload_packages(
     """Get user inputs for uploading packages to SystemLink.
 
     Args:
-        logger (Logger): Logger object.
+        logger: Logger object.
 
     Returns:
-        Tuple[SystemLinkConfig, UploadPackageInfo]: SystemLink config credentials and Upload package information. # noqa: W505.
+        SystemLink config credentials and Upload package information.
     """
     systemlink_config = get_systemlink_config(logger=logger)
     upload_packages_info = get_upload_package_info()

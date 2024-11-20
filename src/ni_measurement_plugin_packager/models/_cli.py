@@ -1,6 +1,6 @@
-"""Models for NI Measurement Plug-In Package Builder CLI Arguments."""
+"""Models for Measurement Plug-In Package Builder CLI Arguments."""
 
-import os
+from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseModel, model_validator
@@ -30,13 +30,13 @@ class UploadPackageInfo(BaseModel):
 class CliInputs(BaseModel):
     """Represent Command Line Interface inputs."""
 
-    measurement_plugin_base_path: Optional[str] = None
-    measurement_plugin_path: Optional[str] = None
-    selected_meas_plugins: Optional[str] = None
+    measurement_plugin_base_path: Optional[Path] = None
+    measurement_plugin_path: Optional[Path] = None
+    selected_plugins: Optional[str] = None
     interactive_mode: bool = False
     upload_packages: bool = False
-    systemlink_config: Optional[SystemLinkConfig] = None
-    upload_package_info: Optional[UploadPackageInfo] = None
+    systemlink_config: SystemLinkConfig = SystemLinkConfig()
+    upload_package_info: UploadPackageInfo = UploadPackageInfo()
 
     @model_validator(mode="after")
     def validate_non_interactive_mode_inputs(self) -> "CliInputs":
@@ -44,27 +44,27 @@ class CliInputs(BaseModel):
         if not self.interactive_mode and (
             (
                 self.measurement_plugin_path
-                and any([self.measurement_plugin_base_path, self.selected_meas_plugins])
+                and any([self.measurement_plugin_base_path, self.selected_plugins])
             )
             or (
-                all([self.measurement_plugin_base_path, self.selected_meas_plugins])
+                all([self.measurement_plugin_base_path, self.selected_plugins])
                 and self.measurement_plugin_path
             )
             or (
-                not all([self.measurement_plugin_base_path, self.selected_meas_plugins])
+                not all([self.measurement_plugin_base_path, self.selected_plugins])
                 and not self.measurement_plugin_path
             )
         ):
             raise FileNotFoundError(NonInteractiveModeMessages.MEAS_DIR_REQUIRED)
 
         if self.measurement_plugin_base_path and (
-            not os.path.isdir(self.measurement_plugin_base_path)
+            not Path(self.measurement_plugin_base_path).is_dir()
         ):
             raise FileNotFoundError(
                 UserMessages.INVALID_BASE_DIR.format(dir=self.measurement_plugin_base_path)
             )
 
-        if self.measurement_plugin_path and not os.path.isdir(self.measurement_plugin_path):
+        if self.measurement_plugin_path and not Path(self.measurement_plugin_path).is_dir():
             raise FileNotFoundError(
                 UserMessages.INVALID_MEAS_DIR.format(dir=self.measurement_plugin_path)
             )
@@ -78,7 +78,7 @@ class CliInputs(BaseModel):
             [
                 self.measurement_plugin_base_path,
                 self.measurement_plugin_path,
-                self.selected_meas_plugins,
+                self.selected_plugins,
                 self.upload_packages,
                 self.systemlink_config.api_key,
                 self.systemlink_config.api_url,
