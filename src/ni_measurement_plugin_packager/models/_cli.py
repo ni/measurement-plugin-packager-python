@@ -53,7 +53,7 @@ class CliInputs(BaseModel):
                 and not self.measurement_plugin_path
             )
         ):
-            raise FileNotFoundError(CommandLinePrompts.MEAS_DIR_REQUIRED)
+            raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIR_REQUIRED)
 
         if self.measurement_plugin_base_path and (
             not Path(self.measurement_plugin_base_path).is_dir()
@@ -66,7 +66,7 @@ class CliInputs(BaseModel):
 
         if self.measurement_plugin_path and not Path(self.measurement_plugin_path).is_dir():
             raise FileNotFoundError(
-                PackagerStatusMessages.INVALID_MEAS_DIR.format(dir=self.measurement_plugin_path)
+                PackagerStatusMessages.INVALID_PLUGIN_DIR.format(dir=self.measurement_plugin_path)
             )
 
         return self

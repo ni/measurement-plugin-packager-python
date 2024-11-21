@@ -43,7 +43,7 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[Pat
         measurement_plugins: List of measurement plug-ins.
     """
     logger.info("\n")
-    logger.info(CommandLinePrompts.AVAILABLE_MEASUREMENTS)
+    logger.info(CommandLinePrompts.AVAILABLE_PLUGINS)
     for index, measurement_name in enumerate(measurement_plugins):
         logger.info(f"{index + 1}. {measurement_name}")
     logger.info("")
@@ -69,7 +69,7 @@ def validate_plugin_files(plugin_path: Path, logger: Logger) -> bool:
         valid_file = False
 
     if not measurement_file_path.is_file():
-        logger.debug(PackagerStatusMessages.NO_MEAS_FILE.format(dir=plugin_path))
+        logger.debug(PackagerStatusMessages.NO_MEASUREMENT_FILE.format(dir=plugin_path))
         valid_file = False
 
     if not batch_file_path.is_file():
@@ -289,7 +289,7 @@ def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Pat
     """
     logger.info("")
     measurement_plugin = Path(measurement_plugin_path).name
-    logger.info(PackagerStatusMessages.BUILDING_MEAS.format(name=measurement_plugin))
+    logger.info(PackagerStatusMessages.BUILDING_MEASUREMENT.format(name=measurement_plugin))
 
     plugin_packager_path = get_ni_packager_path(logger=logger)
     if not plugin_packager_path:
@@ -297,7 +297,7 @@ def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Pat
         return None
 
     if not validate_plugin_files(plugin_path=measurement_plugin_path, logger=logger):
-        logger.info(PackagerStatusMessages.INVALID_MEAS_PLUGIN)
+        logger.info(PackagerStatusMessages.INVALID_MEASUREMENT_PLUGIN)
         return None
 
     measurement_package_info = get_measurement_package_info(

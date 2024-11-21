@@ -9,8 +9,8 @@ YES = "y"
 class CliInterface:
     """Command Line Interface Messages."""
 
-    PLUGIN_DIR = "Measurement Plug-In directory."
-    PLUGIN_BASE_DIR = "Measurement Plug-In base directory."
+    PLUGIN_DIR = "Measurement Plug-in directory."
+    PLUGIN_BASE_DIR = "Measurement Plug-ins base directory."
     SELECTED_PLUGINS = "Comma-separated list of measurement plug-ins or\
  dot(.) for building all the available measurements."
     UPLOAD_PACKAGES = "Upload the measurement packages to SystemLink Feed."

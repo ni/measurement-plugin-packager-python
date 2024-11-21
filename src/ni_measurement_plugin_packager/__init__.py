@@ -95,7 +95,7 @@ def run(
         logger = initialize_logger(name="debug_logger")
         output_path = cli_args.measurement_plugin_base_path or cli_args.measurement_plugin_path
         if not output_path:
-            raise FileNotFoundError(CommandLinePrompts.MEAS_DIR_REQUIRED)
+            raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIR_REQUIRED)
         logger, log_folder_path = setup_logger_with_file_handler(
             output_path,
             logger=logger,
