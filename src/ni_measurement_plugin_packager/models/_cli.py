@@ -1,4 +1,4 @@
-"""Models for Measurement Plug-In Package Builder CLI Arguments."""
+"""Models for Measurement Plug-In Packager CLI Arguments."""
 
 from pathlib import Path
 from typing import Optional
@@ -6,8 +6,8 @@ from typing import Optional
 from pydantic import BaseModel, model_validator
 
 from ni_measurement_plugin_packager.constants import (
-    NonInteractiveModeMessages,
-    UserMessages,
+    CommandLinePrompts,
+    PackagerStatusMessages,
 )
 
 
@@ -53,18 +53,20 @@ class CliInputs(BaseModel):
                 and not self.measurement_plugin_path
             )
         ):
-            raise FileNotFoundError(NonInteractiveModeMessages.MEAS_DIR_REQUIRED)
+            raise FileNotFoundError(CommandLinePrompts.MEAS_DIR_REQUIRED)
 
         if self.measurement_plugin_base_path and (
             not Path(self.measurement_plugin_base_path).is_dir()
         ):
             raise FileNotFoundError(
-                UserMessages.INVALID_BASE_DIR.format(dir=self.measurement_plugin_base_path)
+                PackagerStatusMessages.INVALID_BASE_DIR.format(
+                    dir=self.measurement_plugin_base_path
+                )
             )
 
         if self.measurement_plugin_path and not Path(self.measurement_plugin_path).is_dir():
             raise FileNotFoundError(
-                UserMessages.INVALID_MEAS_DIR.format(dir=self.measurement_plugin_path)
+                PackagerStatusMessages.INVALID_MEAS_DIR.format(dir=self.measurement_plugin_path)
             )
 
         return self
@@ -79,13 +81,13 @@ class CliInputs(BaseModel):
                 self.systemlink_config.workspace,
             ]
         ):
-            raise ValueError(NonInteractiveModeMessages.UNWANTED_SYSTEMLINK_CREDENTIALS)
+            raise ValueError(CommandLinePrompts.UNWANTED_SYSTEMLINK_CREDENTIALS)
 
         if self.upload_packages:
             if not self.systemlink_config.api_key:
-                raise ValueError(UserMessages.NO_API_KEY)
+                raise ValueError(PackagerStatusMessages.NO_API_KEY)
 
             if not self.upload_package_info.feed_name:
-                raise ValueError(NonInteractiveModeMessages.NO_FEED_NAME)
+                raise ValueError(CommandLinePrompts.NO_FEED_NAME)
 
         return self

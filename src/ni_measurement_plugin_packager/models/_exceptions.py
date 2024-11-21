@@ -1,4 +1,4 @@
-"""Custom exceptions for Measurement Plug-In Package Builder."""
+"""Custom exceptions for Measurement Plug-In Packager."""
 
 
 class InvalidInputError(Exception):

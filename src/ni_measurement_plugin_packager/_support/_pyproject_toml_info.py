@@ -11,8 +11,8 @@ from ni_measurement_plugin_packager.constants import (
     DEFAULT_AUTHOR,
     DEFAULT_DESCRIPTION,
     DEFAULT_VERSION,
+    PackagerStatusMessages,
     PyProjectToml,
-    UserMessages,
 )
 from ni_measurement_plugin_packager.models import PackageInfo
 
@@ -58,19 +58,21 @@ def get_updated_package_data(
     if not package_name:
         package_name = measurement_name
         package_name = re.sub(UNDERSCORE_SPACE_REGEX, "-", package_name)
-        logger.info(UserMessages.EMPTY_NAME.format(name=package_name))
+        logger.info(PackagerStatusMessages.EMPTY_NAME.format(name=package_name))
 
     if not package_description:
         package_description = DEFAULT_DESCRIPTION
-        logger.info(UserMessages.EMPTY_DESCRIPTION.format(description=DEFAULT_DESCRIPTION))
+        logger.info(
+            PackagerStatusMessages.EMPTY_DESCRIPTION.format(description=DEFAULT_DESCRIPTION)
+        )
 
     if not package_version:
         package_version = DEFAULT_VERSION
-        logger.info(UserMessages.EMPTY_VERSION.format(version=DEFAULT_VERSION))
+        logger.info(PackagerStatusMessages.EMPTY_VERSION.format(version=DEFAULT_VERSION))
 
     if not measurement_author:
         measurement_author = DEFAULT_AUTHOR
-        logger.info(UserMessages.EMPTY_AUTHOR.format(author=DEFAULT_AUTHOR))
+        logger.info(PackagerStatusMessages.EMPTY_AUTHOR.format(author=DEFAULT_AUTHOR))
     else:
         measurement_author = ",".join(author for author in measurement_author)
 

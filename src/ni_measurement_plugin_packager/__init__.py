@@ -1,4 +1,4 @@
-"""Implementation of Measurement Plug-In Package Builder."""
+"""Implementation of Measurement Plug-In Packager."""
 
 __version__ = "1.3.0-dev3"
 
@@ -14,19 +14,17 @@ from ni_measurement_plugin_packager._support._helpers import (
     build_package,
     get_publish_package_client,
     publish_package_to_systemlink,
+    publish_packages_from_directory,
 )
 from ni_measurement_plugin_packager._support._logger import (
     initialize_logger,
     remove_handlers,
     setup_logger_with_file_handler,
 )
-from ni_measurement_plugin_packager._support._non_interactive_mode import (
-    publish_packages_in_non_interactive_mode,
-)
 from ni_measurement_plugin_packager.constants import (
     CliInterface,
-    NonInteractiveModeMessages,
-    UserMessages,
+    CommandLinePrompts,
+    PackagerStatusMessages,
 )
 from ni_measurement_plugin_packager.models import (
     CliInputs,
@@ -43,14 +41,14 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
     "--plugin-dir",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     required=False,
-    help=CliInterface.MLINK_DIR,
+    help=CliInterface.PLUGIN_DIR,
 )
 @click.option(
     "-b",
     "--base-dir",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     required=False,
-    help=CliInterface.MLINK_BASE_DIR,
+    help=CliInterface.PLUGIN_BASE_DIR,
 )
 @click.option(
     "-s",
@@ -76,10 +74,10 @@ def run(
     feed_name: Optional[str],
     overwrite: Optional[bool],
 ) -> None:
-    """Create and upload package files for Python measurement plug-ins to SystemLink Feeds."""
+    """Create Python measurement plug-in package files and upload to SystemLink Feeds."""
     try:
         logger = initialize_logger(name="console_logger")
-        logger.info(UserMessages.STARTED_EXECUTION)
+        logger.info(PackagerStatusMessages.STARTED_EXECUTION)
 
         systemlink_config = SystemLinkConfig(api_key=api_key, api_url=api_url, workspace=workspace)
         upload_package_info = UploadPackageInfo(feed_name=feed_name, overwrite_packages=overwrite)
@@ -97,15 +95,14 @@ def run(
         logger = initialize_logger(name="debug_logger")
         output_path = cli_args.measurement_plugin_base_path or cli_args.measurement_plugin_path
         if not output_path:
-            raise FileNotFoundError(NonInteractiveModeMessages.MEAS_DIR_REQUIRED)
+            raise FileNotFoundError(CommandLinePrompts.MEAS_DIR_REQUIRED)
         logger, log_folder_path = setup_logger_with_file_handler(
             output_path,
             logger=logger,
         )
-        logger.debug(UserMessages.VERSION.format(version=__version__))
-        logger.info(UserMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
+        logger.debug(PackagerStatusMessages.VERSION.format(version=__version__))
+        logger.info(PackagerStatusMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
 
-        logger.debug(NonInteractiveModeMessages.NON_INTERACTIVE_MODE)
         publish_package_client = None
         if upload_packages:
             publish_package_client = get_publish_package_client(
@@ -114,7 +111,7 @@ def run(
             )
 
         if cli_args.measurement_plugin_base_path and cli_args.selected_plugins:
-            publish_packages_in_non_interactive_mode(
+            publish_packages_from_directory(
                 logger=logger,
                 measurement_plugin_base_path=cli_args.measurement_plugin_base_path,
                 selected_plugins=cli_args.selected_plugins,
@@ -134,7 +131,7 @@ def run(
                     upload_package_info=upload_package_info,
                 )
                 logger.info(
-                    UserMessages.PACKAGE_UPLOADED.format(
+                    PackagerStatusMessages.PACKAGE_UPLOADED.format(
                         package_name=upload_response.file_name,
                         feed_name=upload_package_info.feed_name,
                     )
@@ -145,32 +142,34 @@ def run(
         measurement_plugin = Path(str(cli_args.measurement_plugin_path)).name
         logger.debug(ex, exc_info=True)
         logger.info(
-            UserMessages.PACKAGE_UPLOAD_FAILED.format(
+            PackagerStatusMessages.PACKAGE_UPLOAD_FAILED.format(
                 package=measurement_plugin,
                 name=upload_package_info.feed_name,
             )
         )
         logger.info(ex.error.message)
-        logger.info(UserMessages.CHECK_LOG_FILE)
+        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
 
     except PermissionError as error:
-        logger.info(UserMessages.ACCESS_DENIED)
+        logger.info(PackagerStatusMessages.ACCESS_DENIED)
         logger.debug(error, exc_info=True)
 
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
-        logger.info(UserMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode))
-        logger.info(UserMessages.CHECK_LOG_FILE)
+        logger.info(
+            PackagerStatusMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode)
+        )
+        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
 
     except (FileNotFoundError, KeyError, ValidationError) as ex:
         logger.debug(ex, exc_info=True)
         logger.info(ex)
-        logger.info(UserMessages.CHECK_LOG_FILE)
+        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
 
     except Exception as ex:
         logger.debug(ex, exc_info=True)
         logger.info(ex)
-        logger.info(UserMessages.CHECK_LOG_FILE)
+        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
 
     finally:
-        logger.info(UserMessages.PROCESS_COMPLETED)
+        logger.info(PackagerStatusMessages.PROCESS_COMPLETED)

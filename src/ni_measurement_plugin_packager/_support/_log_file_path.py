@@ -54,6 +54,6 @@ def get_log_folder_path(output_path: Path) -> Tuple[Path, bool, bool]:
             user_path_status = False
             log_folder_path = output_path
 
-    log_folder_path = Path(log_folder_path) / "NI-Measurement-Plugin-Package-Builder" / "Logs"
+    log_folder_path = Path(log_folder_path) / "NI-Measurement-Plugin-Packager" / "Logs"
 
     return log_folder_path, public_path_status, user_path_status

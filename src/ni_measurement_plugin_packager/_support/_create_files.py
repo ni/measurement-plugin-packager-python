@@ -1,4 +1,4 @@
-"""Helper functions for creating the files for Measurement Plug-In Package Builder."""
+"""Helper functions for creating the files for Measurement Plug-In Packager."""
 
 import platform
 import shutil
@@ -66,21 +66,21 @@ def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
 
 
 def create_template_folders(
-    plugin_package_builder_path: Path,
+    plugin_packager_path: Path,
     measurement_plugin_path: Path,
     measurement_package_info: PackageInfo,
 ) -> Path:
     """Create Template folders for building NI Packages.
 
     Args:
-        plugin_package_builder_path: Measurement Package builder path.
+        plugin_packager_path: Measurement Packager path.
         measurement_plugin_path: Measurement Plugin path from user.
         measurement_package_info: Measurement package information.
 
     Returns:
         Template folder path.
     """
-    template_path = Path(plugin_package_builder_path) / measurement_package_info.measurement_name
+    template_path = Path(plugin_packager_path) / measurement_package_info.measurement_name
 
     if template_path.is_dir():
         shutil.rmtree(template_path)
