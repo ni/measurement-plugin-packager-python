@@ -5,16 +5,17 @@
   - [Dependencies](#dependencies)
   - [Installation](#installation)
   - [Usage](#usage)
-    - [1. Non-Interactive Mode](#1-non-interactive-mode)
+    - [1. Building Measurement Plug-Ins](#1-building-measurement-plug-ins)
+    - [2. Uploading to SystemLink](#2-uploading-to-systemlink)
+  - [Directory Utilization](#directory-utilization)
   - [Notes](#notes)
     - [File Exclusions](#file-exclusions)
     - [SystemLink Upload Requirements](#systemlink-upload-requirements)
-    - [Command Line Tips](#command-line-tips)
   - [Additional Resources](#additional-resources)
 
 ## Introduction
 
-The NI Measurement Plugin Packager enables users to build Python Measurement Plug-Ins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the process of package creation and distribution for NI measurement plugins.
+The NI Measurement Plugin Packager enables users to build Python measurement plug-ins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the package creation and distribution process for NI measurement plug-ins.
 
 ## Dependencies
 
@@ -35,20 +36,13 @@ The NI Measurement Plugin Packager enables users to build Python Measurement Plu
 
 ## Usage
 
-The tool supports two modes of operation:
-
-### 1. Non-Interactive Mode
+### 1. Building Measurement Plug-Ins
 <!-- TODO: Update the flag names -->
-- #### Building Single Plugin
+- #### Single Plugin
 
   ```bash
   measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>"
   ```
-
-  What Happens:
-  - Creates a `.nipkg` package for the specified measurement plug-in.
-  - Package will be saved in: `C:\Users\Public\Documents\NI-Measurement-Plugin-Package-Builder\packages`.
-  - Package name will be in the format: `{plugin_name}_{version}_windows_x64.nipkg`
 
   Example:
 
@@ -56,22 +50,27 @@ The tool supports two modes of operation:
   measurement-plugin-packager --plugin-dir "C:/Users/examples/sample_measurement"
   ```
 
-- #### Building Multiple Plugins
+- #### Multiple Plugins
 
   ```bash
   measurement-plugin-packager --base-dir "<measurement_plugin_base_directory>" --selected-meas-plugins "<plugin1,plugin2>"
   ```
 
-  What Happens:
-  - Creates `.nipkg` packages for the specified measurement plug-ins.
-  - Package will be saved in: `C:\Users\Public\Documents\NI-Measurement-Plugin-Package-Builder\packages`.
-  - 
-  
   Example:
   
   ```bash
   measurement-plugin-packager --base-dir "C:/Users/examples" --selected-meas-plugins "sample_measurement,test_measurement"
   ```
+
+  Note: The base directory and selected measurement plug-ins must be specified for building multiple measurement plug-ins.
+
+- #### What Happens
+
+  - Creates `.nipkg` package(s) for the specified measurement plug-in(s).
+  - Package(s) will be saved in: `C:\Users\Public\Documents\NI-Measurement-Plugin-Package-Builder\packages`.
+  - Package name will be in the format: `{plugin_folder_name}_{version}_windows_x64.nipkg` eg: `sample-measurement_0.5.0_windows_x64.nipkg`.
+
+### 2. Uploading to SystemLink
 
 - #### Uploading Single Plugin to SystemLink
 
@@ -97,6 +96,25 @@ The tool supports two modes of operation:
   measurement-plugin-packager --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://  dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
   ```
 
+- #### What Happens
+
+  - Builds and saves the `.nipkg` package(s) for the specified measurement plug-in(s).
+  - Uploads the package(s) to the specified SystemLink feed.
+  
+  Note: Use `-o` or `--overwrite` to overwrite an existing package in SystemLink feeds.
+
+## Directory Utilization
+
+- **Base Directory:** `C:\Users\Public\Documents\NI-Measurement-Plugin-Package-Builder`
+  - **Packages Directory:** `\packages`
+    - Contains the built `.nipkg` files.
+  - **Logs Directory:** `\Logs`
+  - **Measurement Plug-In(copy) Directory:** `\{plugin_folder_name}`
+    - Copies of measurement plug-in folders are stored directly under the base directory.
+    - Includes instruction and control files for each measurement plug-in.
+  
+  Note: If the Public Documents directory is not accessible, it uses your personal Documents directory.
+
 ## Notes
 
 ### File Exclusions
@@ -117,18 +135,14 @@ The following files/directories are automatically ignored during package buildin
 
 ### SystemLink Upload Requirements
 
-- Internet access is required for installing external dependencies.
+- Internet access is required for uploading the package(s).
 - When uploading packages:
   - API key and Feed name are mandatory.
   <!-- To be decided -->
   - API URL and Workspace are optional (defaults to SystemLink client configuration if not provided).
-- All command-line arguments should be enclosed in double quotes.
-
-### Command Line Tips
-
-- For building multiple plugins, both the base directory and selected measurement plugins must be specified.
-- The tool will display the output directory where `.nipkg` files are generated.
+- All command-line arguments should be enclosed in double-quotes.
 
 ## Additional Resources
 
-- [NI Package Builder Documentation](https://www.ni.com/docs/en-US/bundle/package-manager/page/build-package-using-cli.html)
+- [HLD for the tool.](./docs/ni_package_builder_hld.md)
+- [NI Package Builder Documentation.](https://www.ni.com/docs/en-US/bundle/package-manager/page/build-package-using-cli.html)

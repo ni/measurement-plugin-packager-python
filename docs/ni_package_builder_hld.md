@@ -1,6 +1,6 @@
-# NI Measurement Plug-In Package builder
+# NI Measurement Plug-In Packager for Python
 
-- [NI Measurement Plug-In Package builder](#ni-measurement-plug-in-package-builder)
+- [NI Measurement Plug-In Packager for Python](#ni-measurement-plug-in-packager-for-python)
   - [Who](#who)
   - [Problem statement](#problem-statement)
   - [Links to relevant work items](#links-to-relevant-work-items)
