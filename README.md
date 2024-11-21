@@ -10,12 +10,12 @@
   - [Directory Utilization](#directory-utilization)
   - [Notes](#notes)
     - [File Exclusions](#file-exclusions)
-    - [SystemLink Upload Requirements](#systemlink-upload-requirements)
+    - [Requirements to upload packages to SystemLink](#requirements-to-upload-packages-to-systemlink)
   - [Additional Resources](#additional-resources)
 
 ## Introduction
 
-The NI Measurement Plug-In Packager enables users to build Python measurement plug-ins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the package creation and distribution process for NI measurement plug-ins.
+The Measurement Plug-In Packager enables users to build Python measurement plug-ins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the process of building and distributing measurement plug-ins efficiently.
 
 ## Dependencies
 
@@ -37,6 +37,12 @@ The NI Measurement Plug-In Packager enables users to build Python measurement pl
 ## Usage
 
 ### 1. Building Measurement Plug-Ins
+
+- #### What Happens
+
+  - Creates `.nipkg` package(s) for the specified measurement plug-in(s).
+  - Package(s) will be saved in: `C:\Users\Public\Documents\NI-Measurement-Plugin-Packager\packages`.
+  - Package name will be in the format: `{plugin_folder_name}_{version}_windows_x64.nipkg` eg: `sample-measurement_0.5.0_windows_x64.nipkg`.
 <!-- TODO: Update the flag names -->
 - #### Single Plug-In
 
@@ -64,13 +70,14 @@ The NI Measurement Plug-In Packager enables users to build Python measurement pl
 
   Note: The base directory and selected measurement plug-ins must be specified for building multiple measurement plug-ins.
 
+### 2. Uploading to SystemLink
+
 - #### What Happens
 
-  - Creates `.nipkg` package(s) for the specified measurement plug-in(s).
-  - Package(s) will be saved in: `C:\Users\Public\Documents\NI-Measurement-Plugin-Package-Builder\packages`.
-  - Package name will be in the format: `{plugin_folder_name}_{version}_windows_x64.nipkg` eg: `sample-measurement_0.5.0_windows_x64.nipkg`.
-
-### 2. Uploading to SystemLink
+  - Builds and saves the `.nipkg` package(s) for the specified measurement plug-in(s).
+  - Uploads the package(s) to the specified SystemLink feed.
+  
+  Note: Use `-o` or `--overwrite` to overwrite an existing package in SystemLink feeds.
 
 - #### Uploading Single Plug-In to SystemLink
 
@@ -96,16 +103,9 @@ The NI Measurement Plug-In Packager enables users to build Python measurement pl
   measurement-plugin-packager --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://  dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
   ```
 
-- #### What Happens
-
-  - Builds and saves the `.nipkg` package(s) for the specified measurement plug-in(s).
-  - Uploads the package(s) to the specified SystemLink feed.
-  
-  Note: Use `-o` or `--overwrite` to overwrite an existing package in SystemLink feeds.
-
 ## Directory Utilization
 
-- **Base Directory:** `C:\Users\Public\Documents\NI-Measurement-Plugin-Package-Builder`
+- **Base Directory:** `C:\Users\Public\Documents\NI-Measurement-Plugin-Packager`
   - **Packages Directory:** `\packages`
     - Contains the built `.nipkg` files.
   - **Logs Directory:** `\Logs`
@@ -133,7 +133,7 @@ The following files/directories are automatically ignored during package buildin
 - `.pytest_cache`
 - `coverage.xml`
 
-### SystemLink Upload Requirements
+### Requirements to upload packages to SystemLink
 
 - Internet access is required for uploading the package(s).
 - When uploading packages:
@@ -144,5 +144,4 @@ The following files/directories are automatically ignored during package buildin
 
 ## Additional Resources
 
-- [HLD for the tool.](./docs/ni_package_builder_hld.md)
 - [NI Package Builder Documentation.](https://www.ni.com/docs/en-US/bundle/package-manager/page/build-package-using-cli.html)

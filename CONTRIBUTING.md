@@ -5,7 +5,7 @@ Contributions to Measurement Plug-In Packager for Python are welcome from all!
 Measurement Plug-In Packager for Python is managed via [git](https://git-scm.com), with the canonical upstream
 repository hosted on [GitHub](https://github.com/ni/measurement-plugin-packager-python).
 
-Measurement Plug-In Packager for Python follows a pull-request model for development.  If you wish to
+Measurement Plug-In Packager for Python follows a pull-request model for development. If you wish to
 contribute, you will need to create a GitHub account, fork this project, push a
 branch with your changes to your project, and then submit a pull request.
 
