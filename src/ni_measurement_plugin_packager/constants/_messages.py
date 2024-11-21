@@ -18,7 +18,7 @@ Provide the parent directory containing measurement plug-in folders."
     NO_MEASUREMENT_FILE = "Missing 'measurement.py' in directory: '{dir}'"
     NO_BATCH_FILE = "Missing 'start.bat' in directory: '{dir}'"
     SUBPROCESS_ERR = "Command '{cmd}' execution failed with exit status {returncode}."
-    TEMPLATE_FILES_COMPLETED = "Generated required components for NI package creation."
+    TEMPLATE_FILES_COMPLETED = "Generated required template files for NI package creation."
     FAILED_PUBLIC_DIR = (
         "Could not access Public Documents directory. Defaulting to User Documents for logging."
     )
