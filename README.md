@@ -5,8 +5,8 @@
   - [Dependencies](#dependencies)
   - [Installation](#installation)
   - [Usage](#usage)
-    - [1. Building Measurement Plug-Ins](#1-building-measurement-plug-ins)
-    - [2. Uploading to SystemLink](#2-uploading-to-systemlink)
+    - [1. Building Measurement Plug-In Packages](#1-building-measurement-plug-in-packages)
+    - [2. Building and Uploading Measurement Plug-In Packages to SystemLink](#2-building-and-uploading-measurement-plug-in-packages-to-systemlink)
   - [Directory Utilization](#directory-utilization)
   - [Notes](#notes)
     - [File Exclusions](#file-exclusions)
@@ -36,15 +36,15 @@ The Measurement Plug-In Packager enables users to build Python measurement plug-
 
 ## Usage
 
-### 1. Building Measurement Plug-Ins
+### 1. Building Measurement Plug-In Packages
 
 - #### What Happens
 
   - Creates `.nipkg` package(s) for the specified measurement plug-in(s).
-  - Package(s) will be saved in: `C:\Users\Public\Documents\NI-Measurement-Plugin-Packager\packages`.
+  - Package(s) will be created under: `C:\Users\Public\Documents\NI-Measurement-Plugin-Packager\packages`.
   - Package name will be in the format: `{plugin_folder_name}_{version}_windows_x64.nipkg` eg: `sample-measurement_0.5.0_windows_x64.nipkg`.
 <!-- TODO: Update the flag names -->
-- #### Single Plug-In
+- #### Single Plug-in
 
   ```bash
   measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>"
@@ -56,7 +56,7 @@ The Measurement Plug-In Packager enables users to build Python measurement plug-
   measurement-plugin-packager --plugin-dir "C:/Users/examples/sample_measurement"
   ```
 
-- #### Multiple Plug-Ins
+- #### Multiple Plug-ins
 
   ```bash
   measurement-plugin-packager --base-dir "<measurement_plugin_base_directory>" --selected-meas-plugins "<plugin1,plugin2>"
@@ -70,7 +70,7 @@ The Measurement Plug-In Packager enables users to build Python measurement plug-
 
   Note: The base directory and selected measurement plug-ins must be specified for building multiple measurement plug-ins.
 
-### 2. Uploading to SystemLink
+### 2. Building and Uploading Measurement Plug-In Packages to SystemLink
 
 - #### What Happens
 
@@ -113,7 +113,7 @@ The Measurement Plug-In Packager enables users to build Python measurement plug-
     - Copies of measurement plug-in folders are stored directly under the base directory.
     - Includes instruction and control files for each measurement plug-in.
   
-  Note: If the Public Documents directory is not accessible, it uses your personal Documents directory.
+  Note: If the Public Documents directory is not accessible, this tool uses your personal Documents directory.
 
 ## Notes
 
