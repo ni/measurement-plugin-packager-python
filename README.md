@@ -1,6 +1,6 @@
-# NI Measurement Plugin Packager Python
+# Measurement Plugin Packager for Python
 
-- [NI Measurement Plugin Packager Python](#ni-measurement-plugin-packager-python)
+- [Measurement Plugin Packager for Python](#measurement-plugin-packager-for-python)
   - [Introduction](#introduction)
   - [Dependencies](#dependencies)
   - [Installation](#installation)
@@ -18,9 +18,9 @@ The NI Measurement Plugin Packager enables users to build Python Measurement Plu
 
 ## Dependencies
 
-- Python 3.9 or later
-- NI Package Manager 2024 Q4 or later
-- NI SystemLink Feeds Manager 1.0.0-dev1 or later
+- [Python 3.9](https://www.python.org/downloads/release/python-3913/) or later
+- [NI Package Manager 2024 Q4](https://www.ni.com/en/support/downloads/software-products/download.package-manager.html#322516) or later
+- NI SystemLink Feeds Manager [1.0.0-dev1](./dependencies/nisystemlink_feeds_manager-1.0.0.dev1-py3-none-any.whl)
 
 ## Installation
 
@@ -45,6 +45,11 @@ The tool supports two modes of operation:
   measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>"
   ```
 
+  What Happens:
+  - Creates a `.nipkg` package for the specified measurement plug-in.
+  - Package will be saved in: `C:\Users\Public\Documents\NI-Measurement-Plugin-Package-Builder\packages`.
+  - Package name will be in the format: `{plugin_name}_{version}_windows_x64.nipkg`
+
   Example:
 
   ```bash
@@ -56,6 +61,11 @@ The tool supports two modes of operation:
   ```bash
   measurement-plugin-packager --base-dir "<measurement_plugin_base_directory>" --selected-meas-plugins "<plugin1,plugin2>"
   ```
+
+  What Happens:
+  - Creates `.nipkg` packages for the specified measurement plug-ins.
+  - Package will be saved in: `C:\Users\Public\Documents\NI-Measurement-Plugin-Package-Builder\packages`.
+  - 
   
   Example:
   

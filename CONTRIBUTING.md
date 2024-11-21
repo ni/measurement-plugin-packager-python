@@ -1,11 +1,11 @@
-# Contributing to Measurement Plug-In Packager Python
+# Contributing to Measurement Plug-In Packager for Python
 
-Contributions to Measurement Plug-In Packager Python are welcome from all!
+Contributions to Measurement Plug-In Packager for Python are welcome from all!
 
-Measurement Plug-In Packager Python is managed via [git](https://git-scm.com), with the canonical upstream
+Measurement Plug-In Packager for Python is managed via [git](https://git-scm.com), with the canonical upstream
 repository hosted on [GitHub](https://github.com/ni/measurement-plugin-packager-python).
 
-Measurement Plug-In Packager Python follows a pull-request model for development.  If you wish to
+Measurement Plug-In Packager for Python follows a pull-request model for development.  If you wish to
 contribute, you will need to create a GitHub account, fork this project, push a
 branch with your changes to your project, and then submit a pull request.
 
@@ -30,7 +30,7 @@ See [GitHub's official documentation](https://help.github.com/articles/using-pul
 
 ## Clone or Update the Git Repository
 
-To download the Measurement Plug-In Packager Python source, clone its Git
+To download the Measurement Plug-In Packager for Python source, clone its Git
 repository to your local PC.
 
 ```cmd
@@ -154,4 +154,4 @@ unless the dependency uses semantic versioning.
 (taken from [developercertificate.org](https://developercertificate.org/))
 
 See [LICENSE](https://github.com/ni/measurement-plugin-packager-python/blob/main/LICENSE)
-for details about how Measurement Plug-In Packager Python is licensed.
+for details about how Measurement Plug-In Packager for Python is licensed.
