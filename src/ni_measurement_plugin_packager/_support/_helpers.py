@@ -42,11 +42,9 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[Pat
         logger: Logger object.
         measurement_plugins: List of measurement plug-ins.
     """
-    logger.info("")
     logger.info(CommandLinePrompts.AVAILABLE_PLUGINS)
     for index, measurement_name in enumerate(measurement_plugins):
         logger.info(f"{index + 1}. {measurement_name}")
-    logger.info("")
 
 
 def validate_plugin_files(plugin_path: Path, logger: Logger) -> bool:
@@ -274,7 +272,6 @@ def publish_packages_from_directory(
         publish_package_client=publish_package_client,
         upload_package_info=upload_package_info,
     )
-    logger.info("")
 
 
 def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Path]:
@@ -287,7 +284,6 @@ def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Pat
     Returns:
         Built measurement package file path.
     """
-    logger.info("")
     measurement_plugin = Path(measurement_plugin_path).name
     logger.info(StatusMessages.BUILDING_MEASUREMENT.format(name=measurement_plugin))
 
