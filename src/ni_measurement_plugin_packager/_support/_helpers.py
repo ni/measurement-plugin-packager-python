@@ -21,7 +21,7 @@ from ni_measurement_plugin_packager.constants import (
     PACKAGES,
     CommandLinePrompts,
     FileNames,
-    PackagerStatusMessages,
+    StatusMessages,
     PyProjectToml,
 )
 from ni_measurement_plugin_packager.models import (
@@ -42,7 +42,7 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[Pat
         logger: Logger object.
         measurement_plugins: List of measurement plug-ins.
     """
-    logger.info("\n")
+    logger.info("")
     logger.info(CommandLinePrompts.AVAILABLE_PLUGINS)
     for index, measurement_name in enumerate(measurement_plugins):
         logger.info(f"{index + 1}. {measurement_name}")
@@ -65,15 +65,15 @@ def validate_plugin_files(plugin_path: Path, logger: Logger) -> bool:
     valid_file: bool = True
 
     if not pyproject_path.is_file():
-        logger.debug(PackagerStatusMessages.NO_TOML_FILE.format(dir=plugin_path))
+        logger.debug(StatusMessages.NO_TOML_FILE.format(dir=plugin_path))
         valid_file = False
 
     if not measurement_file_path.is_file():
-        logger.debug(PackagerStatusMessages.NO_MEASUREMENT_FILE.format(dir=plugin_path))
+        logger.debug(StatusMessages.NO_MEASUREMENT_FILE.format(dir=plugin_path))
         valid_file = False
 
     if not batch_file_path.is_file():
-        logger.debug(PackagerStatusMessages.NO_BATCH_FILE.format(dir=plugin_path))
+        logger.debug(StatusMessages.NO_BATCH_FILE.format(dir=plugin_path))
         valid_file = False
 
     return valid_file
@@ -125,11 +125,11 @@ def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
 
     except FileNotFoundError as exp:
         raise FileNotFoundError(
-            PackagerStatusMessages.INVALID_BASE_DIR.format(dir=folder_path)
+            StatusMessages.INVALID_BASE_DIR.format(dir=folder_path)
         ) from exp
 
 
-def get_ni_packager_path(logger: Logger) -> Optional[Path]:
+def get_ni_measurement_plugin_packager_path(logger: Logger) -> Optional[Path]:
     """Get Folder path of `Measurement Plug-in Packager`.
 
     Args:
@@ -213,19 +213,19 @@ def get_publish_package_client(
         return publish_package_client
 
     except KeyError as ex:
-        logger.info(PackagerStatusMessages.FAILED_CLIENT_CREATION)
+        logger.info(StatusMessages.FAILED_CLIENT_CREATION)
         logger.debug(ex, exc_info=True)
-        logger.info(PackagerStatusMessages.API_URL_KEY_MISSING.format(key=ex))
-        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+        logger.info(StatusMessages.API_URL_KEY_MISSING.format(key=ex))
+        logger.info(StatusMessages.CHECK_LOG_FILE)
 
     except FileNotFoundError as ex:
-        logger.info(PackagerStatusMessages.FAILED_CLIENT_CREATION)
+        logger.info(StatusMessages.FAILED_CLIENT_CREATION)
         logger.debug(ex, exc_info=True)
         logger.info(ex)
 
     except ApiException as ex:
         logger.info(ex.error.message)
-        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+        logger.info(StatusMessages.CHECK_LOG_FILE)
 
 
 def publish_packages_from_directory(
@@ -253,7 +253,7 @@ def publish_packages_from_directory(
 
     if not measurement_plugins:
         raise InvalidInputError(
-            PackagerStatusMessages.INVALID_BASE_DIR.format(dir=measurement_plugin_base_path)
+            StatusMessages.INVALID_BASE_DIR.format(dir=measurement_plugin_base_path)
         )
 
     plugins_to_process: List[str]
@@ -289,15 +289,15 @@ def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Pat
     """
     logger.info("")
     measurement_plugin = Path(measurement_plugin_path).name
-    logger.info(PackagerStatusMessages.BUILDING_MEASUREMENT.format(name=measurement_plugin))
+    logger.info(StatusMessages.BUILDING_MEASUREMENT.format(name=measurement_plugin))
 
-    plugin_packager_path = get_ni_packager_path(logger=logger)
+    plugin_packager_path = get_ni_measurement_plugin_packager_path(logger=logger)
     if not plugin_packager_path:
-        logger.info(PackagerStatusMessages.INVALID_PACKAGER_PATH)
+        logger.info(StatusMessages.INVALID_PACKAGER_PATH)
         return None
 
     if not validate_plugin_files(plugin_path=measurement_plugin_path, logger=logger):
-        logger.info(PackagerStatusMessages.INVALID_MEASUREMENT_PLUGIN)
+        logger.info(StatusMessages.INVALID_MEASUREMENT_PLUGIN)
         return None
 
     measurement_package_info = get_measurement_package_info(
@@ -313,12 +313,12 @@ def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Pat
     package_folder_path = Path(plugin_packager_path) / PACKAGES
     package_folder_path.mkdir(parents=True, exist_ok=True)
 
-    logger.info(PackagerStatusMessages.TEMPLATE_FILES_COMPLETED)
+    logger.info(StatusMessages.TEMPLATE_FILES_COMPLETED)
     path_to_nipkg_exe = _get_nipkg_exe_directory()
     command = f"{path_to_nipkg_exe} pack {template_folder_path} {package_folder_path}"
     subprocess.run(command, shell=False, check=True)  # nosec: B603
     logger.info(
-        PackagerStatusMessages.PACKAGE_BUILT.format(
+        StatusMessages.PACKAGE_BUILT.format(
             name=measurement_package_info.measurement_name,
             dir=package_folder_path,
         )
@@ -361,7 +361,7 @@ def build_and_publish_packages(
                     upload_package_info=upload_package_info,
                 )
                 logger.info(
-                    PackagerStatusMessages.PACKAGE_UPLOADED.format(
+                    StatusMessages.PACKAGE_UPLOADED.format(
                         package_name=upload_response.file_name,
                         feed_name=upload_package_info.feed_name,
                     )
@@ -369,20 +369,20 @@ def build_and_publish_packages(
         except ApiException as ex:
             logger.debug(ex, exc_info=True)
             logger.info(
-                PackagerStatusMessages.PACKAGE_UPLOAD_FAILED.format(
+                StatusMessages.PACKAGE_UPLOAD_FAILED.format(
                     package=measurement_plugin,
                     name=upload_package_info.feed_name,
                 )
             )
             logger.info(ex.error.message)
-            logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+            logger.info(StatusMessages.CHECK_LOG_FILE)
 
         except (KeyError, FileNotFoundError) as ex:
             logger.debug(ex, exc_info=True)
             logger.info(ex)
-            logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+            logger.info(StatusMessages.CHECK_LOG_FILE)
 
         except Exception as ex:
             logger.debug(ex, exc_info=True)
             logger.info(ex)
-            logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+            logger.info(StatusMessages.CHECK_LOG_FILE)

@@ -24,7 +24,7 @@ from ni_measurement_plugin_packager._support._logger import (
 from ni_measurement_plugin_packager.constants import (
     CliInterface,
     CommandLinePrompts,
-    PackagerStatusMessages,
+    StatusMessages,
 )
 from ni_measurement_plugin_packager.models import (
     CliInputs,
@@ -77,7 +77,7 @@ def run(
     """Create Python measurement plug-in package files and upload to SystemLink Feeds."""
     try:
         logger = initialize_logger(name="console_logger")
-        logger.info(PackagerStatusMessages.STARTED_EXECUTION)
+        logger.info(StatusMessages.STARTED_EXECUTION)
 
         systemlink_config = SystemLinkConfig(api_key=api_key, api_url=api_url, workspace=workspace)
         upload_package_info = UploadPackageInfo(feed_name=feed_name, overwrite_packages=overwrite)
@@ -100,8 +100,8 @@ def run(
             output_path,
             logger=logger,
         )
-        logger.debug(PackagerStatusMessages.VERSION.format(version=__version__))
-        logger.info(PackagerStatusMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
+        logger.debug(StatusMessages.VERSION.format(version=__version__))
+        logger.info(StatusMessages.LOG_FILE_LOCATION.format(log_dir=log_folder_path))
 
         publish_package_client = None
         if upload_packages:
@@ -131,7 +131,7 @@ def run(
                     upload_package_info=upload_package_info,
                 )
                 logger.info(
-                    PackagerStatusMessages.PACKAGE_UPLOADED.format(
+                    StatusMessages.PACKAGE_UPLOADED.format(
                         package_name=upload_response.file_name,
                         feed_name=upload_package_info.feed_name,
                     )
@@ -141,35 +141,35 @@ def run(
     except ApiException as ex:
         measurement_plugin = Path(str(cli_args.measurement_plugin_path)).name
         logger.debug(ex, exc_info=True)
-        logger.info(
-            PackagerStatusMessages.PACKAGE_UPLOAD_FAILED.format(
+        logger.error(
+            StatusMessages.PACKAGE_UPLOAD_FAILED.format(
                 package=measurement_plugin,
                 name=upload_package_info.feed_name,
             )
         )
         logger.info(ex.error.message)
-        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+        logger.info(StatusMessages.CHECK_LOG_FILE)
 
     except PermissionError as error:
-        logger.info(PackagerStatusMessages.ACCESS_DENIED)
+        logger.info(StatusMessages.ACCESS_DENIED)
         logger.debug(error, exc_info=True)
 
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
         logger.info(
-            PackagerStatusMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode)
+            StatusMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode)
         )
-        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+        logger.info(StatusMessages.CHECK_LOG_FILE)
 
     except (FileNotFoundError, KeyError, ValidationError) as ex:
         logger.debug(ex, exc_info=True)
         logger.info(ex)
-        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+        logger.info(StatusMessages.CHECK_LOG_FILE)
 
     except Exception as ex:
         logger.debug(ex, exc_info=True)
         logger.info(ex)
-        logger.info(PackagerStatusMessages.CHECK_LOG_FILE)
+        logger.info(StatusMessages.CHECK_LOG_FILE)
 
     finally:
-        logger.info(PackagerStatusMessages.PROCESS_COMPLETED)
+        logger.info(StatusMessages.PROCESS_COMPLETED)

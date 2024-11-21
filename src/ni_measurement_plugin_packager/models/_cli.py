@@ -7,7 +7,7 @@ from pydantic import BaseModel, model_validator
 
 from ni_measurement_plugin_packager.constants import (
     CommandLinePrompts,
-    PackagerStatusMessages,
+    StatusMessages,
 )
 
 
@@ -59,14 +59,14 @@ class CliInputs(BaseModel):
             not Path(self.measurement_plugin_base_path).is_dir()
         ):
             raise FileNotFoundError(
-                PackagerStatusMessages.INVALID_BASE_DIR.format(
+                StatusMessages.INVALID_BASE_DIR.format(
                     dir=self.measurement_plugin_base_path
                 )
             )
 
         if self.measurement_plugin_path and not Path(self.measurement_plugin_path).is_dir():
             raise FileNotFoundError(
-                PackagerStatusMessages.INVALID_PLUGIN_DIR.format(dir=self.measurement_plugin_path)
+                StatusMessages.INVALID_PLUGIN_DIR.format(dir=self.measurement_plugin_path)
             )
 
         return self
@@ -85,7 +85,7 @@ class CliInputs(BaseModel):
 
         if self.upload_packages:
             if not self.systemlink_config.api_key:
-                raise ValueError(PackagerStatusMessages.NO_API_KEY)
+                raise ValueError(StatusMessages.NO_API_KEY)
 
             if not self.upload_package_info.feed_name:
                 raise ValueError(CommandLinePrompts.NO_FEED_NAME)

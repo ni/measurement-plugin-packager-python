@@ -1,7 +1,7 @@
 """Measurement Plug-In Packager status messages."""
 
 
-class PackagerStatusMessages:
+class StatusMessages:
     """Messages describing the status and progress of the Measurement Plug-In Packager."""
 
     STARTED_EXECUTION = "Initializing the Measurement Plug-In Packager..."

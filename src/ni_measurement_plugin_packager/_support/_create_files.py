@@ -1,4 +1,4 @@
-"""Helper functions for creating the files for Measurement Plug-In Packager."""
+"""Helper functions for creating the template files."""
 
 import platform
 import shutil
