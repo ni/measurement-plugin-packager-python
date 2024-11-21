@@ -1,4 +1,4 @@
-"""Measurement Plug-In Package Builder helper functions."""
+"""Measurement Plug-In Packager helper functions."""
 
 import sys
 from pathlib import Path

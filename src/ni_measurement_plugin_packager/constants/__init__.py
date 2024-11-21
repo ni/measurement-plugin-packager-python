@@ -1,4 +1,4 @@
-"""Initialize the Measurement Plug-in Package Builder constants."""
+"""Constants that are used across modules in this package."""
 
 from ni_measurement_plugin_packager.constants._cli import (
     DEFAULT_AUTHOR,
@@ -15,9 +15,8 @@ from ni_measurement_plugin_packager.constants._log import (
     LOG_FILE_SIZE_LIMIT_IN_BYTES,
 )
 from ni_measurement_plugin_packager.constants._messages import (
-    InteractiveModeMessages,
-    NonInteractiveModeMessages,
-    UserMessages,
+    CommandLinePrompts,
+    StatusMessages,
 )
 from ni_measurement_plugin_packager.constants._template_files import (
     PACKAGES,
@@ -38,9 +37,8 @@ __all__ = [
     "LOG_FILE_MSG_FORMAT",
     "LOG_FILE_NAME",
     "LOG_FILE_SIZE_LIMIT_IN_BYTES",
-    "InteractiveModeMessages",
-    "NonInteractiveModeMessages",
-    "UserMessages",
+    "CommandLinePrompts",
+    "StatusMessages",
     "PACKAGES",
     "ControlFile",
     "FileNames",
