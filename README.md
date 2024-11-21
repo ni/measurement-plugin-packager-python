@@ -1,6 +1,6 @@
-# Measurement Plugin Packager for Python
+# Measurement Plug-In Packager for Python
 
-- [Measurement Plugin Packager for Python](#measurement-plugin-packager-for-python)
+- [Measurement Plug-In Packager for Python](#measurement-plug-in-packager-for-python)
   - [Introduction](#introduction)
   - [Dependencies](#dependencies)
   - [Installation](#installation)
@@ -15,7 +15,7 @@
 
 ## Introduction
 
-The NI Measurement Plugin Packager enables users to build Python measurement plug-ins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the package creation and distribution process for NI measurement plug-ins.
+The NI Measurement Plug-In Packager enables users to build Python measurement plug-ins as NI package files (`.nipkg`) and upload them to SystemLink feeds. This tool streamlines the package creation and distribution process for NI measurement plug-ins.
 
 ## Dependencies
 
@@ -38,7 +38,7 @@ The NI Measurement Plugin Packager enables users to build Python measurement plu
 
 ### 1. Building Measurement Plug-Ins
 <!-- TODO: Update the flag names -->
-- #### Single Plugin
+- #### Single Plug-In
 
   ```bash
   measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>"
@@ -50,7 +50,7 @@ The NI Measurement Plugin Packager enables users to build Python measurement plu
   measurement-plugin-packager --plugin-dir "C:/Users/examples/sample_measurement"
   ```
 
-- #### Multiple Plugins
+- #### Multiple Plug-Ins
 
   ```bash
   measurement-plugin-packager --base-dir "<measurement_plugin_base_directory>" --selected-meas-plugins "<plugin1,plugin2>"
@@ -72,7 +72,7 @@ The NI Measurement Plugin Packager enables users to build Python measurement plu
 
 ### 2. Uploading to SystemLink
 
-- #### Uploading Single Plugin to SystemLink
+- #### Uploading Single Plug-In to SystemLink
 
   ```bash
   measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace   "<workspace_name>" --feed-name "<feed_name>"
@@ -84,7 +84,7 @@ The NI Measurement Plugin Packager enables users to build Python measurement plu
   measurement-plugin-packager --plugin-dir "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/"   --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
   ```
 
-- #### Uploading Multiple Plugins to SystemLink
+- #### Uploading Multiple Plug-Ins to SystemLink
 
   ```bash
   measurement-plugin-packager --base-dir "<base_directory>" --selected-meas-plugins "<plugin1,plugin2>" --upload-packages --api-url "<systemlink_api_url>"   --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
