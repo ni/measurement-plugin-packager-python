@@ -3,7 +3,7 @@
 import subprocess  # nosec: B404
 from logging import FileHandler, Logger
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from nisystemlink_feeds_manager.clients.core import ApiException
 from nisystemlink_feeds_manager.clients.feeds.models import UploadPackageResponse
