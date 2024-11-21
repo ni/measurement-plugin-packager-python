@@ -14,7 +14,7 @@ from ni_measurement_plugin_packager.constants import (
     LOG_FILE_MSG_FORMAT,
     LOG_FILE_NAME,
     LOG_FILE_SIZE_LIMIT_IN_BYTES,
-    UserMessages,
+    StatusMessages,
 )
 
 
@@ -73,9 +73,9 @@ def setup_logger_with_file_handler(output_path: Path, logger: Logger) -> Tuple[L
     add_file_handler(logger=logger, log_folder_path=log_folder_path)
 
     if not public_path_status:
-        logger.info(UserMessages.FAILED_PUBLIC_DIR)
+        logger.info(StatusMessages.FAILED_PUBLIC_DIR)
     if not user_path_status:
-        logger.info(UserMessages.FAILED_USER_DIR)
+        logger.info(StatusMessages.FAILED_USER_DIR)
 
     return logger, log_folder_path
 

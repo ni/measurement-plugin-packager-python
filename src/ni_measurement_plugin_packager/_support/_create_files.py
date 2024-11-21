@@ -1,4 +1,4 @@
-"""Helper functions for creating the files for Measurement Plug-In Package Builder."""
+"""Helper functions for creating the template files."""
 
 import platform
 import shutil
@@ -66,21 +66,21 @@ def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
 
 
 def create_template_folders(
-    plugin_package_builder_path: Path,
+    plugin_packager_path: Path,
     measurement_plugin_path: Path,
     measurement_package_info: PackageInfo,
 ) -> Path:
     """Create Template folders for building NI Packages.
 
     Args:
-        plugin_package_builder_path: Measurement Package builder path.
+        plugin_packager_path: Measurement Packager path.
         measurement_plugin_path: Measurement Plugin path from user.
         measurement_package_info: Measurement package information.
 
     Returns:
         Template folder path.
     """
-    template_path = Path(plugin_package_builder_path) / measurement_package_info.measurement_name
+    template_path = Path(plugin_packager_path) / measurement_package_info.measurement_name
 
     if template_path.is_dir():
         shutil.rmtree(template_path)
@@ -123,25 +123,19 @@ def create_control_file(control_folder_path: Path, package_info: PackageInfo) ->
     """
     control_file_path = control_folder_path / FileNames.CONTROL
 
-    package_version = package_info.version
-    package_description = package_info.description
-    package_name = package_info.package_name.lower()
-    measurement_name = package_info.measurement_name
-
-    measurement_author = package_info.author
-
-    control_file_data = ControlFile.BUILT_USING + ": " + ControlFile.NIPKG + "\n"
-    control_file_data += ControlFile.SECTION + ": " + ControlFile.ADD_ONS + "\n"
-    control_file_data += ControlFile.XB_PLUGIN + ": " + ControlFile.FILE + "\n"
-    control_file_data += ControlFile.XB_STOREPRODUCT + ": " + ControlFile.NO + "\n"
-    control_file_data += ControlFile.XB_USER_VISIBLE + ": " + ControlFile.YES + "\n"
-    control_file_data += ControlFile.XB_VISIBLE_RUNTIME + ": " + ControlFile.NO + "\n"
-    control_file_data += ControlFile.ARCHITECTURE + ": " + _get_system_type() + "\n"
-    control_file_data += ControlFile.DESCRIPTION + ": " + package_description + "\n"
-    control_file_data += ControlFile.VERSION + ": " + package_version + "\n"
-    control_file_data += ControlFile.XB_DISPLAY_NAME + ": " + measurement_name + "\n"
-    control_file_data += ControlFile.MAINTAINER + ": " + measurement_author + "\n"
-    control_file_data += ControlFile.PACKAGE + ": " + package_name + "\n"
+    control_file_data = f"""\
+{ControlFile.BUILT_USING}: {ControlFile.NIPKG}
+{ControlFile.SECTION}: {ControlFile.ADD_ONS}
+{ControlFile.XB_PLUGIN}: {ControlFile.FILE}
+{ControlFile.XB_STOREPRODUCT}: {ControlFile.NO}
+{ControlFile.XB_USER_VISIBLE}: {ControlFile.YES}
+{ControlFile.XB_VISIBLE_RUNTIME}: {ControlFile.NO}
+{ControlFile.ARCHITECTURE}: {_get_system_type()}
+{ControlFile.DESCRIPTION}: {package_info.description}
+{ControlFile.VERSION}: {package_info.version}
+{ControlFile.XB_DISPLAY_NAME}: {package_info.measurement_name}
+{ControlFile.MAINTAINER}: {package_info.author}
+{ControlFile.PACKAGE}: {package_info.package_name.lower()}"""
 
     with open(control_file_path, "w", encoding="utf-8") as fp:
         fp.write(control_file_data)
@@ -158,42 +152,12 @@ def create_instruction_file(data_path: Path, measurement_name: str, package_name
     measurement_service_path = _get_measurement_services_path(measurement_name=measurement_name)
     instruction_path = data_path / InstructionFile.INSTRUCTION
 
-    instruction_data = (
-        InstructionFile.START_TAG + InstructionFile.INSTRUCTION + InstructionFile.END_TAG + "\n"
-    )
-    instruction_data += (
-        InstructionFile.START_TAG
-        + InstructionFile.CUSTOM_DIRECTORIES
-        + InstructionFile.END_TAG
-        + "\n"
-    )
-    instruction_data += (
-        "    "
-        + InstructionFile.START_TAG
-        + InstructionFile.CUSTOM_DIRECTORY
-        + " "
-        + InstructionFile.NAME
-        + "="
-        + '"'
-        + package_name
-        + '" '
-        + InstructionFile.PATH
-        + "="
-        + '"'
-        + str(measurement_service_path)
-        + '"'
-        + InstructionFile.CLOSE_END_TAG
-        + "\n"
-    )
-    instruction_data += (
-        InstructionFile.CLOSE_START_TAG
-        + InstructionFile.CUSTOM_DIRECTORIES
-        + InstructionFile.END_TAG
-        + "\n"
-    )
-    instruction_data += (
-        InstructionFile.CLOSE_START_TAG + InstructionFile.INSTRUCTION + InstructionFile.END_TAG
-    )
+    instruction_data = f"""\
+{InstructionFile.START_TAG}{InstructionFile.INSTRUCTION}{InstructionFile.END_TAG}
+{InstructionFile.START_TAG}{InstructionFile.CUSTOM_DIRECTORIES}{InstructionFile.END_TAG}
+    {InstructionFile.START_TAG}{InstructionFile.CUSTOM_DIRECTORY} {InstructionFile.NAME}="{package_name}" {InstructionFile.PATH}="{measurement_service_path}"{InstructionFile.CLOSE_END_TAG}
+{InstructionFile.CLOSE_START_TAG}{InstructionFile.CUSTOM_DIRECTORIES}{InstructionFile.END_TAG}
+{InstructionFile.CLOSE_START_TAG}{InstructionFile.INSTRUCTION}{InstructionFile.END_TAG}"""
 
     with open(instruction_path, "w", encoding="utf-8") as fp:
         fp.write(instruction_data)

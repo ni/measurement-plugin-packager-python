@@ -1,9 +1,9 @@
-"""Helper functions for Measurement Plug-In Package Builder."""
+"""Helper functions for Measurement Plug-In Packager."""
 
 import subprocess  # nosec: B404
 from logging import FileHandler, Logger
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from nisystemlink_feeds_manager.clients.core import ApiException
 from nisystemlink_feeds_manager.clients.feeds.models import UploadPackageResponse
@@ -11,17 +11,18 @@ from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
 from nisystemlink_feeds_manager.models import PackageInfo
 
 from ni_measurement_plugin_packager._support import _get_nipath
-from ni_measurement_plugin_packager._support._create_files import create_template_folders
+from ni_measurement_plugin_packager._support._create_files import (
+    create_template_folders,
+)
 from ni_measurement_plugin_packager._support._pyproject_toml_info import (
     get_measurement_package_info,
 )
 from ni_measurement_plugin_packager.constants import (
     PACKAGES,
+    CommandLinePrompts,
     FileNames,
-    InteractiveModeMessages,
-    NonInteractiveModeMessages,
     PyProjectToml,
-    UserMessages,
+    StatusMessages,
 )
 from ni_measurement_plugin_packager.models import (
     InvalidInputError,
@@ -34,18 +35,6 @@ def _get_nipkg_exe_directory() -> Path:
     return _get_nipath("NIDIR64") / "NI Package Manager" / "nipkg.exe"
 
 
-def is_valid_folder(folder_path: Path) -> bool:
-    """Check if the provided folder path is valid or not.
-
-    Args:
-        folder_path: Folder path.
-
-    Returns:
-        True, if valid folder path. Else, False.
-    """
-    return folder_path.is_dir()
-
-
 def display_available_measurements(logger: Logger, measurement_plugins: List[Path]) -> None:
     """Display available measurement plug-ins in CLI.
 
@@ -53,11 +42,9 @@ def display_available_measurements(logger: Logger, measurement_plugins: List[Pat
         logger: Logger object.
         measurement_plugins: List of measurement plug-ins.
     """
-    logger.info("\n")
-    logger.info(InteractiveModeMessages.AVAILABLE_MEASUREMENTS)
+    logger.info(CommandLinePrompts.AVAILABLE_PLUGINS)
     for index, measurement_name in enumerate(measurement_plugins):
         logger.info(f"{index + 1}. {measurement_name}")
-    logger.info("")
 
 
 def validate_plugin_files(plugin_path: Path, logger: Logger) -> bool:
@@ -76,15 +63,15 @@ def validate_plugin_files(plugin_path: Path, logger: Logger) -> bool:
     valid_file: bool = True
 
     if not pyproject_path.is_file():
-        logger.debug(UserMessages.NO_TOML_FILE.format(dir=plugin_path))
+        logger.debug(StatusMessages.NO_TOML_FILE.format(dir=plugin_path))
         valid_file = False
 
     if not measurement_file_path.is_file():
-        logger.debug(UserMessages.NO_MEAS_FILE.format(dir=plugin_path))
+        logger.debug(StatusMessages.NO_MEASUREMENT_FILE.format(dir=plugin_path))
         valid_file = False
 
     if not batch_file_path.is_file():
-        logger.debug(UserMessages.NO_BATCH_FILE.format(dir=plugin_path))
+        logger.debug(StatusMessages.NO_BATCH_FILE.format(dir=plugin_path))
         valid_file = False
 
     return valid_file
@@ -95,7 +82,7 @@ def validate_selected_plugins(
     measurement_plugins: List[Path],
     logger: Logger,
 ) -> None:
-    """Validate the selected measurement plug-ins in `non-interactive mode`.
+    """Validate the selected measurement plug-ins.
 
     Args:
         selected_plugins: User selected measurement plug-ins.
@@ -108,28 +95,12 @@ def validate_selected_plugins(
     for measurement_plugin in selected_plugins.split(","):
         plugin_name = measurement_plugin.strip("'\"").strip()
 
-        if plugin_name not in measurement_plugins:
+        if plugin_name not in str(measurement_plugins):
             display_available_measurements(logger=logger, measurement_plugins=measurement_plugins)
 
             raise InvalidInputError(
-                NonInteractiveModeMessages.INVALID_SELECTED_PLUGINS.format(input=plugin_name)
+                CommandLinePrompts.INVALID_SELECTED_PLUGINS.format(input=plugin_name)
             )
-
-
-def get_measurement_plugins(measurement_plugins: List[Path]) -> Dict[str, Path]:
-    """Get measurement plug-ins with indexes.
-
-    Args:
-        measurement_plugins: List of measurement plug-ins.
-
-    Returns:
-        Measurement plug-ins with indexes.
-    """
-    measurement_plugins_with_indexes = {}
-    for index, measurement_name in enumerate(measurement_plugins):
-        measurement_plugins_with_indexes[str(index + 1)] = measurement_name
-
-    return measurement_plugins_with_indexes
 
 
 def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
@@ -151,11 +122,11 @@ def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
         return folders
 
     except FileNotFoundError as exp:
-        raise FileNotFoundError(UserMessages.INVALID_BASE_DIR.format(dir=folder_path)) from exp
+        raise FileNotFoundError(StatusMessages.INVALID_BASE_DIR.format(dir=folder_path)) from exp
 
 
-def get_ni_package_builder_path(logger: Logger) -> Optional[Path]:
-    """Get Folder path of `Measurement Plug-in Package Builder`.
+def get_ni_measurement_plugin_packager_path(logger: Logger) -> Optional[Path]:
+    """Get Folder path of `Measurement Plug-in Packager`.
 
     Args:
         logger: Logger object.
@@ -208,7 +179,7 @@ def publish_package_to_systemlink(
     upload_response = publish_package_client.upload_package(
         package_info=PackageInfo(
             feed_name=upload_package_info.feed_name,
-            path=package_path,
+            path=str(package_path),
             overwrite=upload_package_info.overwrite_packages,
         )
     )
@@ -238,19 +209,67 @@ def get_publish_package_client(
         return publish_package_client
 
     except KeyError as ex:
-        logger.info(UserMessages.FAILED_CLIENT_CREATION)
+        logger.info(StatusMessages.FAILED_CLIENT_CREATION)
         logger.debug(ex, exc_info=True)
-        logger.info(UserMessages.API_URL_KEY_MISSING.format(key=ex))
-        logger.info(UserMessages.CHECK_LOG_FILE)
+        logger.info(StatusMessages.API_URL_KEY_MISSING.format(key=ex))
+        logger.info(StatusMessages.CHECK_LOG_FILE)
 
     except FileNotFoundError as ex:
-        logger.info(UserMessages.FAILED_CLIENT_CREATION)
+        logger.info(StatusMessages.FAILED_CLIENT_CREATION)
         logger.debug(ex, exc_info=True)
         logger.info(ex)
 
     except ApiException as ex:
         logger.info(ex.error.message)
-        logger.info(UserMessages.CHECK_LOG_FILE)
+        logger.info(StatusMessages.CHECK_LOG_FILE)
+
+
+def publish_packages_from_directory(
+    logger: Logger,
+    measurement_plugin_base_path: Path,
+    selected_plugins: str,
+    publish_package_client: PublishPackagesToSystemLink,
+    upload_package_info: UploadPackageInfo,
+) -> None:
+    """Publish measurement packages.
+
+    Args:
+        logger: Logger object.
+        measurement_plugin_base_path: Measurement plugins root folder path.
+        selected_plugins: Selected measurement plugins.
+        publish_package_client: Client for publish packages to SystemLink.
+        upload_package_info: Information about the package to be uploaded.
+
+    Raises:
+        InvalidInputError: If API Key and Feed Name not provided by the user.
+    """
+    measurement_plugins: list[Path] = get_folders(
+        folder_path=measurement_plugin_base_path, logger=logger
+    )
+
+    if not measurement_plugins:
+        raise InvalidInputError(
+            StatusMessages.INVALID_BASE_DIR.format(dir=measurement_plugin_base_path)
+        )
+
+    plugins_to_process: List[str]
+    if selected_plugins == ".":
+        plugins_to_process = [str(path) for path in measurement_plugins]
+    else:
+        validate_selected_plugins(
+            measurement_plugins=measurement_plugins,
+            selected_plugins=selected_plugins,
+            logger=logger,
+        )
+        plugins_to_process = [plugin.strip("'\"").strip() for plugin in selected_plugins.split(",")]
+
+    build_and_publish_packages(
+        logger=logger,
+        measurement_plugin_base_path=measurement_plugin_base_path,
+        measurement_plugins=plugins_to_process,
+        publish_package_client=publish_package_client,
+        upload_package_info=upload_package_info,
+    )
 
 
 def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Path]:
@@ -263,17 +282,16 @@ def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Pat
     Returns:
         Built measurement package file path.
     """
-    logger.info("")
     measurement_plugin = Path(measurement_plugin_path).name
-    logger.info(UserMessages.BUILDING_MEAS.format(name=measurement_plugin))
+    logger.info(StatusMessages.BUILDING_MEASUREMENT.format(name=measurement_plugin))
 
-    plugin_package_builder_path = get_ni_package_builder_path(logger=logger)
-    if not plugin_package_builder_path:
-        logger.info(UserMessages.INVALID_BUILDER_PATH)
+    plugin_packager_path = get_ni_measurement_plugin_packager_path(logger=logger)
+    if not plugin_packager_path:
+        logger.info(StatusMessages.INVALID_PACKAGER_PATH)
         return None
 
     if not validate_plugin_files(plugin_path=measurement_plugin_path, logger=logger):
-        logger.info(UserMessages.INVALID_MEAS_PLUGIN)
+        logger.info(StatusMessages.INVALID_MEASUREMENT_PLUGIN)
         return None
 
     measurement_package_info = get_measurement_package_info(
@@ -281,20 +299,20 @@ def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Pat
         logger=logger,
     )
     template_folder_path = create_template_folders(
-        plugin_package_builder_path=plugin_package_builder_path,
+        plugin_packager_path=plugin_packager_path,
         measurement_plugin_path=measurement_plugin_path,
         measurement_package_info=measurement_package_info,
     )
 
-    package_folder_path = Path(plugin_package_builder_path) / PACKAGES
+    package_folder_path = Path(plugin_packager_path) / PACKAGES
     package_folder_path.mkdir(parents=True, exist_ok=True)
 
-    logger.info(UserMessages.TEMPLATE_FILES_COMPLETED)
+    logger.info(StatusMessages.TEMPLATE_FILES_COMPLETED)
     path_to_nipkg_exe = _get_nipkg_exe_directory()
     command = f"{path_to_nipkg_exe} pack {template_folder_path} {package_folder_path}"
     subprocess.run(command, shell=False, check=True)  # nosec: B603
     logger.info(
-        UserMessages.PACKAGE_BUILT.format(
+        StatusMessages.PACKAGE_BUILT.format(
             name=measurement_package_info.measurement_name,
             dir=package_folder_path,
         )
@@ -307,7 +325,7 @@ def build_package(logger: Logger, measurement_plugin_path: Path) -> Optional[Pat
     return measurement_package_path
 
 
-def publish_packages(
+def build_and_publish_packages(
     logger: Logger,
     measurement_plugin_base_path: Path,
     measurement_plugins: List[str],
@@ -337,7 +355,7 @@ def publish_packages(
                     upload_package_info=upload_package_info,
                 )
                 logger.info(
-                    UserMessages.PACKAGE_UPLOADED.format(
+                    StatusMessages.PACKAGE_UPLOADED.format(
                         package_name=upload_response.file_name,
                         feed_name=upload_package_info.feed_name,
                     )
@@ -345,20 +363,20 @@ def publish_packages(
         except ApiException as ex:
             logger.debug(ex, exc_info=True)
             logger.info(
-                UserMessages.PACKAGE_UPLOAD_FAILED.format(
+                StatusMessages.PACKAGE_UPLOAD_FAILED.format(
                     package=measurement_plugin,
                     name=upload_package_info.feed_name,
                 )
             )
             logger.info(ex.error.message)
-            logger.info(UserMessages.CHECK_LOG_FILE)
+            logger.info(StatusMessages.CHECK_LOG_FILE)
 
         except (KeyError, FileNotFoundError) as ex:
             logger.debug(ex, exc_info=True)
             logger.info(ex)
-            logger.info(UserMessages.CHECK_LOG_FILE)
+            logger.info(StatusMessages.CHECK_LOG_FILE)
 
         except Exception as ex:
             logger.debug(ex, exc_info=True)
             logger.info(ex)
-            logger.info(UserMessages.CHECK_LOG_FILE)
+            logger.info(StatusMessages.CHECK_LOG_FILE)
