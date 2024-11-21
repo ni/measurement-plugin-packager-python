@@ -155,9 +155,7 @@ def run(
 
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
-        logger.info(
-            StatusMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode)
-        )
+        logger.info(StatusMessages.SUBPROCESS_ERR.format(cmd=ex.cmd, returncode=ex.returncode))
         logger.info(StatusMessages.CHECK_LOG_FILE)
 
     except (FileNotFoundError, KeyError, ValidationError) as ex:

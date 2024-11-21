@@ -5,10 +5,7 @@ from typing import Optional
 
 from pydantic import BaseModel, model_validator
 
-from ni_measurement_plugin_packager.constants import (
-    CommandLinePrompts,
-    StatusMessages,
-)
+from ni_measurement_plugin_packager.constants import CommandLinePrompts, StatusMessages
 
 
 class SystemLinkConfig(BaseModel):
@@ -59,9 +56,7 @@ class CliInputs(BaseModel):
             not Path(self.measurement_plugin_base_path).is_dir()
         ):
             raise FileNotFoundError(
-                StatusMessages.INVALID_BASE_DIR.format(
-                    dir=self.measurement_plugin_base_path
-                )
+                StatusMessages.INVALID_BASE_DIR.format(dir=self.measurement_plugin_base_path)
             )
 
         if self.measurement_plugin_path and not Path(self.measurement_plugin_path).is_dir():

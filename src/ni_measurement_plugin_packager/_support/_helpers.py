@@ -21,8 +21,8 @@ from ni_measurement_plugin_packager.constants import (
     PACKAGES,
     CommandLinePrompts,
     FileNames,
-    StatusMessages,
     PyProjectToml,
+    StatusMessages,
 )
 from ni_measurement_plugin_packager.models import (
     InvalidInputError,
@@ -122,9 +122,7 @@ def get_folders(folder_path: Path, logger: Logger) -> List[Path]:
         return folders
 
     except FileNotFoundError as exp:
-        raise FileNotFoundError(
-            StatusMessages.INVALID_BASE_DIR.format(dir=folder_path)
-        ) from exp
+        raise FileNotFoundError(StatusMessages.INVALID_BASE_DIR.format(dir=folder_path)) from exp
 
 
 def get_ni_measurement_plugin_packager_path(logger: Logger) -> Optional[Path]:

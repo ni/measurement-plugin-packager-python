@@ -11,8 +11,8 @@ from ni_measurement_plugin_packager.constants import (
     DEFAULT_AUTHOR,
     DEFAULT_DESCRIPTION,
     DEFAULT_VERSION,
-    StatusMessages,
     PyProjectToml,
+    StatusMessages,
 )
 from ni_measurement_plugin_packager.models import PackageInfo
 
@@ -62,9 +62,7 @@ def get_updated_package_data(
 
     if not package_description:
         package_description = DEFAULT_DESCRIPTION
-        logger.info(
-            StatusMessages.EMPTY_DESCRIPTION.format(description=DEFAULT_DESCRIPTION)
-        )
+        logger.info(StatusMessages.EMPTY_DESCRIPTION.format(description=DEFAULT_DESCRIPTION))
 
     if not package_version:
         package_version = DEFAULT_VERSION
