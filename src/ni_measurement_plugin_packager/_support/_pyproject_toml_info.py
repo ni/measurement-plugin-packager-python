@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any, Dict
 
 import tomli
-
 from ni_measurement_plugin_packager.constants import (
     DEFAULT_AUTHOR,
     DEFAULT_DESCRIPTION,
@@ -20,7 +19,7 @@ UNDERSCORE_SPACE_REGEX = r"[_ ]"
 
 
 def parse_pyproject_toml(toml_file_path: Path) -> Dict[str, Any]:
-    """Get `pyproject.toml` information.
+    """Parse the `pyproject.toml` file for measurement plug-in data.
 
     Args:
         toml_file_path: File path of pyproject.toml.
@@ -39,7 +38,7 @@ def extract_package_metadata(
     toml_content: Dict[str, Any],
     plugin_name: str,
 ) -> PackageInfo:
-    """Get updated package data from `pyproject toml` data.
+    """Extract updated package metadata from `pyproject.toml` content.
 
     Args:
         logger: Logger object.
@@ -77,7 +76,7 @@ def extract_package_metadata(
     package_name = re.sub(UNDERSCORE_SPACE_REGEX, "-", package_name)
 
     updated_package_info = PackageInfo(
-        measurement_name=plugin_name,
+        plugin_name=plugin_name,
         package_name=package_name,
         description=package_description,
         version=package_version,
@@ -88,7 +87,7 @@ def extract_package_metadata(
 
 
 def get_plugin_package_info(measurement_plugin_path: Path, logger: Logger) -> PackageInfo:
-    """Get measurement package information from pyproject.toml.
+    """Retrieve package information from the measurement plug-in directory.
 
     Args:
         measurement_plugin_path: Measurement Plug-in path.
@@ -98,14 +97,14 @@ def get_plugin_package_info(measurement_plugin_path: Path, logger: Logger) -> Pa
        Measurement package info.
     """
     pyproject_toml_path = Path(measurement_plugin_path) / PyProjectToml.FILE_NAME
-    measurement_name = Path(measurement_plugin_path).name
+    plugin_name = Path(measurement_plugin_path).name
 
     pyproject_toml_data = parse_pyproject_toml(toml_file_path=pyproject_toml_path)
 
     measurement_package_info = extract_package_metadata(
         logger=logger,
         toml_content=pyproject_toml_data,
-        plugin_name=measurement_name,
+        plugin_name=plugin_name,
     )
 
     return measurement_package_info

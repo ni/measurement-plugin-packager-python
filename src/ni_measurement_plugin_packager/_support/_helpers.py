@@ -5,11 +5,6 @@ from logging import FileHandler, Logger
 from pathlib import Path
 from typing import List, Optional
 
-from nisystemlink_feeds_manager.clients.core import ApiException
-from nisystemlink_feeds_manager.clients.feeds.models import UploadPackageResponse
-from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
-from nisystemlink_feeds_manager.models import PackageInfo
-
 from ni_measurement_plugin_packager._support import _get_nipath
 from ni_measurement_plugin_packager._support._create_files import (
     generate_template_folders,
@@ -29,29 +24,35 @@ from ni_measurement_plugin_packager.models import (
     SystemLinkConfig,
     UploadPackageInfo,
 )
+from nisystemlink_feeds_manager.clients.core import ApiException
+from nisystemlink_feeds_manager.clients.feeds.models import UploadPackageResponse
+from nisystemlink_feeds_manager.main import PublishPackagesToSystemLink
+from nisystemlink_feeds_manager.models import PackageInfo
 
 
 def _get_nipkg_exe_directory() -> Path:
     return _get_nipath("NIDIR64") / "NI Package Manager" / "nipkg.exe"
 
 
-def list_available_plugins_in_root_directory(logger: Logger, measurement_plugins: List[Path]) -> None:
-    """Display available measurement plug-ins in the given root directory.
+def list_available_plugins_in_root_directory(
+    logger: Logger, measurement_plugins: List[Path]
+) -> None:
+    """List available measurement plug-ins in the given root directory.
 
     Args:
         logger: Logger object.
         measurement_plugins: List of measurement plug-ins.
     """
     logger.info(CommandLinePrompts.AVAILABLE_PLUGINS)
-    for index, measurement_name in enumerate(measurement_plugins):
-        logger.info(f"{index + 1}. {measurement_name}")
+    for index, plugin_name in enumerate(measurement_plugins):
+        logger.info(f"{index + 1}. {plugin_name}")
 
 
 def is_valid_plugin_folder(plugin_path: Path, logger: Logger) -> bool:
-    """Validate measurement plug-in folder.
+    """Check if the measurement plug-in folder is valid.
 
     Args:
-        plugin_path: Measurement plug-in path.
+        plugin_path: Measurement Plug-In path.
         logger: Logger object.
 
     Returns:
@@ -86,7 +87,7 @@ def validate_selected_plugins(
 
     Args:
         selected_plugins: User selected measurement plug-ins.
-        measurement_plugins: Measurement plug-ins.
+        measurement_plugins: Measurement Plug-Ins.
         logger: Logger object.
 
     Raises:
@@ -96,7 +97,9 @@ def validate_selected_plugins(
         plugin_name = measurement_plugin.strip("'\"").strip()
 
         if plugin_name not in str(measurement_plugins):
-            list_available_plugins_in_root_directory(logger=logger, measurement_plugins=measurement_plugins)
+            list_available_plugins_in_root_directory(
+                logger=logger, measurement_plugins=measurement_plugins
+            )
 
             raise InvalidInputError(
                 CommandLinePrompts.SELECTED_PLUGINS_INVALID.format(input=plugin_name)
@@ -104,7 +107,7 @@ def validate_selected_plugins(
 
 
 def get_valid_plugin_folders(folder_path: Path, logger: Logger) -> List[Path]:
-    """Get list of folders present in a path.
+    """Retrieve valid plug-in folders from the given directory.
 
     Args:
         folder_path: Folder path provided by the user.
@@ -122,11 +125,13 @@ def get_valid_plugin_folders(folder_path: Path, logger: Logger) -> List[Path]:
         return folders
 
     except FileNotFoundError as exp:
-        raise FileNotFoundError(StatusMessages.INVALID_ROOT_DIRECTORY.format(dir=folder_path)) from exp
+        raise FileNotFoundError(
+            StatusMessages.INVALID_ROOT_DIRECTORY.format(dir=folder_path)
+        ) from exp
 
 
 def get_packager_root_directory(logger: Logger) -> Optional[Path]:
-    """Get Folder path of `Measurement Plug-in Packager`.
+    """Get root directory of the `Measurement Plug-in Packager`.
 
     Args:
         logger: Logger object.
@@ -143,7 +148,7 @@ def get_packager_root_directory(logger: Logger) -> Optional[Path]:
 
 
 def find_file_in_folder(folder_path: Path, file_name: str) -> Optional[Path]:
-    """Searches for a file in the specified folder that contains the given file name.
+    """Search for a file in the specified folder.
 
     Args:
         folder_path: Folder path.
@@ -166,7 +171,7 @@ def upload_to_systemlink_feed(
     package_path: Path,
     upload_package_info: UploadPackageInfo,
 ) -> UploadPackageResponse:
-    """Publish package to SystemLink feeds services.
+    """Upload a package to SystemLink feeds.
 
     Args:
         publish_package_client: Client for publish packages to SystemLink.
@@ -191,7 +196,7 @@ def initialize_systemlink_client(
     systemlink_config: SystemLinkConfig,
     logger: Logger,
 ) -> PublishPackagesToSystemLink:
-    """Get publish package client for uploading the measurement packages.
+    """Initialize a client to upload packages to SystemLink.
 
     Args:
         systemlink_config: SystemLink configuration credentials.
@@ -231,7 +236,7 @@ def process_and_publish_packages(
     publish_package_client: PublishPackagesToSystemLink,
     upload_package_info: UploadPackageInfo,
 ) -> None:
-    """Publish measurement packages.
+    """Build and publish selected measurement packages.
 
     Args:
         logger: Logger object.
@@ -273,11 +278,11 @@ def process_and_publish_packages(
 
 
 def build_package(logger: Logger, plugin_path: Path) -> Optional[Path]:
-    """Build measurement plug-in as NI package file.
+    """Build an NI package file for the given plug-in.
 
     Args:
         logger: Logger object.
-        measurement_plugin_path: Measurement plug-in path.
+        measurement_plugin_path: Measurement Plug-In path.
 
     Returns:
         Built measurement package file path.
@@ -313,7 +318,7 @@ def build_package(logger: Logger, plugin_path: Path) -> Optional[Path]:
     subprocess.run(command, shell=False, check=True)  # nosec: B603
     logger.info(
         StatusMessages.PACKAGE_BUILT.format(
-            name=measurement_package_info.measurement_name,
+            name=measurement_package_info.plugin_name,
             dir=package_folder_path,
         )
     )
@@ -332,11 +337,11 @@ def build_and_publish_packages(
     publish_package_client: PublishPackagesToSystemLink,
     upload_package_info: UploadPackageInfo,
 ) -> None:
-    """Build set of measurement packages as NI package files and publish it to SystemLink feeds.
+    """Build and upload NI packages to SystemLink feeds.
 
     Args:
         logger: Logger object.
-        plugin_root_directory: Measurement plug-in root directory.
+        plugin_root_directory: Measurement Plug-In root directory.
         measurement_plugins: List of measurement plug-ins.
         publish_package_client: Client for publish packages to SystemLink.
         upload_package_info: Information about the package to be uploaded.

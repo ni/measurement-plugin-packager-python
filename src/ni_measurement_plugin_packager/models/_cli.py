@@ -3,9 +3,8 @@
 from pathlib import Path
 from typing import Optional
 
-from pydantic import BaseModel, model_validator
-
 from ni_measurement_plugin_packager.constants import CommandLinePrompts, StatusMessages
+from pydantic import BaseModel, model_validator
 
 
 class SystemLinkConfig(BaseModel):
@@ -37,24 +36,13 @@ class CliInputs(BaseModel):
     def validate_measurement_plugin_inputs(self) -> "CliInputs":
         """Validator to validate the measurement plugin inputs."""
         if (
-            (
-                self.plugin_path
-                and any([self.plugins_root, self.plugin_names])
-            )
-            or (
-                all([self.plugins_root, self.plugin_names])
-                and self.plugin_path
-            )
-            or (
-                not all([self.plugins_root, self.plugin_names])
-                and not self.plugin_path
-            )
+            (self.plugin_path and any([self.plugins_root, self.plugin_names]))
+            or (all([self.plugins_root, self.plugin_names]) and self.plugin_path)
+            or (not all([self.plugins_root, self.plugin_names]) and not self.plugin_path)
         ):
             raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIRECTORY_REQUIRED)
 
-        if self.plugins_root and (
-            not Path(self.plugins_root).is_dir()
-        ):
+        if self.plugins_root and (not Path(self.plugins_root).is_dir()):
             raise FileNotFoundError(
                 StatusMessages.INVALID_ROOT_DIRECTORY.format(dir=self.plugins_root)
             )

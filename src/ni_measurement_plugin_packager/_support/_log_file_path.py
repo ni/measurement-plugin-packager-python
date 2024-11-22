@@ -1,4 +1,4 @@
-"""Implementation of Get Log folder path."""
+"""Provides functions to retrieve log folder paths with fallback options."""
 
 from pathlib import Path, WindowsPath
 from typing import Tuple
@@ -29,7 +29,7 @@ def get_user_documents_path() -> Path:
 
 
 def get_log_folder_path(fallback_path: Path) -> Tuple[Path, bool, bool]:
-    """Return log file path and status public paths and user paths.
+    """Determine the log folder path with fallback options and status of public/user paths.
 
     1. Try Getting Public documents directory. if not possible,
     2. Try Getting User documents directory. if not possible,
@@ -39,7 +39,7 @@ def get_log_folder_path(fallback_path: Path) -> Tuple[Path, bool, bool]:
         fallback_path: Fallback path for logger.
 
     Returns:
-        Output path for logger and status of public paths and user paths.
+        Output path for logger and accessibility of public paths and user paths.
     """
     public_path_status = True
     user_path_status = True

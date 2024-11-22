@@ -1,4 +1,4 @@
-"""A module to initialize logger functions."""
+"""A module to initialize and manage logger configurations."""
 
 import logging
 import logging.handlers
@@ -49,7 +49,7 @@ def _setup_stream_handler() -> StreamHandler:
 
 
 def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
-    """Add file handler.
+    """Add a file handler to the logger for logging to a file.
 
     Args:
         logger: Logger object.
@@ -60,7 +60,7 @@ def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
 
 
 def setup_logger_with_file_handler(fallback_path: Path, logger: Logger) -> Tuple[Logger, Path]:
-    """Adds a file handler to the provided logger.
+    """Set up a logger with a file handler, returning the logger and log folder path.
 
     Args:
         fallback_path: Output path
@@ -81,7 +81,7 @@ def setup_logger_with_file_handler(fallback_path: Path, logger: Logger) -> Tuple
 
 
 def add_stream_handler(logger: Logger) -> None:
-    """Add stream handler.
+    """Add a stream handler to the logger for logging to the console.
 
     Args:
         logger: Logger object.
@@ -91,7 +91,7 @@ def add_stream_handler(logger: Logger) -> None:
 
 
 def initialize_logger(name: str) -> Logger:
-    """Initialize logger object for logging.
+    """Initialize and configure a logger with stream and file handlers.
 
     Args:
         name: Logger name.
@@ -107,7 +107,7 @@ def initialize_logger(name: str) -> Logger:
 
 
 def remove_handlers(logger: Logger) -> None:
-    """Remove Log Handlers.
+    """Remove all handlers from the given logger.
 
     Args:
         logger: Logger object.

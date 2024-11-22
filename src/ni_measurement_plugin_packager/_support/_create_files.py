@@ -1,4 +1,4 @@
-"""Helper functions for creating the template files."""
+"""Helper functions for creating and managing template files for NI Packages."""
 
 import platform
 import shutil
@@ -27,8 +27,8 @@ ignore_dirs = [
 ]
 
 
-def _get_measurement_services_path(measurement_name: str) -> Path:
-    return _get_nipath("NIPUBAPPDATADIR") / "Plug-Ins" / "Measurements" / measurement_name
+def _get_measurement_services_path(plugin_name: str) -> Path:
+    return _get_nipath("NIPUBAPPDATADIR") / "Plug-Ins" / "Measurements" / plugin_name
 
 
 def _get_system_type() -> str:
@@ -70,17 +70,17 @@ def generate_template_folders(
     measurement_plugin_path: Path,
     measurement_package_info: PackageInfo,
 ) -> Path:
-    """Create Template folders for building NI Packages.
+    """Create template folders for building NI Packages.
 
     Args:
         packager_root_directory: Measurement Packager path.
-        measurement_plugin_path: Measurement Plugin path from user.
+        measurement_plugin_path: Measurement Plugin path.
         measurement_package_info: Measurement package information.
 
     Returns:
         Template folder path.
     """
-    template_directory = Path(packager_root_directory) / measurement_package_info.measurement_name
+    template_directory = Path(packager_root_directory) / measurement_package_info.plugin_name
 
     if template_directory.is_dir():
         shutil.rmtree(template_directory)
@@ -103,7 +103,7 @@ def generate_template_folders(
     )
     generate_instruction_file(
         data_path=data_directory,
-        measurement_name=measurement_package_info.measurement_name,
+        plugin_name=measurement_package_info.plugin_name,
         package_name=measurement_package_info.package_name,
     )
 
@@ -115,7 +115,7 @@ def generate_template_folders(
 
 
 def generate_control_file(control_folder_path: Path, package_info: PackageInfo) -> None:
-    """Create control file for storing information about measurement package.
+    """Create control file for storing information about the plugin package.
 
     Args:
         control_folder_path: Control folder path.
@@ -133,7 +133,7 @@ def generate_control_file(control_folder_path: Path, package_info: PackageInfo) 
 {ControlFile.ARCHITECTURE}: {_get_system_type()}
 {ControlFile.DESCRIPTION}: {package_info.description}
 {ControlFile.VERSION}: {package_info.version}
-{ControlFile.XB_DISPLAY_NAME}: {package_info.measurement_name}
+{ControlFile.XB_DISPLAY_NAME}: {package_info.plugin_name}
 {ControlFile.MAINTAINER}: {package_info.author}
 {ControlFile.PACKAGE}: {package_info.package_name.lower()}"""
 
@@ -141,15 +141,15 @@ def generate_control_file(control_folder_path: Path, package_info: PackageInfo) 
         fp.write(control_file_data)
 
 
-def generate_instruction_file(data_path: Path, measurement_name: str, package_name: str) -> None:
-    """Create instruction file for storing measurement directory information.
+def generate_instruction_file(data_path: Path, plugin_name: str, package_name: str) -> None:
+    """Create an instruction file for storing information about the plugin directory.
 
     Args:
         data_path: Data folder path.
-        measurement_name: Measurement service name.
+        plugin_name: Measurement service name.
         package_name: Measurement package name.
     """
-    measurement_service_path = _get_measurement_services_path(measurement_name=measurement_name)
+    measurement_service_path = _get_measurement_services_path(plugin_name=plugin_name)
     instruction_path = data_path / InstructionFile.INSTRUCTION
 
     instruction_data = f"""\

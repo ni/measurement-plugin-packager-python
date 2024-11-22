@@ -22,7 +22,9 @@ Provide the parent directory containing measurement plug-in folders."
     PUBLIC_DIRECTORY_INACCESSIBLE = (
         "Could not access Public Documents directory. Defaulting to User Documents for logging."
     )
-    USER_DIRECTORY_INACCESSIBLE = "Could not access UserDocuments directory. Using Temp directory for logging."
+    USER_DIRECTORY_INACCESSIBLE = (
+        "Could not access UserDocuments directory. Using Temp directory for logging."
+    )
     BUILDING_PACKAGE = "Creating NI package for measurement '{name}'..."
     NO_AUTHOR = "No author details found in 'pyproject.toml'. Using default author: '{author}'."
     NO_VERSION = (
