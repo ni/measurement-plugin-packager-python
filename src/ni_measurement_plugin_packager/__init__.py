@@ -13,7 +13,7 @@ from pydantic import ValidationError
 from ni_measurement_plugin_packager._support._helpers import (
     build_package,
     initialize_systemlink_client,
-    process_and_publish_packages,
+    process_and_upload_packages,
     upload_to_systemlink_feed,
 )
 from ni_measurement_plugin_packager._support._logger import (
@@ -38,21 +38,21 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-p",
-    "--plugin-path",
+    "--input-path",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     required=False,
     help=CliInterface.PLUGIN_DIR,
 )
 @click.option(
-    "-r",
-    "--plugins-root",
+    "-b",
+    "--base-input-dir",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     required=False,
     help=CliInterface.PLUGINS_ROOT_DIR,
 )
 @click.option(
     "-n",
-    "--plugin-names",
+    "--plugin-dir-names",
     default="",
     required=False,
     help=CliInterface.SELECTED_PLUGINS,
@@ -64,9 +64,9 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 @click.option("-f", "--feed-name", default=None, required=False, help=CliInterface.FEED_NAME)
 @click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
 def create_and_upload_package(
-    plugin_path: Optional[Path],
-    plugins_root: Optional[Path],
-    plugin_names: Optional[str],
+    input_path: Optional[Path],
+    base_input_dir: Optional[Path],
+    plugin_dir_names: Optional[str],
     upload_packages: bool,
     api_url: Optional[str],
     api_key: Optional[str],
@@ -74,7 +74,7 @@ def create_and_upload_package(
     feed_name: Optional[str],
     overwrite: Optional[bool],
 ) -> None:
-    """Create Python measurement plug-in package files and upload to SystemLink Feeds."""
+    """Create Python Measurement plug-in package files and upload to SystemLink Feeds."""
     try:
         logger = initialize_logger(name="console_logger")
         logger.info(StatusMessages.STARTED_EXECUTION)
@@ -83,17 +83,17 @@ def create_and_upload_package(
         upload_package_info = UploadPackageInfo(feed_name=feed_name, overwrite_packages=overwrite)
 
         cli_args = CliInputs(
-            plugins_root=plugins_root,
-            plugin_path=plugin_path,
+            base_input_dir=base_input_dir,
+            input_path=input_path,
             upload_packages=upload_packages,
-            plugin_names=plugin_names,
+            plugin_dir_names=plugin_dir_names,
             systemlink_config=systemlink_config,
             upload_package_info=upload_package_info,
         )
 
         remove_handlers(logger)
         logger = initialize_logger(name="debug_logger")
-        fallback_path = cli_args.plugins_root or cli_args.plugin_path
+        fallback_path = cli_args.base_input_dir or cli_args.input_path
         if not fallback_path:
             raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIRECTORY_REQUIRED)
         logger, log_folder_path = setup_logger_with_file_handler(
@@ -103,31 +103,31 @@ def create_and_upload_package(
         logger.debug(StatusMessages.PACKAGE_VERSION.format(version=__version__))
         logger.info(StatusMessages.LOG_FILE_PATH.format(log_dir=log_folder_path))
 
-        publish_package_client = None
+        systemlink_client = None
         if upload_packages:
-            publish_package_client = initialize_systemlink_client(
+            systemlink_client = initialize_systemlink_client(
                 logger=logger,
                 systemlink_config=systemlink_config,
             )
 
-        if cli_args.plugins_root and cli_args.plugin_names:
-            process_and_publish_packages(
+        if cli_args.base_input_dir and cli_args.plugin_dir_names:
+            process_and_upload_packages(
                 logger=logger,
-                plugin_root_directory=cli_args.plugins_root,
-                selected_plugins=cli_args.plugin_names,
-                publish_package_client=publish_package_client,
+                plugin_root_directory=cli_args.base_input_dir,
+                selected_plugins=cli_args.plugin_dir_names,
+                systemlink_client=systemlink_client,
                 upload_package_info=upload_package_info,
             )
 
-        if cli_args.plugin_path:
+        if cli_args.input_path:
             package_path = build_package(
                 logger=logger,
-                plugin_path=cli_args.plugin_path,
+                plugin_path=cli_args.input_path,
             )
-            if publish_package_client and package_path:
+            if systemlink_client and package_path:
                 upload_response = upload_to_systemlink_feed(
                     package_path=package_path,
-                    publish_package_client=publish_package_client,
+                    systemlink_client=systemlink_client,
                     upload_package_info=upload_package_info,
                 )
                 logger.info(
@@ -138,7 +138,7 @@ def create_and_upload_package(
                 )
 
     except ApiException as ex:
-        measurement_plugin = Path(str(cli_args.plugin_path)).name
+        measurement_plugin = Path(str(cli_args.input_path)).name
         logger.debug(ex, exc_info=True)
         logger.error(
             StatusMessages.UPLOAD_FAILED.format(

@@ -6,17 +6,16 @@ class StatusMessages:
 
     STARTED_EXECUTION = "Initializing the Measurement Plug-In Packager..."
     CHECK_LOG_FILE = "Refer to the log file for detailed information."
-    LOG_FILE_PATH = "Log File Path: {log_dir}"
-    COMPLETION = "Packaging process completed."
-    PACKAGE_VERSION = "Package Version - {version}"
-    INVALID_PLUGIN_DIRECTORY = "Invalid measurement plug-in directory - '{dir}'"
+    LOG_FILE_PATH = "Log File Path: {log_dir}."
+    COMPLETION = "Packaging process completed.\n"
+    PACKAGE_VERSION = "Package Version - {version}."
+    INVALID_PLUGIN_DIRECTORY = "Invalid measurement plug-in directory - '{dir}'."
     INVALID_PACKAGER_PATH = "Invalid measurement plug-in packager directory."
-    INVALID_ROOT_DIRECTORY = "Invalid root directory for measurement plug-ins: '{dir}'\n\
-Provide the parent directory containing measurement plug-in folders."
-    PACKAGE_BUILT = "Successfully created NI Package for measurement '{name}' at '{dir}'"
-    MISSING_TOML_FILE = "Missing 'pyproject.toml' in directory: '{dir}'"
-    MISSING_MEASUREMENT_FILE = "Missing 'measurement.py' in directory: '{dir}'"
-    MISSING_BATCH_FILE = "Missing 'start.bat' in directory: '{dir}'"
+    INVALID_ROOT_DIRECTORY = "Invalid root directory for measurement plug-ins: '{dir}'. Provide the parent directory containing measurement plug-in folders."
+    PACKAGE_BUILT = "Successfully created NI Package for measurement '{name}' at '{dir}'."
+    MISSING_TOML_FILE = "Missing 'pyproject.toml' in directory: '{dir}'."
+    MISSING_MEASUREMENT_FILE = "Missing 'measurement.py' in directory: '{dir}'."
+    MISSING_BATCH_FILE = "Missing 'start.bat' in directory: '{dir}'."
     SUBPROCESS_ERROR = "Command '{cmd}' execution failed with exit status {returncode}."
     TEMPLATE_FILES_GENERATED = "Generated required template files for NI package creation."
     PUBLIC_DIRECTORY_INACCESSIBLE = (
@@ -46,7 +45,6 @@ class CommandLinePrompts:
 
     PLUGIN_DIRECTORY_REQUIRED = "Specify '--plugin-path' or '--plugins-root' with '--plugin-names'."
     AVAILABLE_PLUGINS = "Available measurements: "
-    SELECTED_PLUGINS_INVALID = "Invalid measurement plug-in name '{input}' provided.\n\
-Use comma-separated plugin names (e.g., sample_measurement,test_measurement) or '.' to build all available measurements."
+    SELECTED_PLUGINS_INVALID = "Invalid measurement plug-in name '{input}' provided. Use comma-separated plugin names (e.g., sample_measurement,test_measurement) or '.' to build all available measurements."
     UNWANTED_SYSTEMLINK_CREDENTIALS = "Use '-u' or '--upload-packages' flag to upload package(s)."
     NO_FEED_NAME = "Missing feed name. Provide a valid feed name for uploading the package(s)."

@@ -26,9 +26,9 @@ class UploadPackageInfo(BaseModel):
 class CliInputs(BaseModel):
     """Represent Command Line Interface inputs."""
 
-    plugins_root: Optional[Path] = None
-    plugin_path: Optional[Path] = None
-    plugin_names: Optional[str] = None
+    base_input_dir: Optional[Path] = None
+    input_path: Optional[Path] = None
+    plugin_dir_names: Optional[str] = None
     upload_packages: bool = False
     systemlink_config: SystemLinkConfig = SystemLinkConfig()
     upload_package_info: UploadPackageInfo = UploadPackageInfo()
@@ -37,20 +37,20 @@ class CliInputs(BaseModel):
     def validate_measurement_plugin_inputs(self) -> "CliInputs":
         """Validator to validate the measurement plugin inputs."""
         if (
-            (self.plugin_path and any([self.plugins_root, self.plugin_names]))
-            or (all([self.plugins_root, self.plugin_names]) and self.plugin_path)
-            or (not all([self.plugins_root, self.plugin_names]) and not self.plugin_path)
+            (self.input_path and any([self.base_input_dir, self.plugin_dir_names]))
+            or (all([self.base_input_dir, self.plugin_dir_names]) and self.input_path)
+            or (not all([self.base_input_dir, self.plugin_dir_names]) and not self.input_path)
         ):
             raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIRECTORY_REQUIRED)
 
-        if self.plugins_root and (not Path(self.plugins_root).is_dir()):
+        if self.base_input_dir and (not Path(self.base_input_dir).is_dir()):
             raise FileNotFoundError(
-                StatusMessages.INVALID_ROOT_DIRECTORY.format(dir=self.plugins_root)
+                StatusMessages.INVALID_ROOT_DIRECTORY.format(dir=self.base_input_dir)
             )
 
-        if self.plugin_path and not Path(self.plugin_path).is_dir():
+        if self.input_path and not Path(self.input_path).is_dir():
             raise FileNotFoundError(
-                StatusMessages.INVALID_PLUGIN_DIRECTORY.format(dir=self.plugin_path)
+                StatusMessages.INVALID_PLUGIN_DIRECTORY.format(dir=self.input_path)
             )
 
         return self

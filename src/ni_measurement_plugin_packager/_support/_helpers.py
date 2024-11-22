@@ -53,7 +53,7 @@ def is_valid_plugin_folder(plugin_path: Path, logger: Logger) -> bool:
     """Check if the measurement plug-in folder is valid.
 
     Args:
-        plugin_path: Measurement Plug-In path.
+        plugin_path: Measurement plug-in path.
         logger: Logger object.
 
     Returns:
@@ -88,7 +88,7 @@ def validate_selected_plugins(
 
     Args:
         selected_plugins: User selected measurement plug-ins.
-        measurement_plugins: Measurement Plug-Ins.
+        measurement_plugins: Measurement plug-ins.
         logger: Logger object.
 
     Raises:
@@ -168,21 +168,21 @@ def find_file_in_folder(folder_path: Path, file_name: str) -> Optional[Path]:
 
 
 def upload_to_systemlink_feed(
-    publish_package_client: PublishPackagesToSystemLink,
+    systemlink_client: PublishPackagesToSystemLink,
     package_path: Path,
     upload_package_info: UploadPackageInfo,
 ) -> UploadPackageResponse:
     """Upload a package to SystemLink feeds.
 
     Args:
-        publish_package_client: Client for publish packages to SystemLink.
+        systemlink_client: Client for publish packages to SystemLink.
         package_path: Measurement package path.
         upload_package_info: Information about the package to be uploaded.
 
     Returns:
         Uploaded measurement package response from server.
     """
-    upload_response = publish_package_client.upload_package(
+    upload_response = systemlink_client.upload_package(
         package_info=PackageInfo(
             feed_name=upload_package_info.feed_name,
             path=str(package_path),
@@ -207,12 +207,12 @@ def initialize_systemlink_client(
         Client for publishing the packages to SystemLink.
     """
     try:
-        publish_package_client = PublishPackagesToSystemLink(
+        systemlink_client = PublishPackagesToSystemLink(
             server_api_key=systemlink_config.api_key,
             server_url=systemlink_config.api_url,
             workspace_name=systemlink_config.workspace,
         )
-        return publish_package_client
+        return systemlink_client
 
     except KeyError as ex:
         logger.info(StatusMessages.CLIENT_CREATION_FAILED)
@@ -230,11 +230,11 @@ def initialize_systemlink_client(
         logger.info(StatusMessages.CHECK_LOG_FILE)
 
 
-def process_and_publish_packages(
+def process_and_upload_packages(
     logger: Logger,
     plugin_root_directory: Path,
     selected_plugins: str,
-    publish_package_client: PublishPackagesToSystemLink,
+    systemlink_client: PublishPackagesToSystemLink,
     upload_package_info: UploadPackageInfo,
 ) -> None:
     """Build and publish selected measurement packages.
@@ -243,7 +243,7 @@ def process_and_publish_packages(
         logger: Logger object.
         plugin_root_directory: Measurement plugins root folder path.
         selected_plugins: Selected measurement plugins.
-        publish_package_client: Client for publish packages to SystemLink.
+        systemlink_client: Client for publish packages to SystemLink.
         upload_package_info: Information about the package to be uploaded.
 
     Raises:
@@ -269,21 +269,21 @@ def process_and_publish_packages(
         )
         plugins_to_process = [plugin.strip("'\"").strip() for plugin in selected_plugins.split(",")]
 
-    build_and_publish_packages(
+    build_and_upload_packages(
         logger=logger,
         plugin_root_directory=plugin_root_directory,
         measurement_plugins=plugins_to_process,
-        publish_package_client=publish_package_client,
+        systemlink_client=systemlink_client,
         upload_package_info=upload_package_info,
     )
 
 
 def build_package(logger: Logger, plugin_path: Path) -> Optional[Path]:
-    """Build an NI package file for the given plug-in.
+    """Build a .nipkg file for the given plug-in.
 
     Args:
         logger: Logger object.
-        measurement_plugin_path: Measurement Plug-In path.
+        measurement_plugin_path: Measurement plug-in path.
 
     Returns:
         Built measurement package file path.
@@ -331,20 +331,20 @@ def build_package(logger: Logger, plugin_path: Path) -> Optional[Path]:
     return measurement_package_path
 
 
-def build_and_publish_packages(
+def build_and_upload_packages(
     logger: Logger,
     plugin_root_directory: Path,
     measurement_plugins: List[str],
-    publish_package_client: PublishPackagesToSystemLink,
+    systemlink_client: PublishPackagesToSystemLink,
     upload_package_info: UploadPackageInfo,
 ) -> None:
     """Build and upload NI packages to SystemLink feeds.
 
     Args:
         logger: Logger object.
-        plugin_root_directory: Measurement Plug-In root directory.
+        plugin_root_directory: Measurement plug-in root directory.
         measurement_plugins: List of measurement plug-ins.
-        publish_package_client: Client for publish packages to SystemLink.
+        systemlink_client: Client for publish packages to SystemLink.
         upload_package_info: Information about the package to be uploaded.
     """
     for measurement_plugin in measurement_plugins:
@@ -354,9 +354,9 @@ def build_and_publish_packages(
                 logger=logger,
                 plugin_path=measurement_plugin_path,
             )
-            if publish_package_client and measurement_package_path:
+            if systemlink_client and measurement_package_path:
                 upload_response = upload_to_systemlink_feed(
-                    publish_package_client=publish_package_client,
+                    systemlink_client=systemlink_client,
                     package_path=measurement_package_path,
                     upload_package_info=upload_package_info,
                 )

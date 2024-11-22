@@ -48,7 +48,7 @@ def _get_system_type() -> str:
 
 
 def copy_directory_with_filters(source_directory: Path, destination_directory: Path) -> None:
-    """Copy contents of folders to destination, excluding specified files/folders.
+    """Copy contents of folders to the destination by excluding specific files/folders.
 
     Args:
         source_directory: Source folder path.
@@ -73,8 +73,8 @@ def generate_template_folders(
     """Create template folders for building NI Packages.
 
     Args:
-        packager_root_directory: Measurement Packager path.
-        measurement_plugin_path: Measurement Plugin path.
+        packager_root_directory: Measurement Plug-in Packager path.
+        measurement_plugin_path: Path of the Measurement plug-in.
         measurement_package_info: Measurement package information.
 
     Returns:
@@ -115,7 +115,7 @@ def generate_template_folders(
 
 
 def generate_control_file(control_folder_path: Path, package_info: PackageInfo) -> None:
-    """Create control file for storing information about the plugin package.
+    """Create a control file storing the plugin package info.
 
     Args:
         control_folder_path: Control folder path.
@@ -142,11 +142,11 @@ def generate_control_file(control_folder_path: Path, package_info: PackageInfo) 
 
 
 def generate_instruction_file(data_path: Path, plugin_name: str, package_name: str) -> None:
-    """Create an instruction file for storing information about the plugin directory.
+    """Create an instruction file storing the plugin directory info.
 
     Args:
         data_path: Data folder path.
-        plugin_name: Measurement service name.
+        plugin_name: measurement plug-in name.
         package_name: Measurement package name.
     """
     measurement_service_path = _get_measurement_services_path(plugin_name=plugin_name)
