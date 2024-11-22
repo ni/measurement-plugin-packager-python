@@ -3,8 +3,9 @@
 from pathlib import Path
 from typing import Optional
 
-from ni_measurement_plugin_packager.constants import CommandLinePrompts, StatusMessages
 from pydantic import BaseModel, model_validator
+
+from ni_measurement_plugin_packager.constants import CommandLinePrompts, StatusMessages
 
 
 class SystemLinkConfig(BaseModel):

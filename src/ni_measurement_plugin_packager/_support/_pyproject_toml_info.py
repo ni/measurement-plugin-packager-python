@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 import tomli
+
 from ni_measurement_plugin_packager.constants import (
     DEFAULT_AUTHOR,
     DEFAULT_DESCRIPTION,
