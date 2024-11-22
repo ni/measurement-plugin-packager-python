@@ -18,7 +18,7 @@ from ni_measurement_plugin_packager.constants import (
 )
 
 
-def _create_file_handler(
+def _setup_file_handler(
     log_folder_path: Path,
     file_name: str,
 ) -> logging.handlers.RotatingFileHandler:
@@ -41,7 +41,7 @@ def _create_file_handler(
     return handler
 
 
-def _create_stream_handler() -> StreamHandler:
+def _setup_stream_handler() -> StreamHandler:
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.INFO)
 
@@ -55,27 +55,27 @@ def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
         logger: Logger object.
         log_folder_path: Log folder path.
     """
-    handler = _create_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
+    handler = _setup_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
     logger.addHandler(handler)
 
 
-def setup_logger_with_file_handler(output_path: Path, logger: Logger) -> Tuple[Logger, Path]:
+def setup_logger_with_file_handler(fallback_path: Path, logger: Logger) -> Tuple[Logger, Path]:
     """Adds a file handler to the provided logger.
 
     Args:
-        output_path: Output path
+        fallback_path: Output path
         logger: Logger object.
 
     Returns:
         Logger object and logger folder path.
     """
-    log_folder_path, public_path_status, user_path_status = get_log_folder_path(output_path)
+    log_folder_path, public_path_status, user_path_status = get_log_folder_path(fallback_path)
     add_file_handler(logger=logger, log_folder_path=log_folder_path)
 
     if not public_path_status:
-        logger.info(StatusMessages.FAILED_PUBLIC_DIR)
+        logger.info(StatusMessages.PUBLIC_DIRECTORY_INACCESSIBLE)
     if not user_path_status:
-        logger.info(StatusMessages.FAILED_USER_DIR)
+        logger.info(StatusMessages.USER_DIRECTORY_INACCESSIBLE)
 
     return logger, log_folder_path
 
@@ -86,7 +86,7 @@ def add_stream_handler(logger: Logger) -> None:
     Args:
         logger: Logger object.
     """
-    stream_handler = _create_stream_handler()
+    stream_handler = _setup_stream_handler()
     logger.addHandler(stream_handler)
 
 

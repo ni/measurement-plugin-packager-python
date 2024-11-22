@@ -4,7 +4,7 @@ from pathlib import Path, WindowsPath
 from typing import Tuple
 
 
-def get_public_documents_dir() -> Path:
+def get_public_documents_path() -> Path:
     """Get Public Documents directory path.
 
     Robust method agnostic of OS installed drive.
@@ -16,7 +16,7 @@ def get_public_documents_dir() -> Path:
     return public_documents_path.expanduser()
 
 
-def get_user_docs() -> Path:
+def get_user_documents_path() -> Path:
     """Get user's My Documents directory path.
 
     Robust method agnostic of OS installed drive.
@@ -28,7 +28,7 @@ def get_user_docs() -> Path:
     return public_documents_path.expanduser()
 
 
-def get_log_folder_path(output_path: Path) -> Tuple[Path, bool, bool]:
+def get_log_folder_path(fallback_path: Path) -> Tuple[Path, bool, bool]:
     """Return log file path and status public paths and user paths.
 
     1. Try Getting Public documents directory. if not possible,
@@ -36,7 +36,7 @@ def get_log_folder_path(output_path: Path) -> Tuple[Path, bool, bool]:
     3. Return the output path provided.
 
     Args:
-        output_path: Output path for logger from config file.
+        fallback_path: Fallback path for logger.
 
     Returns:
         Output path for logger and status of public paths and user paths.
@@ -45,14 +45,14 @@ def get_log_folder_path(output_path: Path) -> Tuple[Path, bool, bool]:
     user_path_status = True
 
     try:
-        log_folder_path = get_public_documents_dir()
+        log_folder_path = get_public_documents_path()
     except Exception:
         public_path_status = False
         try:
-            log_folder_path = get_user_docs()
+            log_folder_path = get_user_documents_path()
         except Exception:
             user_path_status = False
-            log_folder_path = output_path
+            log_folder_path = fallback_path
 
     log_folder_path = Path(log_folder_path) / "NI-Measurement-Plugin-Packager" / "Logs"
 

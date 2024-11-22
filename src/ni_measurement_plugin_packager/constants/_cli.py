@@ -10,7 +10,7 @@ class CliInterface:
     """Command Line Interface Messages."""
 
     PLUGIN_DIR = "Measurement Plug-in directory."
-    PLUGIN_BASE_DIR = "Measurement Plug-ins base directory."
+    PLUGINS_ROOT_DIR = "Measurement Plug-ins root directory."
     SELECTED_PLUGINS = "Comma-separated list of measurement plug-ins or\
  dot(.) for building all the available measurements."
     UPLOAD_PACKAGES = "Upload the measurement packages to SystemLink Feed."

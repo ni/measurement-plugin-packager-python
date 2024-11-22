@@ -26,9 +26,9 @@ class UploadPackageInfo(BaseModel):
 class CliInputs(BaseModel):
     """Represent Command Line Interface inputs."""
 
-    measurement_plugin_base_path: Optional[Path] = None
-    measurement_plugin_path: Optional[Path] = None
-    selected_plugins: Optional[str] = None
+    plugins_root: Optional[Path] = None
+    plugin_path: Optional[Path] = None
+    plugin_names: Optional[str] = None
     upload_packages: bool = False
     systemlink_config: SystemLinkConfig = SystemLinkConfig()
     upload_package_info: UploadPackageInfo = UploadPackageInfo()
@@ -38,30 +38,30 @@ class CliInputs(BaseModel):
         """Validator to validate the measurement plugin inputs."""
         if (
             (
-                self.measurement_plugin_path
-                and any([self.measurement_plugin_base_path, self.selected_plugins])
+                self.plugin_path
+                and any([self.plugins_root, self.plugin_names])
             )
             or (
-                all([self.measurement_plugin_base_path, self.selected_plugins])
-                and self.measurement_plugin_path
+                all([self.plugins_root, self.plugin_names])
+                and self.plugin_path
             )
             or (
-                not all([self.measurement_plugin_base_path, self.selected_plugins])
-                and not self.measurement_plugin_path
+                not all([self.plugins_root, self.plugin_names])
+                and not self.plugin_path
             )
         ):
-            raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIR_REQUIRED)
+            raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIRECTORY_REQUIRED)
 
-        if self.measurement_plugin_base_path and (
-            not Path(self.measurement_plugin_base_path).is_dir()
+        if self.plugins_root and (
+            not Path(self.plugins_root).is_dir()
         ):
             raise FileNotFoundError(
-                StatusMessages.INVALID_BASE_DIR.format(dir=self.measurement_plugin_base_path)
+                StatusMessages.INVALID_ROOT_DIRECTORY.format(dir=self.plugins_root)
             )
 
-        if self.measurement_plugin_path and not Path(self.measurement_plugin_path).is_dir():
+        if self.plugin_path and not Path(self.plugin_path).is_dir():
             raise FileNotFoundError(
-                StatusMessages.INVALID_PLUGIN_DIR.format(dir=self.measurement_plugin_path)
+                StatusMessages.INVALID_PLUGIN_DIRECTORY.format(dir=self.plugin_path)
             )
 
         return self
@@ -80,7 +80,7 @@ class CliInputs(BaseModel):
 
         if self.upload_packages:
             if not self.systemlink_config.api_key:
-                raise ValueError(StatusMessages.NO_API_KEY)
+                raise ValueError(StatusMessages.API_KEY_MISSING)
 
             if not self.upload_package_info.feed_name:
                 raise ValueError(CommandLinePrompts.NO_FEED_NAME)

@@ -47,74 +47,74 @@ def _get_system_type() -> str:
     return f"{system}_{architecture}"
 
 
-def copy_folder_contents(src_path: Path, dest_path: Path) -> None:
+def copy_directory_with_filters(source_directory: Path, destination_directory: Path) -> None:
     """Copy contents of folders to destination, excluding specified files/folders.
 
     Args:
-        src_path: Source folder path.
-        dest_path: Destination folder path.
+        source_directory: Source folder path.
+        destination_directory: Destination folder path.
     """
-    for item in src_path.iterdir():
+    for item in source_directory.iterdir():
         if item.name in ignore_dirs:
             continue
-        dest_item = dest_path / item.name
+        dest_item = destination_directory / item.name
         if item.is_dir():
             dest_item.mkdir(parents=True, exist_ok=True)
-            copy_folder_contents(item, dest_item)
+            copy_directory_with_filters(item, dest_item)
         else:
             shutil.copy2(item, dest_item)
 
 
-def create_template_folders(
-    plugin_packager_path: Path,
+def generate_template_folders(
+    packager_root_directory: Path,
     measurement_plugin_path: Path,
     measurement_package_info: PackageInfo,
 ) -> Path:
     """Create Template folders for building NI Packages.
 
     Args:
-        plugin_packager_path: Measurement Packager path.
+        packager_root_directory: Measurement Packager path.
         measurement_plugin_path: Measurement Plugin path from user.
         measurement_package_info: Measurement package information.
 
     Returns:
         Template folder path.
     """
-    template_path = Path(plugin_packager_path) / measurement_package_info.measurement_name
+    template_directory = Path(packager_root_directory) / measurement_package_info.measurement_name
 
-    if template_path.is_dir():
-        shutil.rmtree(template_path)
+    if template_directory.is_dir():
+        shutil.rmtree(template_directory)
 
-    data_path = template_path / FileNames.DATA
-    template_measurement_folder_path = data_path / measurement_package_info.package_name
+    data_directory = template_directory / FileNames.DATA
+    template_measurement_folder_path = data_directory / measurement_package_info.package_name
 
-    control_path = template_path / FileNames.CONTROL
+    control_folder_path = template_directory / FileNames.CONTROL
 
-    control_path.mkdir(parents=True, exist_ok=True)
+    control_folder_path.mkdir(parents=True, exist_ok=True)
     template_measurement_folder_path.mkdir(parents=True, exist_ok=True)
 
-    copy_folder_contents(
-        src_path=Path(measurement_plugin_path),
-        dest_path=Path(template_measurement_folder_path),
+    copy_directory_with_filters(
+        source_directory=Path(measurement_plugin_path),
+        destination_directory=Path(template_measurement_folder_path),
     )
-    create_control_file(
-        control_folder_path=control_path,
+    generate_control_file(
+        control_folder_path=control_folder_path,
         package_info=measurement_package_info,
     )
-    create_instruction_file(
-        data_path=data_path,
+    generate_instruction_file(
+        data_path=data_directory,
         measurement_name=measurement_package_info.measurement_name,
         package_name=measurement_package_info.package_name,
     )
 
-    debian_binary_file = template_path / FileNames.DEBIAN_BIN
+    debian_binary_file = template_directory / FileNames.DEBIAN_BIN
     with open(debian_binary_file, "w", encoding="utf-8") as fp:
         fp.write("2.0")
 
-    return template_path
+    return template_directory
 
 
-def create_control_file(control_folder_path: Path, package_info: PackageInfo) -> None:
+def generate_control_file(control_folder_path: Path, package_info: PackageInfo) -> None:
     """Create control file for storing information about measurement package.
 
     Args:
@@ -141,7 +141,7 @@ def create_control_file(control_folder_path: Path, package_info: PackageInfo) ->
         fp.write(control_file_data)
 
 
-def create_instruction_file(data_path: Path, measurement_name: str, package_name: str) -> None:
+def generate_instruction_file(data_path: Path, measurement_name: str, package_name: str) -> None:
     """Create instruction file for storing measurement directory information.
 
     Args:
