@@ -1,10 +1,10 @@
-"""Implementation of Get Log folder path."""
+"""Provides functions to retrieve log directory paths with fallback options."""
 
 from pathlib import Path, WindowsPath
 from typing import Tuple
 
 
-def get_public_documents_dir() -> Path:
+def get_public_documents_path() -> Path:
     """Get Public Documents directory path.
 
     Robust method agnostic of OS installed drive.
@@ -16,7 +16,7 @@ def get_public_documents_dir() -> Path:
     return public_documents_path.expanduser()
 
 
-def get_user_docs() -> Path:
+def get_user_documents_path() -> Path:
     """Get user's My Documents directory path.
 
     Robust method agnostic of OS installed drive.
@@ -28,32 +28,32 @@ def get_user_docs() -> Path:
     return public_documents_path.expanduser()
 
 
-def get_log_folder_path(output_path: Path) -> Tuple[Path, bool, bool]:
-    """Return log file path and status public paths and user paths.
+def get_log_directory_path(fallback_path: Path) -> Tuple[Path, bool, bool]:
+    """Determine the log directory path with fallback options and status of public/user paths.
 
     1. Try Getting Public documents directory. if not possible,
     2. Try Getting User documents directory. if not possible,
     3. Return the output path provided.
 
     Args:
-        output_path: Output path for logger from config file.
+        fallback_path: Fallback path for logger.
 
     Returns:
-        Output path for logger and status of public paths and user paths.
+        Output path for logger and accessibility of public paths and user paths.
     """
     public_path_status = True
     user_path_status = True
 
     try:
-        log_folder_path = get_public_documents_dir()
+        log_directory_path = get_public_documents_path()
     except Exception:
         public_path_status = False
         try:
-            log_folder_path = get_user_docs()
+            log_directory_path = get_user_documents_path()
         except Exception:
             user_path_status = False
-            log_folder_path = output_path
+            log_directory_path = fallback_path
 
-    log_folder_path = Path(log_folder_path) / "NI-Measurement-Plugin-Packager" / "Logs"
+    log_directory_path = Path(log_directory_path) / "NI-Measurement-Plugin-Packager" / "Logs"
 
-    return log_folder_path, public_path_status, user_path_status
+    return log_directory_path, public_path_status, user_path_status

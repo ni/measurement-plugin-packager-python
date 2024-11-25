@@ -1,4 +1,4 @@
-"""Constants utilized for creation of Control and Instruction files."""
+"""Constants utilized for creating Control and Instruction files."""
 
 PACKAGES = "packages"
 
