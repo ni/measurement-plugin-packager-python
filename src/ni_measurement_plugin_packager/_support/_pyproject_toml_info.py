@@ -14,7 +14,7 @@ from ni_measurement_plugin_packager.constants import (
     PyProjectToml,
     StatusMessages,
 )
-from ni_measurement_plugin_packager.models import PackageInfo
+from ni_measurement_plugin_packager._package_info import PackageInfo
 
 UNDERSCORE_SPACE_REGEX = r"[_ ]"
 

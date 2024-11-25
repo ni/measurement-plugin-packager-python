@@ -29,10 +29,9 @@ from ni_measurement_plugin_packager.constants import (
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 
 
-def validate_path(
+def _validate_path(
     ctx: click.Context, param: click.Parameter, value: Optional[str]
 ) -> Optional[Path]:
-    """Validate whether directory path exists."""
     if not value:
         return None
     path = Path(value)
@@ -44,22 +43,19 @@ def validate_path(
     return path
 
 
-def validate_plugin_inputs(
+def _validate_plugin_inputs(
     ctx: click.Context,
     input_path: Optional[Path],
     base_input_dir: Optional[Path],
     plugin_dir_name: Optional[str],
 ) -> None:
-    """Validate plugin input combinations."""
-    if (
-        (input_path and any([base_input_dir, plugin_dir_name]))
-        or (all([base_input_dir, plugin_dir_name]) and input_path)
-        or (not all([base_input_dir, plugin_dir_name]) and not input_path)
+    if (input_path and (base_input_dir or plugin_dir_name)) or (
+        not input_path and not (base_input_dir and plugin_dir_name)
     ):
         raise click.UsageError(CommandLinePrompts.PLUGIN_DIRECTORY_REQUIRED)
 
 
-def validate_systemlink_inputs(
+def _validate_systemlink_inputs(
     ctx: click.Context,
     upload_packages: bool,
     api_url: Optional[str],
@@ -67,7 +63,6 @@ def validate_systemlink_inputs(
     workspace: Optional[str],
     feed_name: Optional[str],
 ) -> None:
-    """Validate SystemLink related inputs."""
     if not upload_packages and any([api_key, api_url, workspace, feed_name]):
         raise click.UsageError(CommandLinePrompts.UNWANTED_SYSTEMLINK_CREDENTIALS)
 
@@ -83,7 +78,7 @@ def validate_systemlink_inputs(
             if not feed_name:
                 missing.append("feed name")
             raise click.UsageError(
-                f"When uploading packages, all SystemLink credentials are required. Missing: {', '.join(missing)}"
+                f"To upload packages to SystemLink, the following credentials are required: {', '.join(missing)}"
             )
 
 
@@ -92,30 +87,27 @@ def validate_systemlink_inputs(
     "-p",
     "--input-path",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
-    required=False,
-    callback=validate_path,
+    callback=_validate_path,
     help=CliInterface.PLUGIN_DIR,
 )
 @click.option(
     "-b",
     "--base-input-dir",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
-    required=False,
-    callback=validate_path,
+    callback=_validate_path,
     help=CliInterface.PLUGINS_ROOT_DIR,
 )
 @click.option(
     "-n",
     "--plugin-dir-name",
     default="",
-    required=False,
     help=CliInterface.SELECTED_PLUGINS,
 )
 @click.option("-u", "--upload-packages", is_flag=True, help=CliInterface.UPLOAD_PACKAGES)
-@click.option("-a", "--api-url", required=False, help=CliInterface.API_URL)
-@click.option("-k", "--api-key", required=False, help=CliInterface.API_KEY)
-@click.option("-w", "--workspace", required=False, help=CliInterface.WORK_SPACE)
-@click.option("-f", "--feed-name", required=False, help=CliInterface.FEED_NAME)
+@click.option("-a", "--api-url", help=CliInterface.API_URL)
+@click.option("-k", "--api-key", help=CliInterface.API_KEY)
+@click.option("-w", "--workspace", help=CliInterface.WORK_SPACE)
+@click.option("-f", "--feed-name", help=CliInterface.FEED_NAME)
 @click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
 def create_and_upload_package(
     input_path: Optional[Path],
@@ -133,10 +125,10 @@ def create_and_upload_package(
         logger = initialize_logger(name="console_logger")
         logger.info(StatusMessages.STARTED_EXECUTION)
 
-        validate_plugin_inputs(
+        _validate_plugin_inputs(
             click.get_current_context(), input_path, base_input_dir, plugin_dir_name
         )
-        validate_systemlink_inputs(
+        _validate_systemlink_inputs(
             click.get_current_context(), upload_packages, api_url, api_key, workspace, feed_name
         )
 
