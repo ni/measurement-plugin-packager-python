@@ -7,7 +7,7 @@ from logging import Logger, StreamHandler
 from pathlib import Path
 from typing import Tuple
 
-from ni_measurement_plugin_packager._support._log_file_path import get_log_folder_path
+from ni_measurement_plugin_packager._support._log_file_path import get_log_directory_path
 from ni_measurement_plugin_packager.constants import (
     LOG_DATE_FORMAT,
     LOG_FILE_COUNT_LIMIT,
@@ -19,14 +19,14 @@ from ni_measurement_plugin_packager.constants import (
 
 
 def _setup_file_handler(
-    log_folder_path: Path,
+    log_directory_path: Path,
     file_name: str,
 ) -> logging.handlers.RotatingFileHandler:
-    log_file = Path(log_folder_path) / file_name
-    folder_path_obj = Path(log_folder_path)
+    log_file = Path(log_directory_path) / file_name
+    directory_path_obj = Path(log_directory_path)
 
-    if not folder_path_obj.exists():
-        folder_path_obj.mkdir(parents=True)
+    if not directory_path_obj.exists():
+        directory_path_obj.mkdir(parents=True)
 
     handler = logging.handlers.RotatingFileHandler(
         log_file,
@@ -48,36 +48,36 @@ def _setup_stream_handler() -> StreamHandler:
     return handler
 
 
-def add_file_handler(logger: Logger, log_folder_path: Path) -> None:
+def add_file_handler(logger: Logger, log_directory_path: Path) -> None:
     """Add a file handler to the logger for logging to a file.
 
     Args:
         logger: Logger object.
-        log_folder_path: Log folder path.
+        log_directory_path: Log directory path.
     """
-    handler = _setup_file_handler(log_folder_path=log_folder_path, file_name=LOG_FILE_NAME)
+    handler = _setup_file_handler(log_directory_path=log_directory_path, file_name=LOG_FILE_NAME)
     logger.addHandler(handler)
 
 
 def setup_logger_with_file_handler(fallback_path: Path, logger: Logger) -> Tuple[Logger, Path]:
-    """Set up a logger with a file handler, returning the logger and log folder path.
+    """Set up a logger with a file handler, returning the logger and log directory path.
 
     Args:
         fallback_path: Output path
         logger: Logger object.
 
     Returns:
-        Logger object and logger folder path.
+        Logger object and logger directory path.
     """
-    log_folder_path, public_path_status, user_path_status = get_log_folder_path(fallback_path)
-    add_file_handler(logger=logger, log_folder_path=log_folder_path)
+    log_directory_path, public_path_status, user_path_status = get_log_directory_path(fallback_path)
+    add_file_handler(logger=logger, log_directory_path=log_directory_path)
 
     if not public_path_status:
         logger.info(StatusMessages.PUBLIC_DIRECTORY_INACCESSIBLE)
     if not user_path_status:
         logger.info(StatusMessages.USER_DIRECTORY_INACCESSIBLE)
 
-    return logger, log_folder_path
+    return logger, log_directory_path
 
 
 def add_stream_handler(logger: Logger) -> None:

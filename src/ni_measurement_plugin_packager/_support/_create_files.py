@@ -48,11 +48,11 @@ def _get_system_type() -> str:
 
 
 def copy_directory_with_filters(source_directory: Path, destination_directory: Path) -> None:
-    """Copy contents of folders to the destination by excluding specific files/folders.
+    """Copy contents of directories to the destination by excluding specific files/directories.
 
     Args:
-        source_directory: Source folder path.
-        destination_directory: Destination folder path.
+        source_directory: Source directory path.
+        destination_directory: Destination directory path.
     """
     for item in source_directory.iterdir():
         if item.name in ignore_dirs:
@@ -65,12 +65,12 @@ def copy_directory_with_filters(source_directory: Path, destination_directory: P
             shutil.copy2(item, dest_item)
 
 
-def generate_template_folders(
+def generate_template_directories(
     packager_root_directory: Path,
     measurement_plugin_path: Path,
     measurement_package_info: PackageInfo,
 ) -> Path:
-    """Create template folders for building NI Packages.
+    """Create template directories for building NI Packages.
 
     Args:
         packager_root_directory: Measurement Plug-in Packager path.
@@ -78,7 +78,7 @@ def generate_template_folders(
         measurement_package_info: Measurement package information.
 
     Returns:
-        Template folder path.
+        Template directory path.
     """
     template_directory = Path(packager_root_directory) / measurement_package_info.plugin_name
 
@@ -86,19 +86,19 @@ def generate_template_folders(
         shutil.rmtree(template_directory)
 
     data_directory = template_directory / FileNames.DATA
-    template_measurement_folder_path = data_directory / measurement_package_info.package_name
+    template_measurement_directory_path = data_directory / measurement_package_info.package_name
 
-    control_folder_path = template_directory / FileNames.CONTROL
+    control_directory_path = template_directory / FileNames.CONTROL
 
-    control_folder_path.mkdir(parents=True, exist_ok=True)
-    template_measurement_folder_path.mkdir(parents=True, exist_ok=True)
+    control_directory_path.mkdir(parents=True, exist_ok=True)
+    template_measurement_directory_path.mkdir(parents=True, exist_ok=True)
 
     copy_directory_with_filters(
         source_directory=Path(measurement_plugin_path),
-        destination_directory=Path(template_measurement_folder_path),
+        destination_directory=Path(template_measurement_directory_path),
     )
     generate_control_file(
-        control_folder_path=control_folder_path,
+        control_directory_path=control_directory_path,
         package_info=measurement_package_info,
     )
     generate_instruction_file(
@@ -114,14 +114,14 @@ def generate_template_folders(
     return template_directory
 
 
-def generate_control_file(control_folder_path: Path, package_info: PackageInfo) -> None:
+def generate_control_file(control_directory_path: Path, package_info: PackageInfo) -> None:
     """Create a control file storing the plugin package info.
 
     Args:
-        control_folder_path: Control folder path.
+        control_directory_path: Control directory path.
         package_info: Measurement Package information.
     """
-    control_file_path = control_folder_path / FileNames.CONTROL
+    control_file_path = control_directory_path / FileNames.CONTROL
 
     control_file_data = f"""\
 {ControlFile.BUILT_USING}: {ControlFile.NIPKG}
@@ -145,7 +145,7 @@ def generate_instruction_file(data_path: Path, plugin_name: str, package_name: s
     """Create an instruction file storing the plugin directory info.
 
     Args:
-        data_path: Data folder path.
+        data_path: Data directory path.
         plugin_name: measurement plug-in name.
         package_name: Measurement package name.
     """

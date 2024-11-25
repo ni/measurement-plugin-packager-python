@@ -1,4 +1,4 @@
-"""Provides functions to retrieve log folder paths with fallback options."""
+"""Provides functions to retrieve log directory paths with fallback options."""
 
 from pathlib import Path, WindowsPath
 from typing import Tuple
@@ -28,8 +28,8 @@ def get_user_documents_path() -> Path:
     return public_documents_path.expanduser()
 
 
-def get_log_folder_path(fallback_path: Path) -> Tuple[Path, bool, bool]:
-    """Determine the log folder path with fallback options and status of public/user paths.
+def get_log_directory_path(fallback_path: Path) -> Tuple[Path, bool, bool]:
+    """Determine the log directory path with fallback options and status of public/user paths.
 
     1. Try Getting Public documents directory. if not possible,
     2. Try Getting User documents directory. if not possible,
@@ -45,15 +45,15 @@ def get_log_folder_path(fallback_path: Path) -> Tuple[Path, bool, bool]:
     user_path_status = True
 
     try:
-        log_folder_path = get_public_documents_path()
+        log_directory_path = get_public_documents_path()
     except Exception:
         public_path_status = False
         try:
-            log_folder_path = get_user_documents_path()
+            log_directory_path = get_user_documents_path()
         except Exception:
             user_path_status = False
-            log_folder_path = fallback_path
+            log_directory_path = fallback_path
 
-    log_folder_path = Path(log_folder_path) / "NI-Measurement-Plugin-Packager" / "Logs"
+    log_directory_path = Path(log_directory_path) / "NI-Measurement-Plugin-Packager" / "Logs"
 
-    return log_folder_path, public_path_status, user_path_status
+    return log_directory_path, public_path_status, user_path_status

@@ -52,7 +52,7 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 )
 @click.option(
     "-n",
-    "--plugin-dir-names",
+    "--plugin-dir-name",
     default="",
     required=False,
     help=CliInterface.SELECTED_PLUGINS,
@@ -66,7 +66,7 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 def create_and_upload_package(
     input_path: Optional[Path],
     base_input_dir: Optional[Path],
-    plugin_dir_names: Optional[str],
+    plugin_dir_name: Optional[str],
     upload_packages: bool,
     api_url: Optional[str],
     api_key: Optional[str],
@@ -86,7 +86,7 @@ def create_and_upload_package(
             base_input_dir=base_input_dir,
             input_path=input_path,
             upload_packages=upload_packages,
-            plugin_dir_names=plugin_dir_names,
+            plugin_dir_names=plugin_dir_name,
             systemlink_config=systemlink_config,
             upload_package_info=upload_package_info,
         )
@@ -96,12 +96,12 @@ def create_and_upload_package(
         fallback_path = cli_args.base_input_dir or cli_args.input_path
         if not fallback_path:
             raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIRECTORY_REQUIRED)
-        logger, log_folder_path = setup_logger_with_file_handler(
+        logger, log_directory_path = setup_logger_with_file_handler(
             fallback_path,
             logger=logger,
         )
         logger.debug(StatusMessages.PACKAGE_VERSION.format(version=__version__))
-        logger.info(StatusMessages.LOG_FILE_PATH.format(log_dir=log_folder_path))
+        logger.info(StatusMessages.LOG_FILE_PATH.format(log_dir=log_directory_path))
 
         systemlink_client = None
         if upload_packages:
