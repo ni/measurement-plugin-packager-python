@@ -20,7 +20,6 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-pydantic = "^2.7.1"
 tomli = "^2.0.1"
 click = "^8.1.7"
 nisystemlink-feeds-manager = "^1.0.0.dev1"

@@ -10,7 +10,7 @@ from ni_measurement_plugin_packager._constants import (
     InstructionFile,
 )
 from ni_measurement_plugin_packager._support import _get_nipath
-from ni_measurement_plugin_packager.models import PackageInfo
+from ni_measurement_plugin_packager._package_info import PackageInfo
 
 ignore_dirs = [
     ".venv",
