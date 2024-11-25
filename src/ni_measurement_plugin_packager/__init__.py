@@ -8,7 +8,6 @@ from typing import Optional
 
 import click
 from nisystemlink_feeds_manager.clients.core import ApiException
-from pydantic import ValidationError
 
 from ni_measurement_plugin_packager._support._helpers import (
     build_package,
@@ -26,13 +25,61 @@ from ni_measurement_plugin_packager.constants import (
     CommandLinePrompts,
     StatusMessages,
 )
-from ni_measurement_plugin_packager.models import (
-    CliInputs,
-    SystemLinkConfig,
-    UploadPackageInfo,
-)
 
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
+
+
+def _validate_path(
+    ctx: click.Context, param: click.Parameter, value: Optional[str]
+) -> Optional[Path]:
+    if not value:
+        return None
+    path = Path(value)
+    if not path.is_dir():
+        if param.name == "base_input_dir":
+            raise click.BadParameter(StatusMessages.INVALID_ROOT_DIRECTORY.format(dir=value))
+        else:
+            raise click.BadParameter(StatusMessages.INVALID_PLUGIN_DIRECTORY.format(dir=value))
+    return path
+
+
+def _validate_plugin_inputs(
+    ctx: click.Context,
+    input_path: Optional[Path],
+    base_input_dir: Optional[Path],
+    plugin_dir_name: Optional[str],
+) -> None:
+    if (input_path and (base_input_dir or plugin_dir_name)) or (
+        not input_path and not (base_input_dir and plugin_dir_name)
+    ):
+        raise click.UsageError(CommandLinePrompts.PLUGIN_DIRECTORY_REQUIRED)
+
+
+def _validate_systemlink_inputs(
+    ctx: click.Context,
+    upload_packages: bool,
+    api_url: Optional[str],
+    api_key: Optional[str],
+    workspace: Optional[str],
+    feed_name: Optional[str],
+) -> None:
+    if not upload_packages and any([api_key, api_url, workspace, feed_name]):
+        raise click.UsageError(CommandLinePrompts.UNWANTED_SYSTEMLINK_CREDENTIALS)
+
+    if upload_packages:
+        if not all([api_key, api_url, workspace, feed_name]):
+            missing = []
+            if not api_key:
+                missing.append("API key")
+            if not api_url:
+                missing.append("API URL")
+            if not workspace:
+                missing.append("workspace")
+            if not feed_name:
+                missing.append("feed name")
+            raise click.UsageError(
+                f"To upload packages to SystemLink, the following credentials are required: {', '.join(missing)}"
+            )
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
@@ -40,28 +87,27 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
     "-p",
     "--input-path",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
-    required=False,
+    callback=_validate_path,
     help=CliInterface.PLUGIN_DIR,
 )
 @click.option(
     "-b",
     "--base-input-dir",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
-    required=False,
+    callback=_validate_path,
     help=CliInterface.PLUGINS_ROOT_DIR,
 )
 @click.option(
     "-n",
     "--plugin-dir-name",
     default="",
-    required=False,
     help=CliInterface.SELECTED_PLUGINS,
 )
 @click.option("-u", "--upload-packages", is_flag=True, help=CliInterface.UPLOAD_PACKAGES)
-@click.option("-a", "--api-url", default=None, required=False, help=CliInterface.API_URL)
-@click.option("-k", "--api-key", default=None, required=False, help=CliInterface.API_KEY)
-@click.option("-w", "--workspace", default=None, required=False, help=CliInterface.WORK_SPACE)
-@click.option("-f", "--feed-name", default=None, required=False, help=CliInterface.FEED_NAME)
+@click.option("-a", "--api-url", help=CliInterface.API_URL)
+@click.option("-k", "--api-key", help=CliInterface.API_KEY)
+@click.option("-w", "--workspace", help=CliInterface.WORK_SPACE)
+@click.option("-f", "--feed-name", help=CliInterface.FEED_NAME)
 @click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
 def create_and_upload_package(
     input_path: Optional[Path],
@@ -79,21 +125,16 @@ def create_and_upload_package(
         logger = initialize_logger(name="console_logger")
         logger.info(StatusMessages.STARTED_EXECUTION)
 
-        systemlink_config = SystemLinkConfig(api_key=api_key, api_url=api_url, workspace=workspace)
-        upload_package_info = UploadPackageInfo(feed_name=feed_name, overwrite_packages=overwrite)
-
-        cli_args = CliInputs(
-            base_input_dir=base_input_dir,
-            input_path=input_path,
-            upload_packages=upload_packages,
-            plugin_dir_names=plugin_dir_name,
-            systemlink_config=systemlink_config,
-            upload_package_info=upload_package_info,
+        _validate_plugin_inputs(
+            click.get_current_context(), input_path, base_input_dir, plugin_dir_name
+        )
+        _validate_systemlink_inputs(
+            click.get_current_context(), upload_packages, api_url, api_key, workspace, feed_name
         )
 
         remove_handlers(logger)
         logger = initialize_logger(name="debug_logger")
-        fallback_path = cli_args.base_input_dir or cli_args.input_path
+        fallback_path = base_input_dir or input_path
         if not fallback_path:
             raise FileNotFoundError(CommandLinePrompts.PLUGIN_DIRECTORY_REQUIRED)
         logger, log_directory_path = setup_logger_with_file_handler(
@@ -107,43 +148,47 @@ def create_and_upload_package(
         if upload_packages:
             systemlink_client = initialize_systemlink_client(
                 logger=logger,
-                systemlink_config=systemlink_config,
+                api_key=api_key,
+                api_url=api_url,
+                workspace=workspace,
             )
 
-        if cli_args.base_input_dir and cli_args.plugin_dir_names:
+        if base_input_dir and plugin_dir_name:
             process_and_upload_packages(
                 logger=logger,
-                plugin_root_directory=cli_args.base_input_dir,
-                selected_plugins=cli_args.plugin_dir_names,
+                plugin_root_directory=base_input_dir,
+                selected_plugins=plugin_dir_name,
                 systemlink_client=systemlink_client,
-                upload_package_info=upload_package_info,
+                feed_name=feed_name,
+                overwrite_packages=overwrite,
             )
 
-        if cli_args.input_path:
+        if input_path:
             package_path = build_package(
                 logger=logger,
-                plugin_path=cli_args.input_path,
+                plugin_path=input_path,
             )
             if systemlink_client and package_path:
                 upload_response = upload_to_systemlink_feed(
                     package_path=package_path,
                     systemlink_client=systemlink_client,
-                    upload_package_info=upload_package_info,
+                    feed_name=feed_name,
+                    overwrite_packages=overwrite,
                 )
                 logger.info(
                     StatusMessages.PACKAGE_UPLOADED.format(
                         package_name=upload_response.file_name,
-                        feed_name=upload_package_info.feed_name,
+                        feed_name=feed_name,
                     )
                 )
 
     except ApiException as ex:
-        measurement_plugin = Path(str(cli_args.input_path)).name
+        measurement_plugin = Path(str(input_path)).name
         logger.debug(ex, exc_info=True)
         logger.error(
             StatusMessages.UPLOAD_FAILED.format(
                 package=measurement_plugin,
-                name=upload_package_info.feed_name,
+                name=feed_name,
             )
         )
         logger.info(ex.error.message)
@@ -156,11 +201,6 @@ def create_and_upload_package(
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
         logger.info(StatusMessages.SUBPROCESS_ERROR.format(cmd=ex.cmd, returncode=ex.returncode))
-        logger.info(StatusMessages.CHECK_LOG_FILE)
-
-    except (FileNotFoundError, KeyError, ValidationError) as ex:
-        logger.debug(ex, exc_info=True)
-        logger.info(ex)
         logger.info(StatusMessages.CHECK_LOG_FILE)
 
     except Exception as ex:
