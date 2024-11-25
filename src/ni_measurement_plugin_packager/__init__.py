@@ -21,11 +21,7 @@ from ni_measurement_plugin_packager._support._logger import (
     remove_handlers,
     setup_logger_with_file_handler,
 )
-from ni_measurement_plugin_packager.constants import (
-    CliInterface,
-    CommandLinePrompts,
-    StatusMessages,
-)
+from ni_measurement_plugin_packager.constants import CommandLinePrompts, StatusMessages
 from ni_measurement_plugin_packager.models import (
     CliInputs,
     SystemLinkConfig,
@@ -41,28 +37,62 @@ CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
     "--input-path",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     required=False,
-    help=CliInterface.PLUGIN_DIR,
+    help="Specify the directory containing the measurement plug-in.",
 )
 @click.option(
     "-b",
     "--base-input-dir",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     required=False,
-    help=CliInterface.PLUGINS_ROOT_DIR,
+    help="Specify the root directory containing multiple plug-in directories.",
 )
 @click.option(
     "-n",
     "--plugin-dir-name",
     default="",
     required=False,
-    help=CliInterface.SELECTED_PLUGINS,
+    help="Name of specific plug-in directory to process, or use '.' to process all plug-ins.",
 )
-@click.option("-u", "--upload-packages", is_flag=True, help=CliInterface.UPLOAD_PACKAGES)
-@click.option("-a", "--api-url", default=None, required=False, help=CliInterface.API_URL)
-@click.option("-k", "--api-key", default=None, required=False, help=CliInterface.API_KEY)
-@click.option("-w", "--workspace", default=None, required=False, help=CliInterface.WORK_SPACE)
-@click.option("-f", "--feed-name", default=None, required=False, help=CliInterface.FEED_NAME)
-@click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
+@click.option(
+    "-u",
+    "--upload-packages",
+    is_flag=True,
+    help="Enables uploading packages to SystemLink Feed.",
+)
+@click.option(
+    "-a",
+    "--api-url",
+    default=None,
+    required=False,
+    help="SystemLink server API endpoint URL.",
+)
+@click.option(
+    "-k",
+    "--api-key",
+    default=None,
+    required=False,
+    help="API key for SystemLink server.",
+)
+@click.option(
+    "-w",
+    "--workspace",
+    default=None,
+    required=False,
+    help="Workspace name for uploading plug-in packages.",
+)
+@click.option(
+    "-f",
+    "--feed-name",
+    default=None,
+    required=False,
+    help="Feed name for uploading plug-in packages.",
+)
+@click.option(
+    "-o",
+    "--overwrite",
+    is_flag=True,
+    help="Allow overwriting of existing packages in SystemLink feeds.",
+)
 def create_and_upload_package(
     input_path: Optional[Path],
     base_input_dir: Optional[Path],
@@ -146,27 +176,27 @@ def create_and_upload_package(
                 name=upload_package_info.feed_name,
             )
         )
-        logger.info(ex.error.message)
-        logger.info(StatusMessages.CHECK_LOG_FILE)
+        logger.error(ex.error.message)
+        logger.error(StatusMessages.CHECK_LOG_FILE)
 
     except PermissionError as error:
-        logger.info(StatusMessages.ACCESS_DENIED)
+        logger.error(StatusMessages.ACCESS_DENIED)
         logger.debug(error, exc_info=True)
 
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
-        logger.info(StatusMessages.SUBPROCESS_ERROR.format(cmd=ex.cmd, returncode=ex.returncode))
-        logger.info(StatusMessages.CHECK_LOG_FILE)
+        logger.error(StatusMessages.SUBPROCESS_ERROR.format(cmd=ex.cmd, returncode=ex.returncode))
+        logger.error(StatusMessages.CHECK_LOG_FILE)
 
     except (FileNotFoundError, KeyError, ValidationError) as ex:
         logger.debug(ex, exc_info=True)
-        logger.info(ex)
-        logger.info(StatusMessages.CHECK_LOG_FILE)
+        logger.error(str(ex))
+        logger.error(StatusMessages.CHECK_LOG_FILE)
 
     except Exception as ex:
         logger.debug(ex, exc_info=True)
-        logger.info(ex)
-        logger.info(StatusMessages.CHECK_LOG_FILE)
+        logger.error(str(ex))
+        logger.error(StatusMessages.CHECK_LOG_FILE)
 
     finally:
         logger.info(StatusMessages.COMPLETION)
