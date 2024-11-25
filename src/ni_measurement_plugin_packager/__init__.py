@@ -21,11 +21,7 @@ from ni_measurement_plugin_packager._support._logger import (
     remove_handlers,
     setup_logger_with_file_handler,
 )
-from ni_measurement_plugin_packager.models import (
-    CliInputs,
-    SystemLinkConfig,
-    UploadPackageInfo,
-)
+
 
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 
@@ -229,11 +225,6 @@ def create_and_upload_package(
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
         logger.error(StatusMessages.SUBPROCESS_ERROR.format(cmd=ex.cmd, returncode=ex.returncode))
-        logger.error(StatusMessages.CHECK_LOG_FILE)
-
-    except (FileNotFoundError, KeyError, ValidationError) as ex:
-        logger.debug(ex, exc_info=True)
-        logger.error(str(ex))
         logger.error(StatusMessages.CHECK_LOG_FILE)
 
     except Exception as ex:

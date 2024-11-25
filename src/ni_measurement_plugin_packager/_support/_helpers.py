@@ -24,13 +24,6 @@ from ni_measurement_plugin_packager._support._create_files import (
 from ni_measurement_plugin_packager._support._pyproject_toml_info import (
     get_plugin_package_info,
 )
-from ni_measurement_plugin_packager._constants import (
-    PACKAGES,
-    CommandLinePrompts,
-    FileNames,
-    PyProjectToml,
-    StatusMessages,
-)
 
 
 def _get_nipkg_exe_directory() -> Path:
