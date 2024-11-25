@@ -5,7 +5,7 @@ from typing import Optional
 
 from pydantic import BaseModel, model_validator
 
-from ni_measurement_plugin_packager.constants import CommandLinePrompts, StatusMessages
+from ni_measurement_plugin_packager._constants import CommandLinePrompts, StatusMessages
 
 
 class SystemLinkConfig(BaseModel):

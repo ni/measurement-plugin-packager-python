@@ -4,12 +4,12 @@ import platform
 import shutil
 from pathlib import Path
 
-from ni_measurement_plugin_packager._support import _get_nipath
-from ni_measurement_plugin_packager.constants import (
+from ni_measurement_plugin_packager._constants import (
     ControlFile,
     FileNames,
     InstructionFile,
 )
+from ni_measurement_plugin_packager._support import _get_nipath
 from ni_measurement_plugin_packager.models import PackageInfo
 
 ignore_dirs = [

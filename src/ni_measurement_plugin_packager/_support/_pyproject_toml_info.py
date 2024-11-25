@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 import tomli
 
-from ni_measurement_plugin_packager.constants import (
+from ni_measurement_plugin_packager._constants import (
     PyProjectToml,
     StatusMessages,
 )
