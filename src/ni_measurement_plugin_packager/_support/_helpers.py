@@ -24,11 +24,6 @@ from ni_measurement_plugin_packager.constants import (
     PyProjectToml,
     StatusMessages,
 )
-from ni_measurement_plugin_packager.models import (
-    InvalidInputError,
-    SystemLinkConfig,
-    UploadPackageInfo,
-)
 
 
 def _get_nipkg_exe_directory() -> Path:
@@ -92,7 +87,7 @@ def validate_selected_plugins(
         logger: Logger object.
 
     Raises:
-        InvalidInputError: if any invalid input in the selected measurement plug-ins.
+        ValueError: if any invalid input in the selected measurement plug-ins.
     """
     for measurement_plugin in selected_plugins.split(","):
         plugin_name = measurement_plugin.strip("'\"").strip()
@@ -102,9 +97,7 @@ def validate_selected_plugins(
                 logger=logger, measurement_plugins=measurement_plugins
             )
 
-            raise InvalidInputError(
-                CommandLinePrompts.SELECTED_PLUGINS_INVALID.format(input=plugin_name)
-            )
+            raise ValueError(CommandLinePrompts.SELECTED_PLUGINS_INVALID.format(input=plugin_name))
 
 
 def get_valid_plugin_directories(directory_path: Path, logger: Logger) -> List[Path]:
@@ -171,23 +164,25 @@ def find_file_in_directory(directory_path: Path, file_name: str) -> Optional[Pat
 def upload_to_systemlink_feed(
     systemlink_client: PublishPackagesToSystemLink,
     package_path: Path,
-    upload_package_info: UploadPackageInfo,
+    feed_name: Optional[str],
+    overwrite_packages: Optional[bool],
 ) -> UploadPackageResponse:
     """Upload a package to SystemLink feeds.
 
     Args:
         systemlink_client: Client for publish packages to SystemLink.
         package_path: Measurement package path.
-        upload_package_info: Information about the package to be uploaded.
+        feed_name: Name of the feed to upload to.
+        overwrite_packages: Whether to overwrite existing packages.
 
     Returns:
         Uploaded measurement package response from server.
     """
     upload_response = systemlink_client.upload_package(
         package_info=PackageInfo(
-            feed_name=upload_package_info.feed_name,
+            feed_name=feed_name,
             path=str(package_path),
-            overwrite=upload_package_info.overwrite_packages,
+            overwrite=overwrite_packages,
         )
     )
 
@@ -195,13 +190,17 @@ def upload_to_systemlink_feed(
 
 
 def initialize_systemlink_client(
-    systemlink_config: SystemLinkConfig,
+    api_key: Optional[str],
+    api_url: Optional[str],
+    workspace: Optional[str],
     logger: Logger,
 ) -> PublishPackagesToSystemLink:
     """Initialize a client to upload packages to SystemLink.
 
     Args:
-        systemlink_config: SystemLink configuration credentials.
+        api_key: SystemLink API key.
+        api_url: SystemLink API URL.
+        workspace: SystemLink workspace name.
         logger: Logger object.
 
     Returns:
@@ -209,9 +208,9 @@ def initialize_systemlink_client(
     """
     try:
         systemlink_client = PublishPackagesToSystemLink(
-            server_api_key=systemlink_config.api_key,
-            server_url=systemlink_config.api_url,
-            workspace_name=systemlink_config.workspace,
+            server_api_key=api_key,
+            server_url=api_url,
+            workspace_name=workspace,
         )
         return systemlink_client
 
@@ -236,7 +235,8 @@ def process_and_upload_packages(
     plugin_root_directory: Path,
     selected_plugins: str,
     systemlink_client: PublishPackagesToSystemLink,
-    upload_package_info: UploadPackageInfo,
+    feed_name: Optional[str],
+    overwrite_packages: Optional[bool],
 ) -> None:
     """Build and publish selected measurement packages.
 
@@ -245,17 +245,18 @@ def process_and_upload_packages(
         plugin_root_directory: Measurement plugins root directory path.
         selected_plugins: Selected measurement plugins.
         systemlink_client: Client for publish packages to SystemLink.
-        upload_package_info: Information about the package to be uploaded.
+        feed_name: Name of the feed to upload to.
+        overwrite_packages: Whether to overwrite existing packages.
 
     Raises:
-        InvalidInputError: If API Key and Feed Name not provided by the user.
+        FileNotFoundError: If no valid plugins are found in the directory.
     """
     measurement_plugins: list[Path] = get_valid_plugin_directories(
         directory_path=plugin_root_directory, logger=logger
     )
 
     if not measurement_plugins:
-        raise InvalidInputError(
+        raise FileNotFoundError(
             StatusMessages.INVALID_ROOT_DIRECTORY.format(dir=plugin_root_directory)
         )
 
@@ -275,7 +276,8 @@ def process_and_upload_packages(
         plugin_root_directory=plugin_root_directory,
         measurement_plugins=plugins_to_process,
         systemlink_client=systemlink_client,
-        upload_package_info=upload_package_info,
+        feed_name=feed_name,
+        overwrite_packages=overwrite_packages,
     )
 
 
@@ -337,7 +339,8 @@ def build_and_upload_packages(
     plugin_root_directory: Path,
     measurement_plugins: List[str],
     systemlink_client: PublishPackagesToSystemLink,
-    upload_package_info: UploadPackageInfo,
+    feed_name: Optional[str],
+    overwrite_packages: Optional[bool],
 ) -> None:
     """Build and upload NI packages to SystemLink feeds.
 
@@ -346,7 +349,8 @@ def build_and_upload_packages(
         plugin_root_directory: Measurement plug-in root directory.
         measurement_plugins: List of measurement plug-ins.
         systemlink_client: Client for publish packages to SystemLink.
-        upload_package_info: Information about the package to be uploaded.
+        feed_name: Name of the feed to upload to.
+        overwrite_packages: Whether to overwrite existing packages.
     """
     for measurement_plugin in measurement_plugins:
         measurement_plugin_path = Path(plugin_root_directory) / measurement_plugin
@@ -359,12 +363,13 @@ def build_and_upload_packages(
                 upload_response = upload_to_systemlink_feed(
                     systemlink_client=systemlink_client,
                     package_path=measurement_package_path,
-                    upload_package_info=upload_package_info,
+                    feed_name=feed_name,
+                    overwrite_packages=overwrite_packages,
                 )
                 logger.info(
                     StatusMessages.PACKAGE_UPLOADED.format(
                         package_name=upload_response.file_name,
-                        feed_name=upload_package_info.feed_name,
+                        feed_name=feed_name,
                     )
                 )
         except ApiException as ex:
@@ -372,7 +377,7 @@ def build_and_upload_packages(
             logger.info(
                 StatusMessages.UPLOAD_FAILED.format(
                     package=measurement_plugin,
-                    name=upload_package_info.feed_name,
+                    name=feed_name,
                 )
             )
             logger.info(ex.error.message)

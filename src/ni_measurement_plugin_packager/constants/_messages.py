@@ -43,7 +43,7 @@ class StatusMessages:
 class CommandLinePrompts:
     """Messages guiding user interactions and input requirements for command-line operations."""
 
-    PLUGIN_DIRECTORY_REQUIRED = "Specify '--plugin-path' or '--plugins-root' with '--plugin-names'."
+    PLUGIN_DIRECTORY_REQUIRED = "Specify '--input-path' or '--base-input-dir' with '--plugin-dir-name'."
     AVAILABLE_PLUGINS = "Available measurements: "
     SELECTED_PLUGINS_INVALID = "Invalid measurement plug-in name '{input}' provided. Use comma-separated plugin names (e.g., sample_measurement,test_measurement) or '.' to build all available measurements."
     UNWANTED_SYSTEMLINK_CREDENTIALS = "Use '-u' or '--upload-packages' flag to upload package(s)."
