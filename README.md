@@ -43,32 +43,32 @@ The Measurement Plug-In Packager enables users to build Python measurement plug-
   - Creates `.nipkg` package(s) for the specified measurement plug-in(s).
   - Package(s) will be created under: `C:\Users\Public\Documents\NI-Measurement-Plugin-Packager\packages`.
   - Package name will be in the format: `{plugin_folder_name}_{version}_windows_x64.nipkg` eg: `sample-measurement_0.5.0_windows_x64.nipkg`.
-<!-- TODO: Update the flag names -->
+
 - #### Single Plug-in
 
   ```bash
-  measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>"
+  measurement-plugin-packager --input-path "<measurement_plugin_directory>"
   ```
 
   Example:
 
   ```bash
-  measurement-plugin-packager --plugin-dir "C:/Users/examples/sample_measurement"
+  measurement-plugin-packager --input-path "C:/Users/examples/sample_measurement"
   ```
 
 - #### Multiple Plug-ins
 
   ```bash
-  measurement-plugin-packager --base-dir "<measurement_plugin_base_directory>" --selected-meas-plugins "<plugin1,plugin2>"
+  measurement-plugin-packager --base-input-dir "<measurement_plugin_base_directory>" --plugin-dir-name "<plugin1,plugin2>"
   ```
 
   Example:
   
   ```bash
-  measurement-plugin-packager --base-dir "C:/Users/examples" --selected-meas-plugins "sample_measurement,test_measurement"
+  measurement-plugin-packager --base-input-dir "C:/Users/examples" --plugin-dir-name "sample_measurement,test_measurement"
   ```
 
-  Note: The base directory and selected measurement plug-ins must be specified for building multiple measurement plug-ins.
+  Note: The base input directory and plug-ins directory name must be specified for building multiple measurement plug-ins.
 
 ### 2. Building and Uploading Measurement Plug-In Packages to SystemLink
 
@@ -82,25 +82,25 @@ The Measurement Plug-In Packager enables users to build Python measurement plug-
 - #### Uploading Single Plug-In to SystemLink
 
   ```bash
-  measurement-plugin-packager --plugin-dir "<measurement_plugin_directory>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace   "<workspace_name>" --feed-name "<feed_name>"
+  measurement-plugin-packager --input-path "<measurement_plugin_directory>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace   "<workspace_name>" --feed-name "<feed_name>"
   ```
   
   Example:
   
   ```bash
-  measurement-plugin-packager --plugin-dir "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/"   --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
+  measurement-plugin-packager --input-path "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/"   --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
   ```
 
 - #### Uploading Multiple Plug-Ins to SystemLink
 
   ```bash
-  measurement-plugin-packager --base-dir "<base_directory>" --selected-meas-plugins "<plugin1,plugin2>" --upload-packages --api-url "<systemlink_api_url>"   --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
+  measurement-plugin-packager --base-input-dir "<base_directory>" --plugin-dir-name "<plugin1,plugin2>" --upload-packages --api-url "<systemlink_api_url>"   --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
   ```
   
   Example:
   
   ```bash
-  measurement-plugin-packager --base-dir "C:\Users\examples" --selected-meas-plugins "sample_measurement,testing_measurement" --upload-packages --api-url "https://  dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
+  measurement-plugin-packager --base-input-dir "C:\Users\examples" --plugin-dir-name "sample_measurement,testing_measurement" --upload-packages --api-url "https://  dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
   ```
 
 ## Directory Utilization
@@ -136,10 +136,8 @@ The following files/directories are automatically ignored during package buildin
 ### Requirements to upload packages to SystemLink
 
 - Internet access is required for uploading the package(s).
-- When uploading packages:
-  - API key and Feed name are mandatory.
-  <!-- To be decided -->
-  - API URL and Workspace are optional (defaults to SystemLink client configuration if not provided).
+- When uploading package(s):
+  - API key, API URL, Workspace, and Feed name are mandatory.
 - All command-line arguments should be enclosed in double-quotes.
 
 ## Additional Resources
