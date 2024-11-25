@@ -7,7 +7,7 @@ from dataclasses import dataclass
 class PackageInfo:
     """Measurement information for building package."""
 
-    measurement_name: str
+    plugin_name: str
     package_name: str
     version: str
     description: str
