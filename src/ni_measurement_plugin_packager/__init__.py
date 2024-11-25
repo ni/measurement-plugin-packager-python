@@ -124,7 +124,6 @@ def _validate_systemlink_inputs(
 @click.option(
     "-f",
     "--feed-name",
-    default=None,
     help="Feed name for uploading plug-in packages.",
 )
 @click.option(
