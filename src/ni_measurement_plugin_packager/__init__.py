@@ -9,6 +9,7 @@ from typing import Optional
 import click
 from nisystemlink_feeds_manager.clients.core import ApiException
 
+from ni_measurement_plugin_packager._constants import CommandLinePrompts, StatusMessages
 from ni_measurement_plugin_packager._support._helpers import (
     build_package,
     initialize_systemlink_client,
@@ -20,11 +21,7 @@ from ni_measurement_plugin_packager._support._logger import (
     remove_handlers,
     setup_logger_with_file_handler,
 )
-from ni_measurement_plugin_packager.constants import (
-    CliInterface,
-    CommandLinePrompts,
-    StatusMessages,
-)
+
 
 CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 
@@ -88,27 +85,53 @@ def _validate_systemlink_inputs(
     "--input-path",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     callback=_validate_path,
-    help=CliInterface.PLUGIN_DIR,
+    help="Measurement plug-in directory to be packaged.",
 )
 @click.option(
     "-b",
     "--base-input-dir",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     callback=_validate_path,
-    help=CliInterface.PLUGINS_ROOT_DIR,
+    help="Base directory with measurement plug-ins, each in its own separate directory.",
 )
 @click.option(
     "-n",
     "--plugin-dir-name",
     default="",
-    help=CliInterface.SELECTED_PLUGINS,
+    help="Plug-in directory name to be packaged. Used with `--base-input-dir`. Provide '.' to package all plug-ins in the base input directory.",
 )
-@click.option("-u", "--upload-packages", is_flag=True, help=CliInterface.UPLOAD_PACKAGES)
-@click.option("-a", "--api-url", help=CliInterface.API_URL)
-@click.option("-k", "--api-key", help=CliInterface.API_KEY)
-@click.option("-w", "--workspace", help=CliInterface.WORK_SPACE)
-@click.option("-f", "--feed-name", help=CliInterface.FEED_NAME)
-@click.option("-o", "--overwrite", is_flag=True, help=CliInterface.OVERWRITE_PACKAGES)
+@click.option(
+    "-u",
+    "--upload-packages",
+    is_flag=True,
+    help="Enable uploading packages to the SystemLink Feed.",
+)
+@click.option(
+    "-a",
+    "--api-url",
+    help="SystemLink server API endpoint URL.",
+)
+@click.option(
+    "-k",
+    "--api-key",
+    help="API key for the SystemLink server.",
+)
+@click.option(
+    "-w",
+    "--workspace",
+    help="Workspace name to upload the packaged plug-ins.",
+)
+@click.option(
+    "-f",
+    "--feed-name",
+    help="Feed name to upload the packaged plug-in(s).",
+)
+@click.option(
+    "-o",
+    "--overwrite",
+    is_flag=True,
+    help="Overwrite the existing packages in the SystemLink feed.",
+)
 def create_and_upload_package(
     input_path: Optional[Path],
     base_input_dir: Optional[Path],
@@ -191,22 +214,22 @@ def create_and_upload_package(
                 name=feed_name,
             )
         )
-        logger.info(ex.error.message)
-        logger.info(StatusMessages.CHECK_LOG_FILE)
+        logger.error(ex.error.message)
+        logger.error(StatusMessages.CHECK_LOG_FILE)
 
     except PermissionError as error:
-        logger.info(StatusMessages.ACCESS_DENIED)
         logger.debug(error, exc_info=True)
+        logger.error(StatusMessages.ACCESS_DENIED)
 
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
-        logger.info(StatusMessages.SUBPROCESS_ERROR.format(cmd=ex.cmd, returncode=ex.returncode))
-        logger.info(StatusMessages.CHECK_LOG_FILE)
+        logger.error(StatusMessages.SUBPROCESS_ERROR.format(cmd=ex.cmd, returncode=ex.returncode))
+        logger.error(StatusMessages.CHECK_LOG_FILE)
 
     except Exception as ex:
         logger.debug(ex, exc_info=True)
-        logger.info(ex)
-        logger.info(StatusMessages.CHECK_LOG_FILE)
+        logger.error(str(ex))
+        logger.error(StatusMessages.CHECK_LOG_FILE)
 
     finally:
         logger.info(StatusMessages.COMPLETION)

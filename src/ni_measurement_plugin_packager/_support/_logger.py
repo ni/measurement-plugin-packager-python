@@ -7,14 +7,16 @@ from logging import Logger, StreamHandler
 from pathlib import Path
 from typing import Tuple
 
-from ni_measurement_plugin_packager._support._log_file_path import get_log_directory_path
-from ni_measurement_plugin_packager.constants import (
+from ni_measurement_plugin_packager._constants import (
     LOG_DATE_FORMAT,
     LOG_FILE_COUNT_LIMIT,
     LOG_FILE_MSG_FORMAT,
     LOG_FILE_NAME,
     LOG_FILE_SIZE_LIMIT_IN_BYTES,
     StatusMessages,
+)
+from ni_measurement_plugin_packager._support._log_file_path import (
+    get_log_directory_path,
 )
 
 
