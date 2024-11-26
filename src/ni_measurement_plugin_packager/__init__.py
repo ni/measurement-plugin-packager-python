@@ -85,26 +85,26 @@ def _validate_systemlink_inputs(
     "--input-path",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     callback=_validate_path,
-    help="Specify the directory containing the measurement plug-in.",
+    help="Measurement plug-in directory to be packaged.",
 )
 @click.option(
     "-b",
     "--base-input-dir",
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     callback=_validate_path,
-    help="Specify the root directory containing multiple plug-in directories.",
+    help="Base directory with measurement plug-ins, each in its own separate directory.",
 )
 @click.option(
     "-n",
     "--plugin-dir-name",
     default="",
-    help="Name of specific plug-in directory to process, or use '.' to process all plug-ins.",
+    help="Plug-in directory name to be packaged. Used with `--base-input-dir`. Provide '.' to package all plug-ins in the base input directory.",
 )
 @click.option(
     "-u",
     "--upload-packages",
     is_flag=True,
-    help="Enables uploading packages to SystemLink Feed.",
+    help="Enable uploading packages to the SystemLink Feed.",
 )
 @click.option(
     "-a",
@@ -114,23 +114,23 @@ def _validate_systemlink_inputs(
 @click.option(
     "-k",
     "--api-key",
-    help="API key for SystemLink server.",
+    help="API key for the SystemLink server.",
 )
 @click.option(
     "-w",
     "--workspace",
-    help="Workspace name for uploading plug-in packages.",
+    help="Workspace name to upload the packaged plug-ins.",
 )
 @click.option(
     "-f",
     "--feed-name",
-    help="Feed name for uploading plug-in packages.",
+    help="Feed name to upload the packaged plug-in(s).",
 )
 @click.option(
     "-o",
     "--overwrite",
     is_flag=True,
-    help="Allow overwriting of existing packages in SystemLink feeds.",
+    help="Overwrite the existing packages in the SystemLink feed.",
 )
 def create_and_upload_package(
     input_path: Optional[Path],
@@ -218,8 +218,8 @@ def create_and_upload_package(
         logger.error(StatusMessages.CHECK_LOG_FILE)
 
     except PermissionError as error:
-        logger.error(StatusMessages.ACCESS_DENIED)
         logger.debug(error, exc_info=True)
+        logger.error(StatusMessages.ACCESS_DENIED)
 
     except subprocess.CalledProcessError as ex:
         logger.debug(ex, exc_info=True)
