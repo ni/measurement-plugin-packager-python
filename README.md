@@ -45,10 +45,12 @@ and distributing measurement plug-ins efficiently.
 
 ### 1. Packaging a Single Measurement Plug-in
 
-The following command takes in `--input-path` and builds the `.nipkg` file under
-`C:\Users\Public\Documents\NI-Measurement-Plugin-Packager\packages` for the specified measurement
-plug-in directory path. The package will be named in the format:
-`{plugin_folder_name}_{version}_windows_x64.nipkg` eg: `sample-measurement_0.5.0_windows_x64.nipkg`.
+The following command takes in `--input-path` specifying the measurement plug-in directory path to
+build the `.nipkg` file. The package is created at `<Public
+Documents>\NI-Measurement-Plugin-Packager\packages`. The package is named in this format:
+`{plugin_folder_name}_{version}_windows_x64.nipkg`. Example:
+`sample_measurement_0.5.0_windows_x64.nipkg` where the version is picked from the respective
+measurement plug-in's measurement.py file.
 
   ```bash
   measurement-plugin-packager --input-path "<measurement_plugin_directory>"
@@ -62,15 +64,16 @@ plug-in directory path. The package will be named in the format:
 
   **Note:**
   
-  If the Public Documents directory is not accessible, the tool defaults to your personal Documents
-  directory for storing `.nipkg` files in `\packages`, log file in `\Logs` and the measurement
-  plug-in folder(copy) in `\{plugin_folder_name}` with instruction and control files.
+  If the Public Documents directory is inaccessible, the tool defaults to the "Documents" directory.
+  In this location, `.nipkg` files are stored under `\packages` folder, log files are saved in the
+  `\Logs` folder, and the packaged measurement plug-in folder is copied to the
+  `\{plugin_folder_name}` subdirectory.
   
 ### 2. Packaging Multiple Measurement Plug-ins
 
-You can package multiple measurement plug-ins from a base directory by specifying their directory
-names. Use the following command with `--base-input-dir`, and `--plugin-dir-name` to build
-`.nipkg` packages for the specified measurement plug-in folders in the base directory.
+You can package multiple measurement plug-ins from a base directory by specifying plug-in(s)
+directory name. Use the following command with `--base-input-dir`, and `--plugin-dir-name` to build
+`.nipkg` packages for the specified measurement plug-in(s) from the base directory.
 
   ```bash
   measurement-plugin-packager --base-input-dir "<measurement_plugin_base_directory>" --plugin-dir-name "<plugin1,plugin2>"
@@ -83,6 +86,11 @@ names. Use the following command with `--base-input-dir`, and `--plugin-dir-name
   ```
 
 ### 3. Packaging and Publishing the Measurement Plug-in
+
+**Prerequisites:**
+
+- Active internet connection.
+- Command-line arguments should be enclosed in double-quotes.
   
 For publishing measurement plug-in packages directly to the SystemLink, you must provide:
 
@@ -90,15 +98,6 @@ For publishing measurement plug-in packages directly to the SystemLink, you must
 - API Key (`--api-key`)
 - Workspace name (`--workspace`)
 - Feed name (`--feed-name`)
-
-**Prerequisites:**
-
-- Active internet connection
-- Command-line arguments should be enclosed in double-quotes
-
-To publish multiple measurement plug-ins, replace `--input-path` with
-`--base-input-dir` and specify `--plugin-dir-name` as shown
-[above](#2-packaging-multiple-measurement-plug-ins).
 
 ```bash
 measurement-plugin-packager --input-path "<measurement_plugin_directory>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
@@ -110,7 +109,14 @@ Example:
 measurement-plugin-packager --input-path "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
 ```
 
-**Note:** Use `-o` or `--overwrite` to replace an existing package in SystemLink feeds.
+To publish multiple measurement plug-ins, replace `--input-path` with `--base-input-dir` and specify
+`--plugin-dir-name` as shown [above](#2-packaging-multiple-measurement-plug-ins).
+
+**Note:**
+
+- Use `-o` or `--overwrite` to replace an existing package in SystemLink feeds.
+- Only packages built during the current packaging process can be published.
+- The tool doesn't publish any existing packages.
   
 ## Notes
 
