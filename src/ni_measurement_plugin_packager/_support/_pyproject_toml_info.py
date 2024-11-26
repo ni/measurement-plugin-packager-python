@@ -7,16 +7,16 @@ from typing import Any, Dict
 
 import tomli
 
-from ni_measurement_plugin_packager._package_info import PackageInfo
-from ni_measurement_plugin_packager.constants import (
-    DEFAULT_AUTHOR,
-    DEFAULT_DESCRIPTION,
-    DEFAULT_VERSION,
+from ni_measurement_plugin_packager._constants import (
     PyProjectToml,
     StatusMessages,
 )
+from ni_measurement_plugin_packager._package_info import PackageInfo
 
 UNDERSCORE_SPACE_REGEX = r"[_ ]"
+DEFAULT_DESCRIPTION = "Python Measurement Plug-In"
+DEFAULT_VERSION = "1.0.0"
+DEFAULT_AUTHOR = "National Instruments"
 
 
 def parse_pyproject_toml(toml_file_path: Path) -> Dict[str, Any]:
