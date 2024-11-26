@@ -47,7 +47,9 @@ and distributing measurement plug-ins efficiently.
 
 The following command takes in `--input-path` specifying the measurement plug-in directory path to
 build the `.nipkg` file. The package is created at `<Public
-Documents>\NI-Measurement-Plugin-Packager\packages`. The package is named in this format:
+Documents>\NI-Measurement-Plugin-Packager\packages`.
+
+The package is named in this format:
 `{plugin_folder_name}_{version}_windows_x64.nipkg`. Example:
 `sample_measurement_0.5.0_windows_x64.nipkg` where the version is picked from the respective
 measurement plug-in's measurement.py file.
@@ -65,13 +67,13 @@ measurement plug-in's measurement.py file.
   **Note:**
   
   If the Public Documents directory is inaccessible, the tool defaults to the "Documents" directory.
-  In this location, `.nipkg` files are stored under `\packages` folder, log files are saved in the
-  `\Logs` folder, and the packaged measurement plug-in folder is copied to the
+  In this location, `.nipkg` files are saved in the `\packages` folder, log files are saved in the
+  `\Logs` folder and the packaged measurement plug-in folder is copied to the
   `\{plugin_folder_name}` subdirectory.
   
 ### 2. Packaging Multiple Measurement Plug-ins
 
-You can package multiple measurement plug-ins from a base directory by specifying plug-in(s)
+You can package multiple measurement plug-ins from a parent directory by specifying plug-in(s)
 directory name. Use the following command with `--base-input-dir`, and `--plugin-dir-name` to build
 `.nipkg` packages for the specified measurement plug-in(s) from the base directory.
 
@@ -89,10 +91,11 @@ directory name. Use the following command with `--base-input-dir`, and `--plugin
 
 **Prerequisites:**
 
+- [SystemLink Client Setup on the PC](https://www.ni.com/docs/en-US/bundle/systemlink-enterprise/page/setting-up-systemlink-client.html).
 - Active internet connection.
 - Command-line arguments should be enclosed in double-quotes.
   
-For publishing measurement plug-in packages directly to the SystemLink, you must provide:
+To publish measurement plug-in packages directly to the SystemLink, in addition to the measurement plug-in directory path, you must provide the following values,
 
 - SystemLink API URL (`--api-url`)
 - API Key (`--api-key`)
@@ -106,17 +109,22 @@ measurement-plugin-packager --input-path "<measurement_plugin_directory>" --uplo
 Example:
 
 ```bash
-measurement-plugin-packager --input-path "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://dev-api.lifecyclesolutions.ni.com/" --api-key "123234" --workspace "sample_workspace" --feed-name "example_feed"
+measurement-plugin-packager --input-path "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://api.example.com/" --api-key "123abc" --workspace "your-workspace" --feed-name "your-feed-name"
 ```
 
-To publish multiple measurement plug-ins, replace `--input-path` with `--base-input-dir` and specify
-`--plugin-dir-name` as shown [above](#2-packaging-multiple-measurement-plug-ins).
+Similarly, to publish multiple measurement plug-ins, replace `--input-path` with `--base-input-dir` and specify
+`--plugin-dir-name` as shown below.
+
+Example:
+
+```bash
+measurement-plugin-packager --base-input-dir "C:/Users/examples" --plugin-dir-name "sample_measurement,test_measurement" --upload-packages --api-url "https://api.example.com/" --api-key "123abc" --workspace "your-workspace" --feed-name "your-feed-name"
+```
 
 **Note:**
 
 - Use `-o` or `--overwrite` to replace an existing package in SystemLink feeds.
-- Only packages built during the current packaging process can be published.
-- The tool doesn't publish any existing packages.
+- The tool doesn't publish any existing packages. Only packages built during the current packaging process can be published.
   
 ## Notes
 
