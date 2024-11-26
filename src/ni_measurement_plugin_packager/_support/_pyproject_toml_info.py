@@ -19,36 +19,18 @@ DEFAULT_VERSION = "1.0.0"
 DEFAULT_AUTHOR = "National Instruments"
 
 
-def parse_pyproject_toml(toml_file_path: Path) -> Dict[str, Any]:
-    """Parse the `pyproject.toml` file for measurement plug-in data.
-
-    Args:
-        toml_file_path: File path of pyproject.toml.
-
-    Returns:
-        Pyproject toml information.
-    """
+def _parse_pyproject_toml(toml_file_path: Path) -> Dict[str, Any]:
     with open(toml_file_path, "rb") as file:
         pyproject_data = tomli.load(file)
 
     return pyproject_data
 
 
-def extract_package_metadata(
+def _extract_package_metadata(
     logger: Logger,
     toml_content: Dict[str, Any],
     plugin_name: str,
 ) -> PackageInfo:
-    """Extract updated package metadata from `pyproject.toml` content.
-
-    Args:
-        logger: Logger object.
-        toml_content: Pyproject toml data.
-        plugin_name: Measurement name.
-
-    Returns:
-        Updated measurement package info.
-    """
     package_info = toml_content[PyProjectToml.TOOL][PyProjectToml.POETRY]
     package_description = package_info[PyProjectToml.DESCRIPTION]
     package_name = package_info[PyProjectToml.NAME].lower()
@@ -100,9 +82,9 @@ def get_plugin_package_info(measurement_plugin_path: Path, logger: Logger) -> Pa
     pyproject_toml_path = Path(measurement_plugin_path) / PyProjectToml.FILE_NAME
     plugin_name = Path(measurement_plugin_path).name
 
-    pyproject_toml_data = parse_pyproject_toml(toml_file_path=pyproject_toml_path)
+    pyproject_toml_data = _parse_pyproject_toml(toml_file_path=pyproject_toml_path)
 
-    measurement_package_info = extract_package_metadata(
+    measurement_package_info = _extract_package_metadata(
         logger=logger,
         toml_content=pyproject_toml_data,
         plugin_name=plugin_name,

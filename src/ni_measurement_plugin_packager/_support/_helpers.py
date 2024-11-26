@@ -30,30 +30,15 @@ def _get_nipkg_exe_directory() -> Path:
     return _get_nipath("NIDIR64") / "NI Package Manager" / "nipkg.exe"
 
 
-def list_available_plugins_in_root_directory(
+def _list_available_plugins_in_root_directory(
     logger: Logger, measurement_plugins: List[Path]
 ) -> None:
-    """List available measurement plug-ins in the given root directory.
-
-    Args:
-        logger: Logger object.
-        measurement_plugins: List of measurement plug-ins.
-    """
     logger.info(CommandLinePrompts.AVAILABLE_PLUGINS)
     for index, plugin_name in enumerate(measurement_plugins):
         logger.info(f"{index + 1}. {plugin_name}")
 
 
-def is_valid_plugin_directory(plugin_path: Path, logger: Logger) -> bool:
-    """Check if the measurement plug-in directory is valid.
-
-    Args:
-        plugin_path: Measurement plug-in path.
-        logger: Logger object.
-
-    Returns:
-        True, if measurement plug-in directory is valid. Else, False.
-    """
+def _is_valid_plugin_directory(plugin_path: Path, logger: Logger) -> bool:
     pyproject_path: Path = plugin_path / PyProjectToml.FILE_NAME
     measurement_file_path: Path = plugin_path / FileNames.MEASUREMENT_FILE
     batch_file_path: Path = plugin_path / FileNames.BATCH_FILE
@@ -74,48 +59,29 @@ def is_valid_plugin_directory(plugin_path: Path, logger: Logger) -> bool:
     return valid_file
 
 
-def validate_selected_plugins(
+def _validate_selected_plugins(
     selected_plugins: str,
     measurement_plugins: List[Path],
     logger: Logger,
 ) -> None:
-    """Validate the selected measurement plug-ins.
-
-    Args:
-        selected_plugins: User selected measurement plug-ins.
-        measurement_plugins: Measurement plug-ins.
-        logger: Logger object.
-
-    Raises:
-        ValueError: if any invalid input in the selected measurement plug-ins.
-    """
     for measurement_plugin in selected_plugins.split(","):
         plugin_name = measurement_plugin.strip("'\"").strip()
 
         if plugin_name not in str(measurement_plugins):
-            list_available_plugins_in_root_directory(
+            _list_available_plugins_in_root_directory(
                 logger=logger, measurement_plugins=measurement_plugins
             )
 
             raise ValueError(CommandLinePrompts.SELECTED_PLUGINS_INVALID.format(input=plugin_name))
 
 
-def get_valid_plugin_directories(directory_path: Path, logger: Logger) -> List[Path]:
-    """Retrieve valid plug-in directories from the given directory.
-
-    Args:
-        directory_path: Directory path provided by the user.
-        logger: Logger object.
-
-    Returns:
-        List of valid plug-in directories.
-    """
+def _get_valid_plugin_directories(directory_path: Path, logger: Logger) -> List[Path]:
     try:
         directories = [
             name
             for name in directory_path.iterdir()
             if (directory_path / name).is_dir()
-            and is_valid_plugin_directory(directory_path / name, logger)
+            and _is_valid_plugin_directory(directory_path / name, logger)
         ]
         return directories
 
@@ -125,15 +91,7 @@ def get_valid_plugin_directories(directory_path: Path, logger: Logger) -> List[P
         ) from exp
 
 
-def get_packager_root_directory(logger: Logger) -> Optional[Path]:
-    """Get root directory of the `Measurement Plug-in Packager`.
-
-    Args:
-        logger: Logger object.
-
-    Returns:
-        Directory path.
-    """
+def _get_packager_root_directory(logger: Logger) -> Optional[Path]:
     for handler in logger.handlers:
         if isinstance(handler, FileHandler):
             directory_two_levels_up = Path(handler.baseFilename).resolve().parent.parent
@@ -142,16 +100,7 @@ def get_packager_root_directory(logger: Logger) -> Optional[Path]:
     return None
 
 
-def find_file_in_directory(directory_path: Path, file_name: str) -> Optional[Path]:
-    """Search for a file in the specified directory.
-
-    Args:
-        directory_path: Directory path.
-        file_name: File name.
-
-    Returns:
-        File path.
-    """
+def _find_file_in_directory(directory_path: Path, file_name: str) -> Optional[Path]:
     file_path = None
     for name in directory_path.iterdir():
         if file_name in str(name):
@@ -159,6 +108,56 @@ def find_file_in_directory(directory_path: Path, file_name: str) -> Optional[Pat
             break
 
     return file_path
+
+
+def _build_and_upload_packages(
+    logger: Logger,
+    plugin_root_directory: Path,
+    measurement_plugins: List[str],
+    systemlink_client: PublishPackagesToSystemLink,
+    feed_name: Optional[str],
+    overwrite_packages: Optional[bool],
+) -> None:
+    for measurement_plugin in measurement_plugins:
+        measurement_plugin_path = Path(plugin_root_directory) / measurement_plugin
+        try:
+            measurement_package_path = build_package(
+                logger=logger,
+                plugin_path=measurement_plugin_path,
+            )
+            if systemlink_client and measurement_package_path:
+                upload_response = upload_to_systemlink_feed(
+                    systemlink_client=systemlink_client,
+                    package_path=measurement_package_path,
+                    feed_name=feed_name,
+                    overwrite_packages=overwrite_packages,
+                )
+                logger.info(
+                    StatusMessages.PACKAGE_UPLOADED.format(
+                        package_name=upload_response.file_name,
+                        feed_name=feed_name,
+                    )
+                )
+        except ApiException as ex:
+            logger.debug(ex, exc_info=True)
+            logger.info(
+                StatusMessages.UPLOAD_FAILED.format(
+                    package=measurement_plugin,
+                    name=feed_name,
+                )
+            )
+            logger.info(ex.error.message)
+            logger.info(StatusMessages.CHECK_LOG_FILE)
+
+        except (KeyError, FileNotFoundError) as ex:
+            logger.debug(ex, exc_info=True)
+            logger.info(ex)
+            logger.info(StatusMessages.CHECK_LOG_FILE)
+
+        except Exception as ex:
+            logger.debug(ex, exc_info=True)
+            logger.info(ex)
+            logger.info(StatusMessages.CHECK_LOG_FILE)
 
 
 def upload_to_systemlink_feed(
@@ -251,7 +250,7 @@ def process_and_upload_packages(
     Raises:
         FileNotFoundError: If no valid plugins are found in the directory.
     """
-    measurement_plugins: list[Path] = get_valid_plugin_directories(
+    measurement_plugins: list[Path] = _get_valid_plugin_directories(
         directory_path=plugin_root_directory, logger=logger
     )
 
@@ -264,14 +263,14 @@ def process_and_upload_packages(
     if selected_plugins == ".":
         plugins_to_process = [str(path) for path in measurement_plugins]
     else:
-        validate_selected_plugins(
+        _validate_selected_plugins(
             measurement_plugins=measurement_plugins,
             selected_plugins=selected_plugins,
             logger=logger,
         )
         plugins_to_process = [plugin.strip("'\"").strip() for plugin in selected_plugins.split(",")]
 
-    build_and_upload_packages(
+    _build_and_upload_packages(
         logger=logger,
         plugin_root_directory=plugin_root_directory,
         measurement_plugins=plugins_to_process,
@@ -294,12 +293,12 @@ def build_package(logger: Logger, plugin_path: Path) -> Optional[Path]:
     measurement_plugin = Path(plugin_path).name
     logger.info(StatusMessages.BUILDING_PACKAGE.format(name=measurement_plugin))
 
-    packager_root_directory = get_packager_root_directory(logger=logger)
+    packager_root_directory = _get_packager_root_directory(logger=logger)
     if not packager_root_directory:
         logger.info(StatusMessages.INVALID_PACKAGER_PATH)
         return None
 
-    if not is_valid_plugin_directory(plugin_path=plugin_path, logger=logger):
+    if not _is_valid_plugin_directory(plugin_path=plugin_path, logger=logger):
         logger.info(StatusMessages.INVALID_PLUGIN)
         return None
 
@@ -327,68 +326,8 @@ def build_package(logger: Logger, plugin_path: Path) -> Optional[Path]:
         )
     )
 
-    measurement_package_path = find_file_in_directory(
+    measurement_package_path = _find_file_in_directory(
         package_directory_path,
         measurement_package_info.package_name,
     )
     return measurement_package_path
-
-
-def build_and_upload_packages(
-    logger: Logger,
-    plugin_root_directory: Path,
-    measurement_plugins: List[str],
-    systemlink_client: PublishPackagesToSystemLink,
-    feed_name: Optional[str],
-    overwrite_packages: Optional[bool],
-) -> None:
-    """Build and upload NI packages to SystemLink feeds.
-
-    Args:
-        logger: Logger object.
-        plugin_root_directory: Measurement plug-in root directory.
-        measurement_plugins: List of measurement plug-ins.
-        systemlink_client: Client for publish packages to SystemLink.
-        feed_name: Name of the feed to upload to.
-        overwrite_packages: Whether to overwrite existing packages.
-    """
-    for measurement_plugin in measurement_plugins:
-        measurement_plugin_path = Path(plugin_root_directory) / measurement_plugin
-        try:
-            measurement_package_path = build_package(
-                logger=logger,
-                plugin_path=measurement_plugin_path,
-            )
-            if systemlink_client and measurement_package_path:
-                upload_response = upload_to_systemlink_feed(
-                    systemlink_client=systemlink_client,
-                    package_path=measurement_package_path,
-                    feed_name=feed_name,
-                    overwrite_packages=overwrite_packages,
-                )
-                logger.info(
-                    StatusMessages.PACKAGE_UPLOADED.format(
-                        package_name=upload_response.file_name,
-                        feed_name=feed_name,
-                    )
-                )
-        except ApiException as ex:
-            logger.debug(ex, exc_info=True)
-            logger.info(
-                StatusMessages.UPLOAD_FAILED.format(
-                    package=measurement_plugin,
-                    name=feed_name,
-                )
-            )
-            logger.info(ex.error.message)
-            logger.info(StatusMessages.CHECK_LOG_FILE)
-
-        except (KeyError, FileNotFoundError) as ex:
-            logger.debug(ex, exc_info=True)
-            logger.info(ex)
-            logger.info(StatusMessages.CHECK_LOG_FILE)
-
-        except Exception as ex:
-            logger.debug(ex, exc_info=True)
-            logger.info(ex)
-            logger.info(StatusMessages.CHECK_LOG_FILE)

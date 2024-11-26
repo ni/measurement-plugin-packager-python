@@ -4,26 +4,12 @@ from pathlib import Path, WindowsPath
 from typing import Tuple
 
 
-def get_public_documents_path() -> Path:
-    """Get Public Documents directory path.
-
-    Robust method agnostic of OS installed drive.
-
-    Returns:
-        Public Documents directory path.
-    """
+def _get_public_documents_path() -> Path:
     public_documents_path = WindowsPath("~Public") / "Documents"
     return public_documents_path.expanduser()
 
 
-def get_user_documents_path() -> Path:
-    """Get user's My Documents directory path.
-
-    Robust method agnostic of OS installed drive.
-
-    Returns:
-        User's My Documents directory path.
-    """
+def _get_user_documents_path() -> Path:
     public_documents_path = Path.home() / "Documents"
     return public_documents_path.expanduser()
 
@@ -45,11 +31,11 @@ def get_log_directory_path(fallback_path: Path) -> Tuple[Path, bool, bool]:
     user_path_status = True
 
     try:
-        log_directory_path = get_public_documents_path()
+        log_directory_path = _get_public_documents_path()
     except Exception:
         public_path_status = False
         try:
-            log_directory_path = get_user_documents_path()
+            log_directory_path = _get_user_documents_path()
         except Exception:
             user_path_status = False
             log_directory_path = fallback_path
