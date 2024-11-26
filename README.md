@@ -91,7 +91,7 @@ For publishing measurement plug-in packages directly to the SystemLink, you must
 - Workspace name (`--workspace`)
 - Feed name (`--feed-name`)
 
-Prerequisite:
+**Prerequisites:**
 
 - Active internet connection
 - Command-line arguments should be enclosed in double-quotes
