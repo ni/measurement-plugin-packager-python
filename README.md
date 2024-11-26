@@ -99,6 +99,7 @@ To publish measurement plug-in packages directly to the SystemLink, in addition 
 
 - SystemLink API URL (`--api-url`)
 - API Key (`--api-key`)
+  - Please refer [here](https://www.ni.com/docs/en-US/bundle/systemlink-enterprise/page/creating-an-api-key.html) for creating an API Key.
 - Workspace name (`--workspace`)
 - Feed name (`--feed-name`)
 
@@ -114,8 +115,6 @@ measurement-plugin-packager --input-path "C:\Users\examples\sample_measurement" 
 
 Similarly, to publish multiple measurement plug-ins, replace `--input-path` with `--base-input-dir` and specify
 `--plugin-dir-name` as shown below.
-
-Example:
 
 ```bash
 measurement-plugin-packager --base-input-dir "C:/Users/examples" --plugin-dir-name "sample_measurement,test_measurement" --upload-packages --api-url "https://api.example.com/" --api-key "123abc" --workspace "your-workspace" --feed-name "your-feed-name"
