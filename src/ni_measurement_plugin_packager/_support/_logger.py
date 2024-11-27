@@ -50,13 +50,12 @@ def _setup_stream_handler() -> StreamHandler:
     return handler
 
 
-def add_file_handler(logger: Logger, log_directory_path: Path) -> None:
-    """Add a file handler to the logger for logging to a file.
+def _add_stream_handler(logger: Logger) -> None:
+    stream_handler = _setup_stream_handler()
+    logger.addHandler(stream_handler)
 
-    Args:
-        logger: Logger object.
-        log_directory_path: Log directory path.
-    """
+
+def _add_file_handler(logger: Logger, log_directory_path: Path) -> None:
     handler = _setup_file_handler(log_directory_path=log_directory_path, file_name=LOG_FILE_NAME)
     logger.addHandler(handler)
 
@@ -72,7 +71,7 @@ def setup_logger_with_file_handler(fallback_path: Path, logger: Logger) -> Tuple
         Logger object and logger directory path.
     """
     log_directory_path, public_path_status, user_path_status = get_log_directory_path(fallback_path)
-    add_file_handler(logger=logger, log_directory_path=log_directory_path)
+    _add_file_handler(logger=logger, log_directory_path=log_directory_path)
 
     if not public_path_status:
         logger.info(StatusMessages.PUBLIC_DIRECTORY_INACCESSIBLE)
@@ -80,16 +79,6 @@ def setup_logger_with_file_handler(fallback_path: Path, logger: Logger) -> Tuple
         logger.info(StatusMessages.USER_DIRECTORY_INACCESSIBLE)
 
     return logger, log_directory_path
-
-
-def add_stream_handler(logger: Logger) -> None:
-    """Add a stream handler to the logger for logging to the console.
-
-    Args:
-        logger: Logger object.
-    """
-    stream_handler = _setup_stream_handler()
-    logger.addHandler(stream_handler)
 
 
 def initialize_logger(name: str) -> Logger:
@@ -104,7 +93,7 @@ def initialize_logger(name: str) -> Logger:
     new_logger = logging.getLogger(name)
     new_logger.setLevel(logging.DEBUG)
 
-    add_stream_handler(logger=new_logger)
+    _add_stream_handler(logger=new_logger)
     return new_logger
 
 
