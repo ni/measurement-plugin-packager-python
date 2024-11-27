@@ -8,7 +8,7 @@ repository = "https://github.com/ni/measurement-plugin-packager-python/"
 packages = [{include = "ni_measurement_plugin_packager", from = "src"}]
 license = "MIT"
 classifiers = [
-    "Development Status :: 3- Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Manufacturing",
     "Operating System :: Microsoft :: Windows",
