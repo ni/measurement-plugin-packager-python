@@ -1,19 +1,19 @@
-# NI Measurement Plug-In Package builder
+# NI Measurement Plug-In Package Builder
 
 - [NI Measurement Plug-In Package Builder](#ni-measurement-plug-in-package-builder)
   - [Who](#who)
   - [Problem statement](#problem-statement)
   - [Links to relevant work items](#links-to-relevant-work-items)
-  - [Implementation and Design](#implemenation-and-design)
-    - [Workflow](#work-flow)
-        - [Non-interactive mode](#non-interactive-mode)
-        - [Interactive mode](#interactive-mode)
+  - [Implementation and Design](#implementation-and-design)
+    - [Workflow](#workflow)
+      - [Non-interactive mode](#non-interactive-mode)
+      - [Interactive mode](#interactive-mode)
     - [NI SystemLink Feeds Manager](#ni-systemlink-feeds-manager)
-    - [User Inputs](#user-inputs)
-    - [Logger implementation](#logger-implementation)
+    - [User inputs](#user-inputs)
+      - [Logger implementation](#logger-implementation)
     - [Building measurement packages](#building-measurement-packages)
-        - [Creating required files](#creating-required-files)
-        - [Building measurements using nipkg exe](#building-measurements-using-nipkg-exe)
+      - [Creating required files](#creating-required-files)
+      - [Building measurements using nipkg exe](#building-measurements-using-nipkg-exe)
   - [Installation](#installation)
   - [Alternative implementations and designs](#alternative-implementations-and-designs)
   - [Open issues](#open-issues)
@@ -76,7 +76,7 @@ It initially prompts the user with the base directory of the measurement plug-in
 ```
 ni-measurement-plugin-package-builder -i
 ```
-![interactive_mode_flow_chart](interactive_mode_flow_chart.png)
+![interactive_mode_flow_chart](./images/interactive_mode_flow_chart.png)
 
 Note: The following files present in the measurement plug-in folder will be ignored while building the .nipkg files,
 
@@ -119,7 +119,7 @@ Logger implementation plays a crucial role in this tool for displaying the statu
 Two types of loggers have been implemented in this tool, one is `console logger` and another is `File logger`. Console logger is used for displaying messages in the console whereas the File logger is used for logging all types of messages in a separate file called `log.txt`. Both the logger logs the messages with different formats, the console logger logs the message as plain text whereas the file logger logs the messages along with the time stamp.
 
 For example,
-![file_logger](file_logger.png)
+![file_logger](./images/file_logger.png)
 
 Initially, the console logger gets loaded followed by the file logger. The file logger contains all messages, including console messages, as well as any exception messages and their traceback.
 
@@ -132,15 +132,15 @@ The tool will create those folders in either **User's My Documents directory pat
 
 Building the measurement plug-in packages requires a certain template.
 
-![required_files](template_files_heirarchy.png)
+![required_files](./images/template_files_heirarchy.png)
 
 The Control folder contains a single file `control` which has information about the maintainer, version and system architecture, etc. Some of that information has been from the `pyproject.toml`, if the pyproject.toml doesn't have this information default values would be used in that place.
 
-![control_file](control_file.png)
+![control_file](./images/control_file.png)
 
 The Data folder contains the copied measurement plug-in files under the separate folder with the measurement name and the `instructions` file contains the information about statically registering the measurement after installation of the measurement package
 
-![instructions_file](instructions.png)
+![instructions_file](./images/instructions.png)
 
 All these folders will be placed under the folder named with the `measurement plug-in name` parallel to the `Logs` folder.
 

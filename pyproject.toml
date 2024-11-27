@@ -4,7 +4,7 @@ version = "1.3.0-dev3"
 description = "Packager for Python measurement plug-ins"
 authors = ["NI <opensource@ni.com>"]
 readme = "README.md"
-repository = "https://github.com/ni/measurement-plugin-python-packager/"
+repository = "https://github.com/ni/measurement-plugin-packager-python/"
 packages = [{include = "ni_measurement_plugin_packager", from = "src"}]
 license = "MIT"
 classifiers = [
