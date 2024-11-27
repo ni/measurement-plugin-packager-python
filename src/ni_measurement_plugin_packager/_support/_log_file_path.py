@@ -1,11 +1,11 @@
 """Provides functions to retrieve log directory paths with fallback options."""
 
-from pathlib import Path, WindowsPath
+from pathlib import Path
 from typing import Tuple
 
 
 def _get_public_documents_path() -> Path:
-    public_documents_path = WindowsPath("~Public") / "Documents"
+    public_documents_path = Path("~Public") / "Documents"
     return public_documents_path.expanduser()
 
 
