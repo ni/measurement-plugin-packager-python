@@ -341,7 +341,7 @@ files = []
 
 [package.source]
 type = "file"
-url = "dependencies/nisystemlink_feeds_manager-1.0.0.dev1-py3-none-any.whl"
+url = "../nisystemlink_feeds_manager-1.0.0.dev1-py3-none-any.whl"
 
 [[package]]
 name = "packaging"
