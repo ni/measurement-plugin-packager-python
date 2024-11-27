@@ -27,8 +27,6 @@ and distributing measurement plug-ins efficiently.
 - [NI SystemLink Client 2024
   Q1](https://www.ni.com/en/support/downloads/software-products/download.systemlink-client.html#521644)
   or later
-- NI SystemLink Feeds Manager
-  [1.0.0-dev1](./dependencies/nisystemlink_feeds_manager-1.0.0.dev1-py3-none-any.whl)
 
 ## Installation
 
