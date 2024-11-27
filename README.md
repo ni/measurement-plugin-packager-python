@@ -73,7 +73,7 @@ measurement plug-in's measurement.py file.
   
 ### 2. Packaging Multiple Measurement Plug-ins
 
-You can package multiple measurement plug-ins from a parent directory by specifying plug-in(s)
+You can package multiple measurement plug-ins from a parent directory by specifying the respective plug-in(s)
 directory name. Use the following command with `--base-input-dir`, and `--plugin-dir-name` to build
 `.nipkg` packages for the specified measurement plug-in(s) from the base directory.
 
