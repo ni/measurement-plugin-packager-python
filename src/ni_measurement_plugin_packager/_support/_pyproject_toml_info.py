@@ -11,7 +11,7 @@ from ni_measurement_plugin_packager._constants import (
     PyProjectToml,
     StatusMessages,
 )
-from ni_measurement_plugin_packager._package_info import PackageInfo
+from ni_measurement_plugin_packager._support._package_info import PackageInfo
 
 UNDERSCORE_SPACE_REGEX = r"[_ ]"
 DEFAULT_DESCRIPTION = "Python Measurement Plug-In"
