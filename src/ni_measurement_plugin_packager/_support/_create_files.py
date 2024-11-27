@@ -47,22 +47,52 @@ def _get_system_type() -> str:
     return f"{system}_{architecture}"
 
 
-def copy_directory_with_filters(source_directory: Path, destination_directory: Path) -> None:
-    """Copy contents of directories to the destination by excluding specific files/directories.
-
-    Args:
-        source_directory: Source directory path.
-        destination_directory: Destination directory path.
-    """
+def _copy_directory_with_filters(source_directory: Path, destination_directory: Path) -> None:
     for item in source_directory.iterdir():
         if item.name in ignore_dirs:
             continue
         dest_item = destination_directory / item.name
         if item.is_dir():
             dest_item.mkdir(parents=True, exist_ok=True)
-            copy_directory_with_filters(item, dest_item)
+            _copy_directory_with_filters(item, dest_item)
         else:
             shutil.copy2(item, dest_item)
+
+
+def _generate_control_file(control_directory_path: Path, package_info: PackageInfo) -> None:
+    control_file_path = control_directory_path / FileNames.CONTROL
+
+    control_file_data = f"""\
+{ControlFile.BUILT_USING}: {ControlFile.NIPKG}
+{ControlFile.SECTION}: {ControlFile.ADD_ONS}
+{ControlFile.XB_PLUGIN}: {ControlFile.FILE}
+{ControlFile.XB_STOREPRODUCT}: {ControlFile.NO}
+{ControlFile.XB_USER_VISIBLE}: {ControlFile.YES}
+{ControlFile.XB_VISIBLE_RUNTIME}: {ControlFile.NO}
+{ControlFile.ARCHITECTURE}: {_get_system_type()}
+{ControlFile.DESCRIPTION}: {package_info.description}
+{ControlFile.VERSION}: {package_info.version}
+{ControlFile.XB_DISPLAY_NAME}: {package_info.plugin_name}
+{ControlFile.MAINTAINER}: {package_info.author}
+{ControlFile.PACKAGE}: {package_info.package_name.lower()}"""
+
+    with open(control_file_path, "w", encoding="utf-8") as fp:
+        fp.write(control_file_data)
+
+
+def _generate_instruction_file(data_path: Path, plugin_name: str, package_name: str) -> None:
+    measurement_service_path = _get_measurement_services_path(plugin_name=plugin_name)
+    instruction_path = data_path / InstructionFile.INSTRUCTION
+
+    instruction_data = f"""\
+{InstructionFile.START_TAG}{InstructionFile.INSTRUCTION}{InstructionFile.END_TAG}
+{InstructionFile.START_TAG}{InstructionFile.CUSTOM_DIRECTORIES}{InstructionFile.END_TAG}
+    {InstructionFile.START_TAG}{InstructionFile.CUSTOM_DIRECTORY} {InstructionFile.NAME}="{package_name}" {InstructionFile.PATH}="{measurement_service_path}"{InstructionFile.CLOSE_END_TAG}
+{InstructionFile.CLOSE_START_TAG}{InstructionFile.CUSTOM_DIRECTORIES}{InstructionFile.END_TAG}
+{InstructionFile.CLOSE_START_TAG}{InstructionFile.INSTRUCTION}{InstructionFile.END_TAG}"""
+
+    with open(instruction_path, "w", encoding="utf-8") as fp:
+        fp.write(instruction_data)
 
 
 def generate_template_directories(
@@ -93,15 +123,15 @@ def generate_template_directories(
     control_directory_path.mkdir(parents=True, exist_ok=True)
     template_measurement_directory_path.mkdir(parents=True, exist_ok=True)
 
-    copy_directory_with_filters(
+    _copy_directory_with_filters(
         source_directory=Path(measurement_plugin_path),
         destination_directory=Path(template_measurement_directory_path),
     )
-    generate_control_file(
+    _generate_control_file(
         control_directory_path=control_directory_path,
         package_info=measurement_package_info,
     )
-    generate_instruction_file(
+    _generate_instruction_file(
         data_path=data_directory,
         plugin_name=measurement_package_info.plugin_name,
         package_name=measurement_package_info.package_name,
@@ -112,52 +142,3 @@ def generate_template_directories(
         fp.write("2.0")
 
     return template_directory
-
-
-def generate_control_file(control_directory_path: Path, package_info: PackageInfo) -> None:
-    """Create a control file storing the plugin package info.
-
-    Args:
-        control_directory_path: Control directory path.
-        package_info: Measurement Package information.
-    """
-    control_file_path = control_directory_path / FileNames.CONTROL
-
-    control_file_data = f"""\
-{ControlFile.BUILT_USING}: {ControlFile.NIPKG}
-{ControlFile.SECTION}: {ControlFile.ADD_ONS}
-{ControlFile.XB_PLUGIN}: {ControlFile.FILE}
-{ControlFile.XB_STOREPRODUCT}: {ControlFile.NO}
-{ControlFile.XB_USER_VISIBLE}: {ControlFile.YES}
-{ControlFile.XB_VISIBLE_RUNTIME}: {ControlFile.NO}
-{ControlFile.ARCHITECTURE}: {_get_system_type()}
-{ControlFile.DESCRIPTION}: {package_info.description}
-{ControlFile.VERSION}: {package_info.version}
-{ControlFile.XB_DISPLAY_NAME}: {package_info.plugin_name}
-{ControlFile.MAINTAINER}: {package_info.author}
-{ControlFile.PACKAGE}: {package_info.package_name.lower()}"""
-
-    with open(control_file_path, "w", encoding="utf-8") as fp:
-        fp.write(control_file_data)
-
-
-def generate_instruction_file(data_path: Path, plugin_name: str, package_name: str) -> None:
-    """Create an instruction file storing the plugin directory info.
-
-    Args:
-        data_path: Data directory path.
-        plugin_name: measurement plug-in name.
-        package_name: Measurement package name.
-    """
-    measurement_service_path = _get_measurement_services_path(plugin_name=plugin_name)
-    instruction_path = data_path / InstructionFile.INSTRUCTION
-
-    instruction_data = f"""\
-{InstructionFile.START_TAG}{InstructionFile.INSTRUCTION}{InstructionFile.END_TAG}
-{InstructionFile.START_TAG}{InstructionFile.CUSTOM_DIRECTORIES}{InstructionFile.END_TAG}
-    {InstructionFile.START_TAG}{InstructionFile.CUSTOM_DIRECTORY} {InstructionFile.NAME}="{package_name}" {InstructionFile.PATH}="{measurement_service_path}"{InstructionFile.CLOSE_END_TAG}
-{InstructionFile.CLOSE_START_TAG}{InstructionFile.CUSTOM_DIRECTORIES}{InstructionFile.END_TAG}
-{InstructionFile.CLOSE_START_TAG}{InstructionFile.INSTRUCTION}{InstructionFile.END_TAG}"""
-
-    with open(instruction_path, "w", encoding="utf-8") as fp:
-        fp.write(instruction_data)
