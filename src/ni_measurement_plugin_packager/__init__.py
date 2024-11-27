@@ -1,6 +1,6 @@
 """Implementation of Measurement Plug-In Packager."""
 
-__version__ = "1.3.0-dev3"
+__version__ = "1.3.0"
 
 import subprocess  # nosec: B404
 from pathlib import Path
