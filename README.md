@@ -53,13 +53,13 @@ The package is named in this format:
 measurement plug-in's measurement.py file.
 
   ```bash
-  measurement-plugin-packager --input-path "<measurement_plugin_directory>"
+  ni-measurement-plugin-packager --input-path "<measurement_plugin_directory>"
   ```
 
   Example:
 
   ```bash
-  measurement-plugin-packager --input-path "C:/Users/examples/sample_measurement"
+  ni-measurement-plugin-packager --input-path "C:/Users/examples/sample_measurement"
   ```
 
   **Note:**
@@ -76,13 +76,13 @@ directory name. Use the following command with `--base-input-dir`, and `--plugin
 `.nipkg` packages for the specified measurement plug-in(s) from the base directory.
 
   ```bash
-  measurement-plugin-packager --base-input-dir "<measurement_plugin_base_directory>" --plugin-dir-name "<plugin1,plugin2>"
+  ni-measurement-plugin-packager --base-input-dir "<measurement_plugin_base_directory>" --plugin-dir-name "<plugin1,plugin2>"
   ```
 
   Example:
   
   ```bash
-  measurement-plugin-packager --base-input-dir "C:/Users/examples" --plugin-dir-name "sample_measurement,test_measurement"
+  ni-measurement-plugin-packager --base-input-dir "C:/Users/examples" --plugin-dir-name "sample_measurement,test_measurement"
   ```
 
 ### 3. Packaging and Publishing the Measurement Plug-in
@@ -102,20 +102,20 @@ To publish measurement plug-in packages directly to the SystemLink, in addition 
 - Feed name (`--feed-name`)
 
 ```bash
-measurement-plugin-packager --input-path "<measurement_plugin_directory>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
+ni-measurement-plugin-packager --input-path "<measurement_plugin_directory>" --upload-packages --api-url "<systemlink_api_url>" --api-key "<api_key>" --workspace "<workspace_name>" --feed-name "<feed_name>"
 ```
 
 Example:
 
 ```bash
-measurement-plugin-packager --input-path "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://api.example.com/" --api-key "123abc" --workspace "your-workspace" --feed-name "your-feed-name"
+ni-measurement-plugin-packager --input-path "C:\Users\examples\sample_measurement" --upload-packages --api-url "https://api.example.com/" --api-key "123abc" --workspace "your-workspace" --feed-name "your-feed-name"
 ```
 
 Similarly, to publish multiple measurement plug-ins, replace `--input-path` with `--base-input-dir` and specify
 `--plugin-dir-name` as shown below.
 
 ```bash
-measurement-plugin-packager --base-input-dir "C:/Users/examples" --plugin-dir-name "sample_measurement,test_measurement" --upload-packages --api-url "https://api.example.com/" --api-key "123abc" --workspace "your-workspace" --feed-name "your-feed-name"
+ni-measurement-plugin-packager --base-input-dir "C:/Users/examples" --plugin-dir-name "sample_measurement,test_measurement" --upload-packages --api-url "https://api.example.com/" --api-key "123abc" --workspace "your-workspace" --feed-name "your-feed-name"
 ```
 
 **Note:**
