@@ -697,7 +697,7 @@ uplink = ">=0.9.7,<0.10.0"
 
 [package.source]
 type = "file"
-url = "nisystemlink_feeds_manager-1.0.0.dev2-py3-none-any.whl"
+url = "../nisystemlink_feeds_manager-1.0.0.dev2-py3-none-any.whl"
 
 [[package]]
 name = "packaging"
