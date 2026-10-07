@@ -20,7 +20,7 @@ and distributing measurement plug-ins efficiently.
 
 ## Dependencies
 
-- [Python 3.9](https://www.python.org/downloads/release/python-3913/) or later
+- [Python 3.10](https://www.python.org/downloads/release/python-3119/) or later
 - [NI Package Manager 2024
   Q4](https://www.ni.com/en/support/downloads/software-products/download.package-manager.html#322516)
   or later
