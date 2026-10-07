@@ -22,7 +22,7 @@ classifiers = [
 python = ">=3.10,<4.0"
 tomli = "^2.0.1"
 click = "^8.1.7"
-nisystemlink-feeds-manager = "^1.0.0.dev1"
+nisystemlink-feeds-manager = {path = "nisystemlink_feeds_manager-1.0.0.dev2-py3-none-any.whl"}
 
 [tool.poetry.scripts]
 ni-measurement-plugin-packager = "ni_measurement_plugin_packager:create_and_upload_package"
