@@ -44,7 +44,7 @@ Search open/closed issues before submitting. Someone may have reported the same 
 <!--- Include as many relevant details as possible about the environment you experienced the bug in -->
 
 * OS & Device: [e.g. macOS, Windows, Linux] on [Mac, PC]
-* `nisystemlink-feeds-manager` version [e.g. 1.0.0.dev1]
+* `nisystemlink-feeds-manager` version [e.g. 1.0.0.dev2]
 * `ni-measurement-plugin-packager` version [e.g. 1.3.0]
 * `ni-measurement-plugin-sdk-service` version [e.g. 2.1.0]
 * InstrumentStudio version [e.g. 2024 Q4]
