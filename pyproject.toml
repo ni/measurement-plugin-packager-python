@@ -28,7 +28,7 @@ nisystemlink-feeds-manager = "^1.0.0.dev2"
 ni-measurement-plugin-packager = "ni_measurement_plugin_packager:create_and_upload_package"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^1.11.2"
+mypy = "^2.0.0"
 ni-python-styleguide = "^0.4.6"
 bandit = { version = "^1.7", extras = ["toml"] }
 
